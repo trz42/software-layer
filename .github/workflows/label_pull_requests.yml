@@ -21,6 +21,3 @@ jobs:
       - uses: actions/labeler@v4
         with:
           repo-token: "${{ secrets.GITHUB_TOKEN }}"
-          labels:
-            label: "run_bot"
-            - files: EESSI-pilot-software-install.sh
