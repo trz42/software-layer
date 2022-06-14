@@ -332,6 +332,12 @@ fail_msg="Installation of WRF failed, that's unexpected..."
 OMPI_MCA_pml=ucx UCX_TLS=tcp $EB WRF-3.9.1.1-foss-2020a-dmpar.eb -r --include-easyblocks-from-pr 2648
 check_exit_code $? "${ok_msg}" "${fail_msg}"
 
+echo ">> Installing hipSYCL-0.9.1..."
+ok_msg="hipSYCL installed, hipp hipp hurra!"
+fail_msg="Installation of hipSYCL failed, that's disappointing..."
+$EB hipSYCL-0.9.1-GCC-10.2.0.eb --robot --toolchain=foss,2020a
+check_exit_code $? "${ok_msg}" "${fail_msg}"
+
 echo ">> Creating/updating Lmod cache..."
 export LMOD_RC="${EASYBUILD_INSTALLPATH}/.lmod/lmodrc.lua"
 if [ ! -f $LMOD_RC ]; then
