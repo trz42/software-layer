@@ -335,7 +335,8 @@ check_exit_code $? "${ok_msg}" "${fail_msg}"
 echo ">> Installing hipSYCL-0.9.1..."
 ok_msg="hipSYCL installed, hipp hipp hurra!"
 fail_msg="Installation of hipSYCL failed, that's disappointing..."
-$EB hipSYCL-0.9.1-GCC-10.2.0.eb --robot --toolchain=foss,2020a
+$EB hipSYCL-0.9.1-GCC-10.2.0.eb --robot --dry-run
+#$EB hipSYCL-0.9.1-GCC-10.2.0.eb --robot --toolchain=foss,2020a
 check_exit_code $? "${ok_msg}" "${fail_msg}"
 
 echo ">> Creating/updating Lmod cache..."
