@@ -53,3 +53,7 @@ software:
          versions: 
            '3.9.1.1': 
              versionsuffix: -dmpar
+  CaDiCaL:
+     toolchains:
+       foss-2020a:
+         versions: ['1.3.0']
