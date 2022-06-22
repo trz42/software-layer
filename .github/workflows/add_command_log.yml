@@ -1,0 +1,31 @@
+name: Add Command Log
+on:
+  - pull_request
+
+jobs:
+  add_command_log:
+
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+
+    steps:
+      - uses: Beakyn/gha-comment-pull-request@v1.0.1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          comment-message: |
+            ----
+            Command Log (add commands for the bot here):
+          delete-previous-comment: false
+          
+# - name: Comment deploy URL to pull request
+#  with:
+#    description-message: |
+#      ----
+#      ### Live Preview
+#      :rocket: Released to https://${{steps.environment.outputs.deployUrl}}
+#    comment-message: |
+#      ### Live Preview
+#      :rocket: Released to https://${{steps.environment.outputs.deployUrl}}
