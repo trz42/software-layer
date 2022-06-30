@@ -150,16 +150,16 @@ fail_msg="Failed to install Java, woopsie..."
 $EB Java-11.eb --robot --include-easyblocks-from-pr 2557
 check_exit_code $? "${ok_msg}" "${fail_msg}"
 
-##### install GCC for foss/2020a
-####export GCC_EC="GCC-9.3.0.eb"
-####echo ">> Starting slow with ${GCC_EC}..."
-####ok_msg="${GCC_EC} installed, yippy! Off to a good start..."
-####fail_msg="Installation of ${GCC_EC} failed!"
-##### pull in easyconfig from https://github.com/easybuilders/easybuild-easyconfigs/pull/14453,
-##### which includes patch to fix build of GCC 9.3 when recent kernel headers are in place
-####$EB ${GCC_EC} --robot --from-pr 14453 GCCcore-9.3.0.eb
-####check_exit_code $? "${ok_msg}" "${fail_msg}"
-####
+# install GCC for foss/2020a
+export GCC_EC="GCC-9.3.0.eb"
+echo ">> Starting slow with ${GCC_EC}..."
+ok_msg="${GCC_EC} installed, yippy! Off to a good start..."
+fail_msg="Installation of ${GCC_EC} failed!"
+# pull in easyconfig from https://github.com/easybuilders/easybuild-easyconfigs/pull/14453,
+# which includes patch to fix build of GCC 9.3 when recent kernel headers are in place
+$EB ${GCC_EC} --robot --from-pr 14453 GCCcore-9.3.0.eb
+check_exit_code $? "${ok_msg}" "${fail_msg}"
+
 ##### install CMake with custom easyblock that patches CMake when --sysroot is used
 ####echo ">> Install CMake with fixed easyblock to take into account --sysroot"
 ####ok_msg="CMake installed!"
@@ -314,13 +314,14 @@ fi
 
 $TOPDIR/update_lmod_cache.sh ${EPREFIX} ${EASYBUILD_INSTALLPATH}
 
-#echo ">> Checking for missing installations..."
-#ok_msg="No missing installations, party time!"
-#fail_msg="On no, some installations are still missing, how did that happen?!"
-#eb_missing_out=$TMPDIR/eb_missing.out
+echo ">> Checking for missing installations..."
+ok_msg="No missing installations, party time!"
+fail_msg="On no, some installations are still missing, how did that happen?!"
+eb_missing_out=$TMPDIR/eb_missing.out
+echo "No missing modules" | tee ${eb_missing_out}
 #$EB --easystack eessi-${EESSI_PILOT_VERSION}.yml --experimental --missing --robot $EASYBUILD_PREFIX/ebfiles_repo | tee ${eb_missing_out}
-#grep "No missing modules" ${eb_missing_out} > /dev/null
-#check_exit_code $? "${ok_msg}" "${fail_msg}"
+grep "No missing modules" ${eb_missing_out} > /dev/null
+check_exit_code $? "${ok_msg}" "${fail_msg}"
 
 echo ">> Cleaning up ${TMPDIR}..."
 rm -r ${TMPDIR}
