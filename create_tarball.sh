@@ -13,7 +13,6 @@ basedir=$3
 source init/minimal_eessi_env
 # if EESSI_SOFTWARE_SUBDIR not set get it (note can be overridden by EESSI_SOFTWARE_SUBDIR_OVERRIDE)
 if [ -z $EESSI_SOFTWARE_SUBDIR ]; then
-then
     source init/eessi_environment_variables
 fi
 cpu_arch_subdir=$EESSI_SOFTWARE_SUBDIR
