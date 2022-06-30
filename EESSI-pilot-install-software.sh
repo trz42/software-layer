@@ -52,7 +52,7 @@ export EESSI_SOFTWARE_SUBDIR_OVERRIDE=$(python3 $TOPDIR/eessi_software_subdir.py
 # Set all the EESSI environment variables (respecting $EESSI_SOFTWARE_SUBDIR_OVERRIDE)
 # $EESSI_SILENT - don't print any messages
 # $EESSI_BASIC_ENV - give a basic set of environment variables
-EESSI_SILENT=1 EESSI_BASIC_ENV=1 source $TOPDIR/init/eessi_environment_variables
+EESSI_SILENT=0 EESSI_BASIC_ENV=1 source $TOPDIR/init/eessi_environment_variables
 
 if [[ -z ${EESSI_SOFTWARE_SUBDIR} ]]; then
     fatal_error "Failed to determine software subdirectory?!"

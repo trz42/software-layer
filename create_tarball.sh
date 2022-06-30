@@ -3,13 +3,23 @@
 set -e
 
 if [ $# -ne 4 ]; then
-    echo "ERROR: Usage: $0 <EESSI tmp dir (example: /tmp/$USER/EESSI)> <pilot version (example: 2021.03)> <CPU arch subdir (example: x86_64/amd/zen2)> <path to tarball>" >&2
+        echo "ERROR: Usage: $0 <EESSI tmp dir (example: /tmp/$USER/EESSI)> <pilot version (example: 2021.03)> <component (software or compat)> <dir to tarball>" >&2
     exit 1
 fi
 eessi_tmpdir=$1
 pilot_version=$2
-cpu_arch_subdir=$3
-target_tgz=$4
+component=$3
+basedir=$4
+
+# if EESSI_SOFTWARE_SUBDIR not set get it (note can be overridden by EESSI_SOFTWARE_SUBDIR_OVERRIDE)
+if [ -z $EESSI_SOFTWARE_SUBDIR ]; then
+then
+    source init/eessi_environment_variables
+fi
+cpu_arch_subdir=$EESSI_SOFTWARE_SUBDIR
+
+timestamp=$(date +%s)
+export target_tgz=$(printf "%s/eessi-%s-%s-%s-%s-%d.tar.gz" ${basedir} ${EESSI_PILOT_VERSION} ${component} ${EESSI_OS_TYPE} ${cpu_arch_subdir} ${timestamp})
 
 tmpdir=`mktemp -d`
 echo ">> tmpdir: $tmpdir"
