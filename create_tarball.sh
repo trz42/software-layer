@@ -2,15 +2,15 @@
 
 set -e
 
-if [ $# -ne 4 ]; then
-        echo "ERROR: Usage: $0 <EESSI tmp dir (example: /tmp/$USER/EESSI)> <pilot version (example: 2021.03)> <component (software or compat)> <dir to tarball>" >&2
+if [ $# -ne 3 ]; then
+        echo "ERROR: Usage: $0 <EESSI tmp dir (example: /tmp/$USER/EESSI)> <component (software or compat)> <dir to tarball>" >&2
     exit 1
 fi
 eessi_tmpdir=$1
-pilot_version=$2
-component=$3
-basedir=$4
+component=$2
+basedir=$3
 
+source init/minimal_eessi_env
 # if EESSI_SOFTWARE_SUBDIR not set get it (note can be overridden by EESSI_SOFTWARE_SUBDIR_OVERRIDE)
 if [ -z $EESSI_SOFTWARE_SUBDIR ]; then
 then
