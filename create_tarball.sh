@@ -16,11 +16,12 @@ if [ -z $EESSI_SOFTWARE_SUBDIR ]; then
     source init/eessi_environment_variables
 fi
 
-cpu_arch_subdir=$(echo ${EESSI_SOFTWARE_SUBDIR} | tr '/' '-')
+cpu_arch_subdir=${EESSI_SOFTWARE_SUBDIR}
+cpu_arch_subdir_converted=$(echo ${EESSI_SOFTWARE_SUBDIR} | tr '/' '-')
 pilot_version=$EESSI_PILOT_VERSION
 
 timestamp=$(date +%s)
-export target_tgz=$(printf "%s/eessi-%s-%s-%s-%s-%d.tar.gz" ${basedir} ${EESSI_PILOT_VERSION} ${component} ${EESSI_OS_TYPE} ${cpu_arch_subdir} ${timestamp})
+export target_tgz=$(printf "%s/eessi-%s-%s-%s-%s-%d.tar.gz" ${basedir} ${EESSI_PILOT_VERSION} ${component} ${EESSI_OS_TYPE} ${cpu_arch_subdir_converted} ${timestamp})
 
 tmpdir=`mktemp -d`
 echo ">> tmpdir: $tmpdir"
