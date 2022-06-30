@@ -15,7 +15,9 @@ source init/minimal_eessi_env
 if [ -z $EESSI_SOFTWARE_SUBDIR ]; then
     source init/eessi_environment_variables
 fi
+
 cpu_arch_subdir=$EESSI_SOFTWARE_SUBDIR
+pilot_version=$EESSI_PILOT_VERSION
 
 timestamp=$(date +%s)
 export target_tgz=$(printf "%s/eessi-%s-%s-%s-%s-%d.tar.gz" ${basedir} ${EESSI_PILOT_VERSION} ${component} ${EESSI_OS_TYPE} ${cpu_arch_subdir} ${timestamp})
