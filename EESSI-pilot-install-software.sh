@@ -318,7 +318,7 @@ echo ">> Checking for missing installations..."
 ok_msg="No missing installations, party time!"
 fail_msg="On no, some installations are still missing, how did that happen?!"
 eb_missing_out=$TMPDIR/eb_missing.out
-echo "No missing modules" | tee ${eb_missing_out}
+echo "No missing modules!" | tee ${eb_missing_out}
 #$EB --easystack eessi-${EESSI_PILOT_VERSION}.yml --experimental --missing --robot $EASYBUILD_PREFIX/ebfiles_repo | tee ${eb_missing_out}
 grep "No missing modules" ${eb_missing_out} > /dev/null
 check_exit_code $? "${ok_msg}" "${fail_msg}"
