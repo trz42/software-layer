@@ -160,6 +160,13 @@ fail_msg="Installation of ${GCC_EC} failed!"
 $EB ${GCC_EC} --robot --from-pr 14453 GCCcore-9.3.0.eb
 check_exit_code $? "${ok_msg}" "${fail_msg}"
 
+export CaDiCaL_EC="CaDiCaL-1.3.0-GCC-9.3.0.eb"
+echo ">> Installing ${CaDiCaL_EC}..."
+ok_msg="${CaDiCaL_EC} installed, let's solve some problems!"
+fail_msg="Installation of ${CaDiCaL_EC} failed, that's a pity..."
+$EB ${CaDiCaL_EC} --robot
+check_exit_code $? "${ok_msg}" "${fail_msg}"
+
 ##### install CMake with custom easyblock that patches CMake when --sysroot is used
 ####echo ">> Install CMake with fixed easyblock to take into account --sysroot"
 ####ok_msg="CMake installed!"
