@@ -305,6 +305,12 @@ fail_msg="Installation of WRF failed, that's unexpected..."
 OMPI_MCA_pml=ucx UCX_TLS=tcp $EB WRF-3.9.1.1-foss-2020a-dmpar.eb -r --include-easyblocks-from-pr 2648
 check_exit_code $? "${ok_msg}" "${fail_msg}"
 
+echo ">> Installing CaDiCaL 1.3.0..."
+ok_msg="CaDiCaL installed, let's solve some problems!"
+fail_msg="Installation of CaDiCaL failed, that's a pity..."
+$EB CaDiCaL-1.3.0-GCC-9.3.0.eb --robot
+check_exit_code $? "${ok_msg}" "${fail_msg}"
+
 echo ">> Creating/updating Lmod cache..."
 export LMOD_RC="${EASYBUILD_INSTALLPATH}/.lmod/lmodrc.lua"
 if [ ! -f $LMOD_RC ]; then
