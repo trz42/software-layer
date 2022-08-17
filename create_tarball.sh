@@ -17,7 +17,8 @@ echo "EESSI_SOFTWARE_SUBDIR='${EESSI_SOFTWARE_SUBDIR}'"
 if [ $# -ge 4 ]; then
     echo "4th parameter is: '$4'"
     if [ $4 == "--generic" ]; then
-        export EESSI_SOFTWARE_SUBDIR_OVERRIDE=${EESSI_OS_TYPE}/${EESSI_CPU_FAMILY}/generic
+        #export EESSI_SOFTWARE_SUBDIR_OVERRIDE=${EESSI_OS_TYPE}/${EESSI_CPU_FAMILY}/generic
+        export EESSI_SOFTWARE_SUBDIR_OVERRIDE=${EESSI_CPU_FAMILY}/generic
         echo "EESSI_SOFTWARE_SUBDIR_OVERRIDE='${EESSI_SOFTWARE_SUBDIR_OVERRIDE}'"
     else
         echo "did not set EESSI_SOFTWARE_SUBDIR_OVERRIDE"
