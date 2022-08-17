@@ -1,4 +1,5 @@
 #!/bin/bash
+env | grep -i EASYBUILD_OPTARCH | sed -e 's/^/run_in_compat_layer.sh:/'
 if [ -z $EESSI_PILOT_VERSION ]; then
     echo "ERROR: \$EESSI_PILOT_VERSION must be set!" >&2
     exit 1

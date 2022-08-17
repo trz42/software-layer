@@ -3,6 +3,8 @@
 # Script to install EESSI pilot software stack (version 2021.12)
 #
 
+env | grep -i EASYBUILD_OPTARCH | sed -e 's/^/EESSI-pilot-install-software.sh:/'
+
 TOPDIR=$(dirname $(realpath $0))
 
 source $TOPDIR/utils.sh
@@ -150,22 +152,22 @@ fail_msg="Failed to install Java, woopsie..."
 $EB Java-11.eb --robot --include-easyblocks-from-pr 2557
 check_exit_code $? "${ok_msg}" "${fail_msg}"
 
-# install GCC for foss/2020a
-export GCC_EC="GCC-9.3.0.eb"
-echo ">> Starting slow with ${GCC_EC}..."
-ok_msg="${GCC_EC} installed, yippy! Off to a good start..."
-fail_msg="Installation of ${GCC_EC} failed!"
-# pull in easyconfig from https://github.com/easybuilders/easybuild-easyconfigs/pull/14453,
-# which includes patch to fix build of GCC 9.3 when recent kernel headers are in place
-$EB ${GCC_EC} --robot --from-pr 14453 GCCcore-9.3.0.eb
-check_exit_code $? "${ok_msg}" "${fail_msg}"
-
-export CaDiCaL_EC="CaDiCaL-1.3.0-GCC-9.3.0.eb"
-echo ">> Installing ${CaDiCaL_EC}..."
-ok_msg="${CaDiCaL_EC} installed, let's solve some problems!"
-fail_msg="Installation of ${CaDiCaL_EC} failed, that's a pity..."
-$EB ${CaDiCaL_EC} --robot
-check_exit_code $? "${ok_msg}" "${fail_msg}"
+### install GCC for foss/2020a
+##export GCC_EC="GCC-9.3.0.eb"
+##echo ">> Starting slow with ${GCC_EC}..."
+##ok_msg="${GCC_EC} installed, yippy! Off to a good start..."
+##fail_msg="Installation of ${GCC_EC} failed!"
+### pull in easyconfig from https://github.com/easybuilders/easybuild-easyconfigs/pull/14453,
+### which includes patch to fix build of GCC 9.3 when recent kernel headers are in place
+##$EB ${GCC_EC} --robot --from-pr 14453 GCCcore-9.3.0.eb
+##check_exit_code $? "${ok_msg}" "${fail_msg}"
+##
+##export CaDiCaL_EC="CaDiCaL-1.3.0-GCC-9.3.0.eb"
+##echo ">> Installing ${CaDiCaL_EC}..."
+##ok_msg="${CaDiCaL_EC} installed, let's solve some problems!"
+##fail_msg="Installation of ${CaDiCaL_EC} failed, that's a pity..."
+##$EB ${CaDiCaL_EC} --robot
+##check_exit_code $? "${ok_msg}" "${fail_msg}"
 
 ##### install CMake with custom easyblock that patches CMake when --sysroot is used
 ####echo ">> Install CMake with fixed easyblock to take into account --sysroot"

@@ -1,5 +1,7 @@
 #!/bin/bash
 
+env | grep -i EASYBUILD_OPTARCH | sed -e 's/^/build_container.sh:/'
+
 BUILD_CONTAINER="docker://ghcr.io/eessi/build-node:debian10"
 
 if [ $# -lt 2 ]; then
