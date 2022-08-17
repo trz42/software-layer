@@ -3,8 +3,6 @@
 # Script to install EESSI pilot software stack (version 2021.12)
 #
 
-env | grep -i EASYBUILD_OPTARCH | sed -e 's/^/EESSI-pilot-install-software.sh:/'
-
 TOPDIR=$(dirname $(realpath $0))
 
 source $TOPDIR/utils.sh
