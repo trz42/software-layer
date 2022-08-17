@@ -45,7 +45,7 @@ mkdir -p $EESSI_TMPDIR/{var-lib-cvmfs,var-run-cvmfs}
 export SINGULARITY_CACHEDIR=$EESSI_TMPDIR/singularity_cache
 
 # take into account that $SINGULARITY_BIND may be defined already, to bind additional paths into the build container
-BIND_PATHS="$EESSI_TMPDIR/var-run-cvmfs:/var/run/cvmfs,$EESSI_TMPDIR/var-lib-cvmfs:/var/lib/cvmfs,$EESSI_TMPDIR,nessi.uiocloud.no:/etc/cvmfs/keys/nessi.uiocloud.no,nessi.uiocloud.no.conf:/etc/cvmfs/domain.d/nessi.uiocloud.no.conf,default.local:/etc/cvmfs/default.local,startprefix:/cvmfs/pilot.nessi.uiocloud.no/versions/2021.12/compat/linux/x86_64/startprefix"
+BIND_PATHS="$EESSI_TMPDIR/var-run-cvmfs:/var/run/cvmfs,$EESSI_TMPDIR/var-lib-cvmfs:/var/lib/cvmfs,$EESSI_TMPDIR,nessi.uiocloud.no:/etc/cvmfs/keys/nessi.uiocloud.no,nessi.uiocloud.no.conf:/etc/cvmfs/domain.d/nessi.uiocloud.no.conf,default.local:/etc/cvmfs/default.local"
 if [ -z $SINGULARITY_BIND ]; then
     export SINGULARITY_BIND="$BIND_PATHS"
 else
