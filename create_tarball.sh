@@ -2,8 +2,8 @@
 
 set -e
 
-if [ $# -ne 3 ]; then
-        echo "ERROR: Usage: $0 <EESSI tmp dir (example: /tmp/$USER/EESSI)> <component (software or compat)> <dir to tarball>" >&2
+if [ $# -le 3 ]; then
+        echo "ERROR: Usage: $0 <EESSI tmp dir (example: /tmp/$USER/EESSI)> <component (software or compat)> <dir to tarball> <any additional options (example: --generic)>" >&2
     exit 1
 fi
 eessi_tmpdir=$1
@@ -11,6 +11,20 @@ component=$2
 basedir=$3
 
 source init/minimal_eessi_env
+
+# check if 4th parameter which might be set to --generic
+echo "EESSI_SOFTWARE_SUBDIR='${EESSI_SOFTWARE_SUBDIR}'"
+if [ $# -ge 4 ]; then
+    echo "4th parameter is: '$4'"
+    if [ $4 == "--generic" ]; then
+        EESSI_SOFTWARE_SUBDIR_OVERRIDE=${EESSI_OS_TYPE}/${EESSI_CPU_FAMILY}/generic
+        echo "EESSI_SOFTWARE_SUBDIR_OVERRIDE='${EESSI_SOFTWARE_SUBDIR_OVERRIDE}'"
+    else
+        echo "did not set EESSI_SOFTWARE_SUBDIR_OVERRIDE"
+        echo "still EESSI_SOFTWARE_SUBDIR_OVERRIDE='${EESSI_SOFTWARE_SUBDIR_OVERRIDE}'"
+    fi
+fi
+
 # if EESSI_SOFTWARE_SUBDIR not set get it (note can be overridden by EESSI_SOFTWARE_SUBDIR_OVERRIDE)
 if [ -z $EESSI_SOFTWARE_SUBDIR ]; then
     source init/eessi_environment_variables
