@@ -23,6 +23,7 @@ echo "minimal_eessi_env: EESSI_PREFIX=${EESSI_PREFIX}= EESSI_OS_TYPE=${EESSI_OS_
 if [ -d $EESSI_PREFIX ]; then
   echo "Found EESSI pilot repo @ $EESSI_PREFIX!" >> $output
 
+  echo "EPREFIX=${EPREFIX}"
   export EESSI_EPREFIX=$EPREFIX
   if [ -d $EESSI_EPREFIX ]; then
 
@@ -30,6 +31,8 @@ if [ -d $EESSI_PREFIX ]; then
     # note: eessi_software_subdir_for_host.py will pick up value from $EESSI_SOFTWARE_SUBDIR_OVERRIDE if it's defined!
     export EESSI_EPREFIX_PYTHON=$EESSI_EPREFIX/usr/bin/python3
     export EESSI_SOFTWARE_SUBDIR=$($EESSI_EPREFIX_PYTHON ${EESSI_INIT_DIR_PATH}/eessi_software_subdir_for_host.py $EESSI_PREFIX)
+    echo "EESSI_SOFTWARE_SUBDIR_OVERRIDE=${EESSI_SOFTWARE_SUBDIR_OVERRIDE}"
+    echo "determining subdir with .py script: $($EESSI_EPREFIX_PYTHON ${EESSI_INIT_DIR_PATH}/eessi_software_subdir_for_host.py $EESSI_PREFIX)"
     if [ ! -z $EESSI_SOFTWARE_SUBDIR ]; then
 
         echo "Using ${EESSI_SOFTWARE_SUBDIR} as software subdirectory." >> $output

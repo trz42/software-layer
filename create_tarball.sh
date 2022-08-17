@@ -28,6 +28,7 @@ fi
 # if EESSI_SOFTWARE_SUBDIR not set get it (note can be overridden by EESSI_SOFTWARE_SUBDIR_OVERRIDE)
 if [ -z $EESSI_SOFTWARE_SUBDIR ]; then
     source init/eessi_environment_variables
+    echo "after source init/eessi_environment_variables: EESSI_SOFTWARE_SUBDIR='${EESSI_SOFTWARE_SUBDIR}'"
 fi
 
 cpu_arch_subdir=${EESSI_SOFTWARE_SUBDIR}
