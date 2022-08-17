@@ -2,7 +2,7 @@
 
 set -e
 
-if [ $# -le 3 ]; then
+if [ "$#" -le 3 ]; then
         echo "ERROR: Usage: $0 <EESSI tmp dir (example: /tmp/$USER/EESSI)> <component (software or compat)> <dir to tarball> <any additional options (example: --generic)>" >&2
     exit 1
 fi
@@ -14,10 +14,9 @@ source init/minimal_eessi_env
 
 # check if 4th parameter which might be set to --generic
 echo "EESSI_SOFTWARE_SUBDIR='${EESSI_SOFTWARE_SUBDIR}'"
-if [ $# -ge 4 ]; then
+if [ "$#" -ge 4 ]; then
     echo "4th parameter is: '$4'"
-    if [ $4 == "--generic" ]; then
-        #export EESSI_SOFTWARE_SUBDIR_OVERRIDE=${EESSI_OS_TYPE}/${EESSI_CPU_FAMILY}/generic
+    if [ "$4" == "--generic" ]; then
         export EESSI_SOFTWARE_SUBDIR_OVERRIDE=${EESSI_CPU_FAMILY}/generic
         echo "EESSI_SOFTWARE_SUBDIR_OVERRIDE='${EESSI_SOFTWARE_SUBDIR_OVERRIDE}'"
     else
