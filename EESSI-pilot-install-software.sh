@@ -15,6 +15,7 @@ else
 fi
 
 TMPDIR=$(mktemp -d)
+echo "TMPDIR=${TMPDIR}; size=$(df -h ${TMPDIR})"
 
 echo ">> Setting up environment..."
 
@@ -98,9 +99,11 @@ else
     echo_yellow ">> No EasyBuild module yet, installing it..."
 
     EB_TMPDIR=${TMPDIR}/ebtmp
-    echo ">> Temporary installation (in ${EB_TMPDIR})..."
+    echo ">> Temporary installation (in ${EB_TMPDIR}, $(df -h ${EB_TMPDIR}))..."
     pip_install_out=${TMPDIR}/pip_install.out
     pip3 install --prefix $EB_TMPDIR easybuild &> ${pip_install_out}
+
+    tail ${pip_install_out}
 
     echo ">> Final installation in ${EASYBUILD_INSTALLPATH}..."
     export PATH=${EB_TMPDIR}/bin:$PATH
