@@ -147,6 +147,8 @@ if [[ $? -eq 0 ]]; then
 else
     echo_yellow ">> No EasyBuild module yet, installing it..."
 
+    curl -I https://pypi.org/simple/easybuild/
+
     EB_TMPDIR=${TMPDIR}/ebtmp
     echo ">> Temporary installation (in ${EB_TMPDIR}, $(df -h ${EB_TMPDIR}))..."
     pip_install_out=${TMPDIR}/pip_install.out
