@@ -4,6 +4,7 @@
 
 # see example parsing of command line arguments at
 #   https://wiki.bash-hackers.org/scripting/posparams#using_a_while_loop
+#   https://stackoverflow.com/questions/192249/how-do-i-parse-command-line-arguments-in-bash
 
 display_help() {
   echo "usage: $0 [OPTIONS]"
@@ -13,38 +14,39 @@ display_help() {
   echo "  -y | --https_proxy URL -  provides URL for the environment variable https_proxy"
 }
 
-while :
-do
-    case "$1" in
-      -g | --generic)
-          EASYBUILD_OPTARCH="GENERIC"
-          shift
-          ;;
-      -h | --help)
-	  display_help  # Call your function
-	  # no shifting needed here, we're done.
-	  exit 0
-	  ;;
-      -x | --http_proxy)
-	  export http_proxy="$2"
-	  shift 2
-	  ;;
-      -y | --https_proxy)
-	  export https_proxy="$2"
-	  shift 2
-	  ;;
-      --) # End of all options
-	  shift
-	  break;
-      -*)
-	  echo "Error: Unknown option: $1" >&2
-	  exit 1
-	  ;;
-      *)  # No more options
-	  break
-	  ;;
-    esac
+POSITIONAL_ARGS=()
+
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    -g|--generic)
+      EASYBUILD_OPTARCH="GENERIC"
+      shift
+      ;;
+    -h|--help)
+      display_help  # Call your function
+      # no shifting needed here, we're done.
+      exit 0
+      ;;
+    -x|--http-proxy)
+      export http_proxy="$2"
+      shift 2
+      ;;
+    -y|--https-proxy)
+      export https_proxy="$2"
+      shift 2
+      ;;
+    -*|--*)
+      echo "Error: Unknown option: $1" >&2
+      exit 1
+      ;;
+    *)  # No more options
+      POSITIONAL_ARGS+=("$1") # save positional arg
+      shift
+      ;;
+  esac
 done
+
+set -- "${POSITIONAL_ARGS[@]}"
 
 TOPDIR=$(dirname $(realpath $0))
 
