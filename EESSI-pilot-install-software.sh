@@ -1,7 +1,50 @@
 #!/bin/bash
 #
 # Script to install EESSI pilot software stack (version 2021.12)
-#
+
+# see example parsing of command line arguments at
+#   https://wiki.bash-hackers.org/scripting/posparams#using_a_while_loop
+
+display_help() {
+  echo "usage: $0 [OPTIONS]"
+  echo "  -g | --generic         -  instructs script to build for generic architecture target"
+  echo "  -h | --help            -  display this usage information"
+  echo "  -x | --http_proxy URL  -  provides URL for the environment variable http_proxy"
+  echo "  -y | --https_proxy URL -  provides URL for the environment variable https_proxy"
+}
+
+while :
+do
+    case "$1" in
+      -g | --generic)
+          EASYBUILD_OPTARCH="GENERIC"
+          shift
+          ;;
+      -h | --help)
+	  display_help  # Call your function
+	  # no shifting needed here, we're done.
+	  exit 0
+	  ;;
+      -x | --http_proxy)
+	  export http_proxy="$2"
+	  shift 2
+	  ;;
+      -y | --https_proxy)
+	  export https_proxy="$2"
+	  shift 2
+	  ;;
+      --) # End of all options
+	  shift
+	  break;
+      -*)
+	  echo "Error: Unknown option: $1" >&2
+	  exit 1
+	  ;;
+      *)  # No more options
+	  break
+	  ;;
+    esac
+done
 
 TOPDIR=$(dirname $(realpath $0))
 
@@ -18,6 +61,7 @@ TMPDIR=$(mktemp -d)
 echo "TMPDIR=${TMPDIR}; size=$(df -h ${TMPDIR})"
 
 # are proxies configured
+echo "are proxies defined via http*?"
 env | grep -i http
 
 echo ">> Setting up environment..."
@@ -43,7 +87,7 @@ export PYTHONPYCACHEPREFIX=$TMPDIR/pycache
 DETECTION_PARAMETERS=''
 GENERIC=0
 EB='eb'
-if [[ "$1" == "--generic" || "$EASYBUILD_OPTARCH" == "GENERIC" ]]; then
+if [[ "$EASYBUILD_OPTARCH" == "GENERIC" ]]; then
     echo_yellow ">> GENERIC build requested, taking appropriate measures!"
     DETECTION_PARAMETERS="$DETECTION_PARAMETERS --generic"
     GENERIC=1
