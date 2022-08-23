@@ -17,6 +17,9 @@ fi
 TMPDIR=$(mktemp -d)
 echo "TMPDIR=${TMPDIR}; size=$(df -h ${TMPDIR})"
 
+# are proxies configured
+env | grep -i http
+
 echo ">> Setting up environment..."
 
 source $TOPDIR/init/minimal_eessi_env
