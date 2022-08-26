@@ -10,12 +10,69 @@ eessi_tmpdir=$1
 component=$2
 basedir=$3
 
-source init/minimal_eessi_env
+# see example parsing of command line arguments at
+#   https://wiki.bash-hackers.org/scripting/posparams#using_a_while_loop
+#   https://stackoverflow.com/questions/192249/how-do-i-parse-command-line-arguments-in-bash
 
-# check if 4th parameter is provided and set to --generic
-if [ $# -ge 4 -a "$4" == "--generic" ]; then
-    export EESSI_SOFTWARE_SUBDIR_OVERRIDE=${EESSI_CPU_FAMILY}/generic
+display_help() {
+  echo "usage: $0 <EESSI tmp dir (example: /tmp/$USER/EESSI)> <component (software or compat)> <dir to tarball> [OPTIONS]"
+  echo "  OPTIONS"
+  echo "  -g | --generic         -  instructs script to tar files of generic architecture target"
+  echo "  -h | --help            -  display this usage information"
+  echo "  -x | --http_proxy URL  -  provides URL for the environment variable http_proxy"
+  echo "  -y | --https_proxy URL -  provides URL for the environment variable https_proxy"
+}
+
+POSITIONAL_ARGS=()
+
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    -g|--generic)
+      EASYBUILD_OPTARCH="GENERIC"
+      shift
+      ;;
+    -h|--help)
+      display_help  # Call your function
+      # no shifting needed here, we're done.
+      exit 0
+      ;;
+    -x|--http-proxy)
+      export http_proxy="$2"
+      shift 2
+      ;;
+    -y|--https-proxy)
+      export https_proxy="$2"
+      shift 2
+      ;;
+    -*|--*)
+      echo "Error: Unknown option: $1" >&2
+      exit 1
+      ;;
+    *)  # No more options
+      POSITIONAL_ARGS+=("$1") # save positional arg
+      shift
+      ;;
+  esac
+done
+
+set -- "${POSITIONAL_ARGS[@]}"
+
+TOPDIR=$(dirname $(realpath $0))
+
+source $TOPDIR/utils.sh
+
+DETECTION_PARAMETERS=''
+GENERIC=0
+if [[ "$EASYBUILD_OPTARCH" == "GENERIC" ]]; then
+    echo_yellow ">> Tar'ing GENERIC build, taking appropriate measures!"
+    DETECTION_PARAMETERS="$DETECTION_PARAMETERS --generic"
+    GENERIC=1
 fi
+
+echo ">> Determining software subdirectory to use for target..."
+export EESSI_SOFTWARE_SUBDIR_OVERRIDE=$(python3 $TOPDIR/eessi_software_subdir.py $DETECTION_PARAMETERS)
+
+source init/minimal_eessi_env
 
 # if EESSI_SOFTWARE_SUBDIR not set get it (note can be overridden by EESSI_SOFTWARE_SUBDIR_OVERRIDE)
 if [ -z $EESSI_SOFTWARE_SUBDIR ]; then
