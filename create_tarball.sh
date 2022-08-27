@@ -61,18 +61,19 @@ TOPDIR=$(dirname $(realpath $0))
 
 source $TOPDIR/utils.sh
 
-DETECTION_PARAMETERS=''
-GENERIC=0
-if [[ "$EASYBUILD_OPTARCH" == "GENERIC" ]]; then
-    echo_yellow ">> Tar'ing GENERIC build, taking appropriate measures!"
-    DETECTION_PARAMETERS="$DETECTION_PARAMETERS --generic"
-    GENERIC=1
+# need to source minimal_eessi_env early to have EESSI_CPU_FAMILY defined
+source $TOPDIR/init/minimal_eessi_env
+
+if [ -d $EESSI_CVMFS_REPO ]; then
+    echo_green "$EESSI_CVMFS_REPO available, OK!"
+else
+    fatal_error "$EESSI_CVMFS_REPO is not available!"
 fi
 
-echo ">> Determining software subdirectory to use for target..."
-export EESSI_SOFTWARE_SUBDIR_OVERRIDE=$(python3 $TOPDIR/eessi_software_subdir.py $DETECTION_PARAMETERS)
-
-source init/minimal_eessi_env
+if [[ "$EASYBUILD_OPTARCH" == "GENERIC" ]]; then
+    echo_yellow ">> Tar'ing GENERIC build, taking appropriate measures!"
+    export EESSI_SOFTWARE_SUBDIR_OVERRIDE=${EESSI_CPU_FAMILY}/generic
+fi
 
 # if EESSI_SOFTWARE_SUBDIR not set get it (note can be overridden by EESSI_SOFTWARE_SUBDIR_OVERRIDE)
 if [ -z $EESSI_SOFTWARE_SUBDIR ]; then
