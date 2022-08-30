@@ -10,10 +10,68 @@ eessi_tmpdir=$1
 component=$2
 basedir=$3
 
-source init/minimal_eessi_env
+# see example parsing of command line arguments at
+#   https://wiki.bash-hackers.org/scripting/posparams#using_a_while_loop
+#   https://stackoverflow.com/questions/192249/how-do-i-parse-command-line-arguments-in-bash
 
-# check if 4th parameter is provided and set to --generic
-if [ $# -ge 4 -a "$4" == "--generic" ]; then
+display_help() {
+  echo "usage: $0 <EESSI tmp dir (example: /tmp/$USER/EESSI)> <component (software or compat)> <dir to tarball> [OPTIONS]"
+  echo "  OPTIONS"
+  echo "  -g | --generic         -  instructs script to tar files of generic architecture target"
+  echo "  -h | --help            -  display this usage information"
+  echo "  -x | --http_proxy URL  -  provides URL for the environment variable http_proxy"
+  echo "  -y | --https_proxy URL -  provides URL for the environment variable https_proxy"
+}
+
+POSITIONAL_ARGS=()
+
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    -g|--generic)
+      EASYBUILD_OPTARCH="GENERIC"
+      shift
+      ;;
+    -h|--help)
+      display_help  # Call your function
+      # no shifting needed here, we're done.
+      exit 0
+      ;;
+    -x|--http-proxy)
+      export http_proxy="$2"
+      shift 2
+      ;;
+    -y|--https-proxy)
+      export https_proxy="$2"
+      shift 2
+      ;;
+    -*|--*)
+      echo "Error: Unknown option: $1" >&2
+      exit 1
+      ;;
+    *)  # No more options
+      POSITIONAL_ARGS+=("$1") # save positional arg
+      shift
+      ;;
+  esac
+done
+
+set -- "${POSITIONAL_ARGS[@]}"
+
+TOPDIR=$(dirname $(realpath $0))
+
+source $TOPDIR/utils.sh
+
+# need to source minimal_eessi_env early to have EESSI_CPU_FAMILY defined
+source $TOPDIR/init/minimal_eessi_env
+
+if [ -d $EESSI_CVMFS_REPO ]; then
+    echo_green "$EESSI_CVMFS_REPO available, OK!"
+else
+    fatal_error "$EESSI_CVMFS_REPO is not available!"
+fi
+
+if [[ "$EASYBUILD_OPTARCH" == "GENERIC" ]]; then
+    echo_yellow ">> Tar'ing GENERIC build, taking appropriate measures!"
     export EESSI_SOFTWARE_SUBDIR_OVERRIDE=${EESSI_CPU_FAMILY}/generic
 fi
 
