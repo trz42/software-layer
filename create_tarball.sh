@@ -19,8 +19,6 @@ display_help() {
   echo "  OPTIONS"
   echo "  -g | --generic         -  instructs script to tar files of generic architecture target"
   echo "  -h | --help            -  display this usage information"
-  echo "  -x | --http_proxy URL  -  provides URL for the environment variable http_proxy"
-  echo "  -y | --https_proxy URL -  provides URL for the environment variable https_proxy"
 }
 
 POSITIONAL_ARGS=()
@@ -35,14 +33,6 @@ while [[ $# -gt 0 ]]; do
       display_help  # Call your function
       # no shifting needed here, we're done.
       exit 0
-      ;;
-    -x|--http-proxy)
-      export http_proxy="$2"
-      shift 2
-      ;;
-    -y|--https-proxy)
-      export https_proxy="$2"
-      shift 2
       ;;
     -*|--*)
       echo "Error: Unknown option: $1" >&2
