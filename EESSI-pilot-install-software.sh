@@ -150,6 +150,7 @@ else
     curl -I https://pypi.org/simple/easybuild/
 
     EB_TMPDIR=${TMPDIR}/ebtmp
+    mkdir -p $EB_TMPDIR
     echo ">> Temporary installation (in ${EB_TMPDIR}, $(df -h ${EB_TMPDIR}))..."
     pip_install_out=${TMPDIR}/pip_install.out
     pip3 install --prefix $EB_TMPDIR easybuild &> ${pip_install_out}
