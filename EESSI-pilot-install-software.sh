@@ -98,6 +98,7 @@ else
     echo_yellow ">> No EasyBuild module yet, installing it..."
 
     EB_TMPDIR=${TMPDIR}/ebtmp
+    mkdir -p $EB_TMPDIR
     echo ">> Temporary installation (in ${EB_TMPDIR})..."
     pip_install_out=${TMPDIR}/pip_install.out
     pip3 install --prefix $EB_TMPDIR easybuild &> ${pip_install_out}
