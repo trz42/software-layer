@@ -214,6 +214,13 @@ fail_msg="Installation of ${GCC_EC} failed!"
 $EB ${GCC_EC} --robot --from-pr 14453 GCCcore-9.3.0.eb
 check_exit_code $? "${ok_msg}" "${fail_msg}"
 
+export binutils_EC="binutils-2.34-GCC-9.3.0.eb"
+echo ">> Installing ${binutils_EC}..."
+ok_msg="${binutils_EC} installed, let's solve some problems!"
+fail_msg="Installation of ${binutils_EC} failed, that's a pity..."
+$EB ${binutils_EC} --robot
+check_exit_code $? "${ok_msg}" "${fail_msg}"
+
 ##export CaDiCaL_EC="CaDiCaL-1.3.0-GCC-9.3.0.eb"
 ##echo ">> Installing ${CaDiCaL_EC}..."
 ##ok_msg="${CaDiCaL_EC} installed, let's solve some problems!"
@@ -379,8 +386,8 @@ echo ">> Checking for missing installations..."
 ok_msg="No missing installations, party time!"
 fail_msg="On no, some installations are still missing, how did that happen?!"
 eb_missing_out=$TMPDIR/eb_missing.out
-echo "No missing modules!" | tee ${eb_missing_out}
-#$EB --easystack eessi-${EESSI_PILOT_VERSION}.yml --experimental --missing --robot $EASYBUILD_PREFIX/ebfiles_repo | tee ${eb_missing_out}
+#echo "No missing modules!" | tee ${eb_missing_out}
+$EB --easystack eessi-${EESSI_PILOT_VERSION}.yml --experimental --missing --robot $EASYBUILD_PREFIX/ebfiles_repo | tee ${eb_missing_out}
 grep "No missing modules" ${eb_missing_out} > /dev/null
 check_exit_code $? "${ok_msg}" "${fail_msg}"
 

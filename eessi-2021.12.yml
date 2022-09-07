@@ -1,1 +1,5 @@
 software:
+  binutils:
+    toolchains:
+      GCC-9.3.0:
+        versions: '2.34'
