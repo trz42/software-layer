@@ -55,7 +55,7 @@ source $TOPDIR/utils.sh
 # use current directory for locking opearations
 echo "pwd='$(pwd)'"
 echo "df(pwd)='$(df -h .)'"
-EASYBUILD_LOCKS_DIR=$(pwd)
+export EASYBUILD_LOCKS_DIR=$(pwd)
 
 # honor $TMPDIR if it is already defined, use /tmp otherwise
 if [ -z $TMPDIR ]; then
