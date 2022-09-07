@@ -214,7 +214,7 @@ fail_msg="Installation of ${GCC_EC} failed!"
 $EB ${GCC_EC} --robot --from-pr 14453 GCCcore-9.3.0.eb
 check_exit_code $? "${ok_msg}" "${fail_msg}"
 
-export binutils_EC="binutils-2.34-GCC-9.3.0.eb"
+export binutils_EC="binutils-2.34-GCCcore-9.3.0.eb"
 echo ">> Installing ${binutils_EC}..."
 ok_msg="${binutils_EC} installed, let's solve some problems!"
 fail_msg="Installation of ${binutils_EC} failed, that's a pity..."
