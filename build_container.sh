@@ -1,5 +1,7 @@
 #!/bin/bash
 
+env | grep -i EASYBUILD_OPTARCH | sed -e 's/^/build_container.sh:/'
+
 BUILD_CONTAINER="docker://ghcr.io/eessi/build-node:debian10"
 
 if [ $# -lt 2 ]; then
@@ -26,7 +28,7 @@ if [ $? -eq 0 ]; then
     attr -s test -V test $testfile > /dev/null
     if [ $? -ne 0 ]; then
         echo "ERROR: $EESSI_TMPDIR does not support extended attributes!" >&2
-       exit 2
+        #exit 2
     else
         rm $testfile
     fi
@@ -43,7 +45,7 @@ mkdir -p $EESSI_TMPDIR/{var-lib-cvmfs,var-run-cvmfs}
 export SINGULARITY_CACHEDIR=$EESSI_TMPDIR/singularity_cache
 
 # take into account that $SINGULARITY_BIND may be defined already, to bind additional paths into the build container
-BIND_PATHS="$EESSI_TMPDIR/var-run-cvmfs:/var/run/cvmfs,$EESSI_TMPDIR/var-lib-cvmfs:/var/lib/cvmfs,$EESSI_TMPDIR"
+BIND_PATHS="$EESSI_TMPDIR/var-run-cvmfs:/var/run/cvmfs,$EESSI_TMPDIR/var-lib-cvmfs:/var/lib/cvmfs,$EESSI_TMPDIR,nessi.uiocloud.no:/etc/cvmfs/keys/nessi.uiocloud.no,nessi.uiocloud.no.conf:/etc/cvmfs/domain.d/nessi.uiocloud.no.conf,default.local:/etc/cvmfs/default.local"
 if [ -z $SINGULARITY_BIND ]; then
     export SINGULARITY_BIND="$BIND_PATHS"
 else
@@ -56,8 +58,8 @@ if [ -z $SINGULARITY_HOME ]; then
 fi
 
 # set environment variables for fuse mounts in Singularity container
-export EESSI_PILOT_READONLY="container:cvmfs2 pilot.eessi-hpc.org /cvmfs_ro/pilot.eessi-hpc.org"
-export EESSI_PILOT_WRITABLE_OVERLAY="container:fuse-overlayfs -o lowerdir=/cvmfs_ro/pilot.eessi-hpc.org -o upperdir=$EESSI_TMPDIR/overlay-upper -o workdir=$EESSI_TMPDIR/overlay-work /cvmfs/pilot.eessi-hpc.org"
+export EESSI_PILOT_READONLY="container:cvmfs2 pilot.nessi.uiocloud.no /cvmfs_ro/pilot.nessi.uiocloud.no"
+export EESSI_PILOT_WRITABLE_OVERLAY="container:fuse-overlayfs -o lowerdir=/cvmfs_ro/pilot.nessi.uiocloud.no -o upperdir=$EESSI_TMPDIR/overlay-upper -o workdir=$EESSI_TMPDIR/overlay-work /cvmfs/pilot.nessi.uiocloud.no"
 
 if [ "$SHELL_OR_RUN" == "shell" ]; then
     # start shell in Singularity container, with EESSI repository mounted with writable overlay
