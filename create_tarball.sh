@@ -57,9 +57,7 @@ topdir=${cvmfs_repo}/versions/
 echo ">> Creating tarball ${target_tgz} from ${topdir}..."
 tar cfvz ${target_tgz} -C ${topdir} --files-from=${files_list}
 
-echo pwd=$(pwd)
 echo ${target_tgz} created!
-ls
 
 echo ">> Cleaning up tmpdir ${tmpdir}..."
 rm -r ${tmpdir}
