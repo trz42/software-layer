@@ -2,6 +2,8 @@
 
 set -e
 
+current_dir=$(pwd)
+
 if [ $# -ne 4 ]; then
     echo "ERROR: Usage: $0 <EESSI tmp dir (example: /tmp/$USER/EESSI)> <pilot version (example: 2021.03)> <CPU arch subdir (example: x86_64/amd/zen2)> <path to tarball>" >&2
     exit 1
@@ -55,6 +57,7 @@ fi
 topdir=${cvmfs_repo}/versions/
 
 echo ">> Creating tarball ${target_tgz} from ${topdir}..."
+cd ${current_dir}
 tar cfvz ${target_tgz} -C ${topdir} --files-from=${files_list}
 
 echo pwd=$(pwd)
