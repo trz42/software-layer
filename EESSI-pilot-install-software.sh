@@ -132,11 +132,13 @@ else
     echo_green ">> MODULEPATH set up: ${MODULEPATH}"
 fi
 
-REQ_EB_VERSION='4.5.0'
+#REQ_EB_VERSION='4.5.0'
+REQ_EB_VERSION='4.6.1'
 
 echo ">> Checking for EasyBuild module..."
 ml_av_easybuild_out=$TMPDIR/ml_av_easybuild.out
 module avail 2>&1 | grep -i easybuild/${REQ_EB_VERSION} &> ${ml_av_easybuild_out}
+
 if [[ $? -eq 0 ]]; then
     echo_green ">> EasyBuild module found!"
 else
@@ -147,12 +149,24 @@ else
     pip_install_out=${TMPDIR}/pip_install.out
     pip3 install --prefix $EB_TMPDIR easybuild &> ${pip_install_out}
 
+    echo "pip_install_out"
+    cat ${pip_install_out}
+
     echo ">> Final installation in ${EASYBUILD_INSTALLPATH}..."
     export PATH=${EB_TMPDIR}/bin:$PATH
     export PYTHONPATH=$(ls -d ${EB_TMPDIR}/lib/python*/site-packages):$PYTHONPATH
-    eb_install_out=${TMPDIR}/eb_install.out
-    eb --install-latest-eb-release &> ${eb_install_out}
+    echo "which eb = '$(which eb)'"
+    eb --show-config
 
+    eb_install_out=${TMPDIR}/eb_install.out
+#    eb --install-latest-eb-release &> ${eb_install_out}
+    eb EasyBuild-${REQ_EB_VERSION}.eb >> ${eb_install_out} 2>&1
+
+    echo "eb_install_out"
+    cat ${eb_install_out}
+
+    echo "eb --search EasyBuild-${REQ_EB_VERSION}.eb..."
+    eb --search EasyBuild-${REQ_EB_VERSION}.eb
     eb --search EasyBuild-${REQ_EB_VERSION}.eb | grep EasyBuild-${REQ_EB_VERSION}.eb > /dev/null
     if [[ $? -eq 0 ]]; then
         eb EasyBuild-${REQ_EB_VERSION}.eb >> ${eb_install_out} 2>&1
@@ -166,8 +180,11 @@ else
     fi
 fi
 
+ls -l $MODULEPATH
+
 echo ">> Loading EasyBuild module..."
 module load EasyBuild/$REQ_EB_VERSION
+#module --ignore_cache load EasyBuild/$REQ_EB_VERSION
 eb_show_system_info_out=${TMPDIR}/eb_show_system_info.out
 $EB --show-system-info > ${eb_show_system_info_out}
 if [[ $? -eq 0 ]]; then
