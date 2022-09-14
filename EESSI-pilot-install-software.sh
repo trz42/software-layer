@@ -215,10 +215,10 @@ check_exit_code $? "${ok_msg}" "${fail_msg}"
 # install Java with fixed custom easyblock that uses patchelf to ensure right glibc is picked up,
 # see https://github.com/EESSI/software-layer/issues/123
 # and https://github.com/easybuilders/easybuild-easyblocks/pull/2557
-ok_msg="Java 11.0.16 installed, off to a good (?) start!"
-fail_msg="Failed to install Java 11.0.16, woopsie..."
-$EB Java-11.0.16.eb --robot --include-easyblocks-from-pr 2557
-check_exit_code $? "${ok_msg}" "${fail_msg}"
+#ok_msg="Java 11.0.16 installed, off to a good (?) start!"
+#fail_msg="Failed to install Java 11.0.16, woopsie..."
+#$EB Java-11.0.16.eb --robot --include-easyblocks-from-pr 2557
+#check_exit_code $? "${ok_msg}" "${fail_msg}"
 
 # install GCC for foss/2020a
 export GCC_EC="GCC-9.3.0.eb"
