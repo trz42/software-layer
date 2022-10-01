@@ -92,7 +92,8 @@ if [[ "$EASYBUILD_OPTARCH" == "GENERIC" ]]; then
 fi
 
 echo ">> Determining software subdirectory to use for current build host..."
-export EESSI_SOFTWARE_SUBDIR_OVERRIDE=$(python3 $TOPDIR/eessi_software_subdir.py $DETECTION_PARAMETERS)
+#export EESSI_SOFTWARE_SUBDIR_OVERRIDE=$(python3 $TOPDIR/eessi_software_subdir.py $DETECTION_PARAMETERS)
+export EESSI_SOFTWARE_SUBDIR_OVERRIDE=x86_64/intel/cascadelake
 
 # Set all the EESSI environment variables (respecting $EESSI_SOFTWARE_SUBDIR_OVERRIDE)
 # $EESSI_SILENT - don't print any messages
