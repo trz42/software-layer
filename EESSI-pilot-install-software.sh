@@ -133,7 +133,6 @@ else
 fi
 
 REQ_EB_VERSION='4.5.0'
-#REQ_EB_VERSION='4.6.1'
 
 echo ">> Checking for EasyBuild module..."
 ml_av_easybuild_out=$TMPDIR/ml_av_easybuild.out
@@ -159,8 +158,8 @@ else
     eb --show-config
 
     eb_install_out=${TMPDIR}/eb_install.out
-    eb --install-latest-eb-release &> ${eb_install_out}
-#    eb EasyBuild-${REQ_EB_VERSION}.eb >> ${eb_install_out} 2>&1
+    #eb --install-latest-eb-release &> ${eb_install_out}
+    eb EasyBuild-4.6.0.eb &> ${eb_install_out}
 
     echo "eb_install_out"
     cat ${eb_install_out}
@@ -212,14 +211,6 @@ fail_msg="Failed to install Java, woopsie..."
 $EB Java-11.eb --robot --include-easyblocks-from-pr 2557
 check_exit_code $? "${ok_msg}" "${fail_msg}"
 
-# install Java with fixed custom easyblock that uses patchelf to ensure right glibc is picked up,
-# see https://github.com/EESSI/software-layer/issues/123
-# and https://github.com/easybuilders/easybuild-easyblocks/pull/2557
-#ok_msg="Java 11.0.16 installed, off to a good (?) start!"
-#fail_msg="Failed to install Java 11.0.16, woopsie..."
-#$EB Java-11.0.16.eb --robot --include-easyblocks-from-pr 2557
-#check_exit_code $? "${ok_msg}" "${fail_msg}"
-
 # install GCC for foss/2020a
 export GCC_EC="GCC-9.3.0.eb"
 echo ">> Starting slow with ${GCC_EC}..."
@@ -230,158 +221,152 @@ fail_msg="Installation of ${GCC_EC} failed!"
 $EB ${GCC_EC} --robot --from-pr 14453 GCCcore-9.3.0.eb
 check_exit_code $? "${ok_msg}" "${fail_msg}"
 
-# install CMake with custom easyblock that patches CMake when --sysroot is used
-echo ">> Install CMake with fixed easyblock to take into account --sysroot"
-ok_msg="CMake installed!"
-fail_msg="Installation of CMake failed, what the ..."
-$EB CMake-3.16.4-GCCcore-9.3.0.eb --robot --include-easyblocks-from-pr 2248
-check_exit_code $? "${ok_msg}" "${fail_msg}"
-
-# If we're building OpenBLAS for GENERIC, we need https://github.com/easybuilders/easybuild-easyblocks/pull/1946
-echo ">> Installing OpenBLAS..."
-ok_msg="Done with OpenBLAS!"
-fail_msg="Installation of OpenBLAS failed!"
-if [[ $GENERIC -eq 1 ]]; then
-    echo_yellow ">> Using https://github.com/easybuilders/easybuild-easyblocks/pull/1946 to build generic OpenBLAS."
-    $EB --include-easyblocks-from-pr 1946 OpenBLAS-0.3.9-GCC-9.3.0.eb --robot
-else
-    $EB OpenBLAS-0.3.9-GCC-9.3.0.eb --robot
-fi
-check_exit_code $? "${ok_msg}" "${fail_msg}"
-
-echo ">> Installing OpenMPI..."
-ok_msg="OpenMPI installed, w00!"
-fail_msg="Installation of OpenMPI failed, that's not good..."
-$EB OpenMPI-4.0.3-GCC-9.3.0.eb --robot
-check_exit_code $? "${ok_msg}" "${fail_msg}"
-
-# install Python
-echo ">> Install Python 2.7.18 and Python 3.8.2..."
-ok_msg="Python 2.7.18 and 3.8.2 installed, yaay!"
-fail_msg="Installation of Python failed, oh no..."
-$EB Python-2.7.18-GCCcore-9.3.0.eb Python-3.8.2-GCCcore-9.3.0.eb --robot
-check_exit_code $? "${ok_msg}" "${fail_msg}"
-
-echo ">> Installing Perl..."
-ok_msg="Perl installed, making progress..."
-fail_msg="Installation of Perl failed, this never happens..."
-# use enhanced Perl easyblock from https://github.com/easybuilders/easybuild-easyblocks/pull/2640
-# to avoid trouble when using long installation prefix (for example with EESSI pilot 2021.12 on skylake_avx512...)
-$EB Perl-5.30.2-GCCcore-9.3.0.eb --robot --include-easyblocks-from-pr 2640
-check_exit_code $? "${ok_msg}" "${fail_msg}"
-
-echo ">> Installing Qt5..."
-ok_msg="Qt5 installed, phieuw, that was a big one!"
-fail_msg="Installation of Qt5 failed, that's frustrating..."
-$EB Qt5-5.14.1-GCCcore-9.3.0.eb --robot
-check_exit_code $? "${ok_msg}" "${fail_msg}"
-
-# skip test step when installing SciPy-bundle on aarch64,
-# to dance around problem with broken numpy tests;
-# cfr. https://github.com/easybuilders/easybuild-easyconfigs/issues/11959
-echo ">> Installing SciPy-bundle"
-ok_msg="SciPy-bundle installed, yihaa!"
-fail_msg="SciPy-bundle installation failed, bummer..."
-SCIPY_EC=SciPy-bundle-2020.03-foss-2020a-Python-3.8.2.eb
-if [[ "$(uname -m)" == "aarch64" ]]; then
-  $EB $SCIPY_EC --robot --skip-test-step
-else
-  $EB $SCIPY_EC --robot
-fi
-check_exit_code $? "${ok_msg}" "${fail_msg}"
-
-echo ">> Installing GROMACS..."
-ok_msg="GROMACS installed, wow!"
-fail_msg="Installation of GROMACS failed, damned..."
-$EB GROMACS-2020.1-foss-2020a-Python-3.8.2.eb GROMACS-2020.4-foss-2020a-Python-3.8.2.eb --robot
-check_exit_code $? "${ok_msg}" "${fail_msg}"
-
-# note: compiling OpenFOAM is memory hungry (16GB is not enough with 8 cores)!
-# 32GB is sufficient to build with 16 cores
-echo ">> Installing OpenFOAM (twice!)..."
-ok_msg="OpenFOAM installed, now we're talking!"
-fail_msg="Installation of OpenFOAM failed, we were so close..."
-$EB OpenFOAM-8-foss-2020a.eb OpenFOAM-v2006-foss-2020a.eb --robot
-check_exit_code $? "${ok_msg}" "${fail_msg}"
-
-if [ ! "${EESSI_CPU_FAMILY}" = "ppc64le" ]; then
-    echo ">> Installing QuantumESPRESSO..."
-    ok_msg="QuantumESPRESSO installed, let's go quantum!"
-    fail_msg="Installation of QuantumESPRESSO failed, did somebody observe it?!"
-    $EB QuantumESPRESSO-6.6-foss-2020a.eb --robot
-    check_exit_code $? "${ok_msg}" "${fail_msg}"
-fi
-
-echo ">> Installing R 4.0.0 (better be patient)..."
-ok_msg="R installed, wow!"
-fail_msg="Installation of R failed, so sad..."
-$EB R-4.0.0-foss-2020a.eb --robot --parallel-extensions-install --experimental
-check_exit_code $? "${ok_msg}" "${fail_msg}"
-
-echo ">> Installing Bioconductor 3.11 bundle..."
-ok_msg="Bioconductor installed, enjoy!"
-fail_msg="Installation of Bioconductor failed, that's annoying..."
-$EB R-bundle-Bioconductor-3.11-foss-2020a-R-4.0.0.eb --robot
-check_exit_code $? "${ok_msg}" "${fail_msg}"
-
-echo ">> Installing TensorFlow 2.3.1..."
-ok_msg="TensorFlow 2.3.1 installed, w00!"
-fail_msg="Installation of TensorFlow failed, why am I not surprised..."
-$EB TensorFlow-2.3.1-foss-2020a-Python-3.8.2.eb --robot --include-easyblocks-from-pr 2218
-check_exit_code $? "${ok_msg}" "${fail_msg}"
-
-echo ">> Installing Horovod 0.21.3..."
-ok_msg="Horovod installed! Go do some parallel training!"
-fail_msg="Horovod installation failed. There comes the headache..."
-$EB Horovod-0.21.3-foss-2020a-TensorFlow-2.3.1-Python-3.8.2.eb --robot
-check_exit_code $? "${ok_msg}" "${fail_msg}"
-
-if [ ! "${EESSI_CPU_FAMILY}" = "ppc64le" ]; then
-
-    echo ">> Installing code-server 3.7.3..."
-    ok_msg="code-server 3.7.3 installed, now you can use VS Code!"
-    fail_msg="Installation of code-server failed, that's going to be hard to fix..."
-    $EB code-server-3.7.3.eb --robot
-    check_exit_code $? "${ok_msg}" "${fail_msg}"
-fi
-
-echo ">> Installing RStudio-Server 1.3.1093..."
-ok_msg="RStudio-Server installed, enjoy!"
-fail_msg="Installation of RStudio-Server failed, might be OS deps..."
-$EB RStudio-Server-1.3.1093-foss-2020a-Java-11-R-4.0.0.eb --robot
-check_exit_code $? "${ok_msg}" "${fail_msg}"
-
-echo ">> Installing OSU-Micro-Benchmarks 5.6.3..."
-ok_msg="OSU-Micro-Benchmarks installed, yihaa!"
-fail_msg="Installation of OSU-Micro-Benchmarks failed, that's unexpected..."
-$EB OSU-Micro-Benchmarks-5.6.3-gompi-2020a.eb -r
-check_exit_code $? "${ok_msg}" "${fail_msg}"
-
-echo ">> Installing Spark 3.1.1..."
-ok_msg="Spark installed, set off the fireworks!"
-fail_msg="Installation of Spark failed, no fireworks this time..."
-$EB Spark-3.1.1-foss-2020a-Python-3.8.2.eb -r
-check_exit_code $? "${ok_msg}" "${fail_msg}"
-
-echo ">> Installing IPython 7.15.0..."
-ok_msg="IPython installed, launch your Jupyter Notebooks!"
-fail_msg="Installation of IPython failed, that's unexpected..."
-$EB IPython-7.15.0-foss-2020a-Python-3.8.2.eb -r
-check_exit_code $? "${ok_msg}" "${fail_msg}"
-
-echo ">> Installing WRF 3.9.1.1..."
-ok_msg="WRF installed, it's getting hot in here!"
-fail_msg="Installation of WRF failed, that's unexpected..."
-OMPI_MCA_pml=ucx UCX_TLS=tcp $EB WRF-3.9.1.1-foss-2020a-dmpar.eb -r --include-easyblocks-from-pr 2648
-check_exit_code $? "${ok_msg}" "${fail_msg}"
+## install CMake with custom easyblock that patches CMake when --sysroot is used
+#echo ">> Install CMake with fixed easyblock to take into account --sysroot"
+#ok_msg="CMake installed!"
+#fail_msg="Installation of CMake failed, what the ..."
+#$EB CMake-3.16.4-GCCcore-9.3.0.eb --robot --include-easyblocks-from-pr 2248
+#check_exit_code $? "${ok_msg}" "${fail_msg}"
+#
+## If we're building OpenBLAS for GENERIC, we need https://github.com/easybuilders/easybuild-easyblocks/pull/1946
+#echo ">> Installing OpenBLAS..."
+#ok_msg="Done with OpenBLAS!"
+#fail_msg="Installation of OpenBLAS failed!"
+#if [[ $GENERIC -eq 1 ]]; then
+#    echo_yellow ">> Using https://github.com/easybuilders/easybuild-easyblocks/pull/1946 to build generic OpenBLAS."
+#    $EB --include-easyblocks-from-pr 1946 OpenBLAS-0.3.9-GCC-9.3.0.eb --robot
+#else
+#    $EB OpenBLAS-0.3.9-GCC-9.3.0.eb --robot
+#fi
+#check_exit_code $? "${ok_msg}" "${fail_msg}"
+#
+#echo ">> Installing OpenMPI..."
+#ok_msg="OpenMPI installed, w00!"
+#fail_msg="Installation of OpenMPI failed, that's not good..."
+#$EB OpenMPI-4.0.3-GCC-9.3.0.eb --robot
+#check_exit_code $? "${ok_msg}" "${fail_msg}"
+#
+## install Python
+#echo ">> Install Python 2.7.18 and Python 3.8.2..."
+#ok_msg="Python 2.7.18 and 3.8.2 installed, yaay!"
+#fail_msg="Installation of Python failed, oh no..."
+#$EB Python-2.7.18-GCCcore-9.3.0.eb Python-3.8.2-GCCcore-9.3.0.eb --robot
+#check_exit_code $? "${ok_msg}" "${fail_msg}"
+#
+#echo ">> Installing Perl..."
+#ok_msg="Perl installed, making progress..."
+#fail_msg="Installation of Perl failed, this never happens..."
+## use enhanced Perl easyblock from https://github.com/easybuilders/easybuild-easyblocks/pull/2640
+## to avoid trouble when using long installation prefix (for example with EESSI pilot 2021.12 on skylake_avx512...)
+#$EB Perl-5.30.2-GCCcore-9.3.0.eb --robot --include-easyblocks-from-pr 2640
+#check_exit_code $? "${ok_msg}" "${fail_msg}"
+#
+#echo ">> Installing Qt5..."
+#ok_msg="Qt5 installed, phieuw, that was a big one!"
+#fail_msg="Installation of Qt5 failed, that's frustrating..."
+#$EB Qt5-5.14.1-GCCcore-9.3.0.eb --robot
+#check_exit_code $? "${ok_msg}" "${fail_msg}"
+#
+## skip test step when installing SciPy-bundle on aarch64,
+## to dance around problem with broken numpy tests;
+## cfr. https://github.com/easybuilders/easybuild-easyconfigs/issues/11959
+#echo ">> Installing SciPy-bundle"
+#ok_msg="SciPy-bundle installed, yihaa!"
+#fail_msg="SciPy-bundle installation failed, bummer..."
+#SCIPY_EC=SciPy-bundle-2020.03-foss-2020a-Python-3.8.2.eb
+#if [[ "$(uname -m)" == "aarch64" ]]; then
+#  $EB $SCIPY_EC --robot --skip-test-step
+#else
+#  $EB $SCIPY_EC --robot
+#fi
+#check_exit_code $? "${ok_msg}" "${fail_msg}"
+#
+#echo ">> Installing GROMACS..."
+#ok_msg="GROMACS installed, wow!"
+#fail_msg="Installation of GROMACS failed, damned..."
+#$EB GROMACS-2020.1-foss-2020a-Python-3.8.2.eb GROMACS-2020.4-foss-2020a-Python-3.8.2.eb --robot
+#check_exit_code $? "${ok_msg}" "${fail_msg}"
+#
+## note: compiling OpenFOAM is memory hungry (16GB is not enough with 8 cores)!
+## 32GB is sufficient to build with 16 cores
+#echo ">> Installing OpenFOAM (twice!)..."
+#ok_msg="OpenFOAM installed, now we're talking!"
+#fail_msg="Installation of OpenFOAM failed, we were so close..."
+#$EB OpenFOAM-8-foss-2020a.eb OpenFOAM-v2006-foss-2020a.eb --robot
+#check_exit_code $? "${ok_msg}" "${fail_msg}"
+#
+#if [ ! "${EESSI_CPU_FAMILY}" = "ppc64le" ]; then
+#    echo ">> Installing QuantumESPRESSO..."
+#    ok_msg="QuantumESPRESSO installed, let's go quantum!"
+#    fail_msg="Installation of QuantumESPRESSO failed, did somebody observe it?!"
+#    $EB QuantumESPRESSO-6.6-foss-2020a.eb --robot
+#    check_exit_code $? "${ok_msg}" "${fail_msg}"
+#fi
+#
+#echo ">> Installing R 4.0.0 (better be patient)..."
+#ok_msg="R installed, wow!"
+#fail_msg="Installation of R failed, so sad..."
+#$EB R-4.0.0-foss-2020a.eb --robot --parallel-extensions-install --experimental
+#check_exit_code $? "${ok_msg}" "${fail_msg}"
+#
+#echo ">> Installing Bioconductor 3.11 bundle..."
+#ok_msg="Bioconductor installed, enjoy!"
+#fail_msg="Installation of Bioconductor failed, that's annoying..."
+#$EB R-bundle-Bioconductor-3.11-foss-2020a-R-4.0.0.eb --robot
+#check_exit_code $? "${ok_msg}" "${fail_msg}"
+#
+#echo ">> Installing TensorFlow 2.3.1..."
+#ok_msg="TensorFlow 2.3.1 installed, w00!"
+#fail_msg="Installation of TensorFlow failed, why am I not surprised..."
+#$EB TensorFlow-2.3.1-foss-2020a-Python-3.8.2.eb --robot --include-easyblocks-from-pr 2218
+#check_exit_code $? "${ok_msg}" "${fail_msg}"
+#
+#echo ">> Installing Horovod 0.21.3..."
+#ok_msg="Horovod installed! Go do some parallel training!"
+#fail_msg="Horovod installation failed. There comes the headache..."
+#$EB Horovod-0.21.3-foss-2020a-TensorFlow-2.3.1-Python-3.8.2.eb --robot
+#check_exit_code $? "${ok_msg}" "${fail_msg}"
+#
+#if [ ! "${EESSI_CPU_FAMILY}" = "ppc64le" ]; then
+#
+#    echo ">> Installing code-server 3.7.3..."
+#    ok_msg="code-server 3.7.3 installed, now you can use VS Code!"
+#    fail_msg="Installation of code-server failed, that's going to be hard to fix..."
+#    $EB code-server-3.7.3.eb --robot
+#    check_exit_code $? "${ok_msg}" "${fail_msg}"
+#fi
+#
+#echo ">> Installing RStudio-Server 1.3.1093..."
+#ok_msg="RStudio-Server installed, enjoy!"
+#fail_msg="Installation of RStudio-Server failed, might be OS deps..."
+#$EB RStudio-Server-1.3.1093-foss-2020a-Java-11-R-4.0.0.eb --robot
+#check_exit_code $? "${ok_msg}" "${fail_msg}"
+#
+#echo ">> Installing OSU-Micro-Benchmarks 5.6.3..."
+#ok_msg="OSU-Micro-Benchmarks installed, yihaa!"
+#fail_msg="Installation of OSU-Micro-Benchmarks failed, that's unexpected..."
+#$EB OSU-Micro-Benchmarks-5.6.3-gompi-2020a.eb -r
+#check_exit_code $? "${ok_msg}" "${fail_msg}"
+#
+#echo ">> Installing Spark 3.1.1..."
+#ok_msg="Spark installed, set off the fireworks!"
+#fail_msg="Installation of Spark failed, no fireworks this time..."
+#$EB Spark-3.1.1-foss-2020a-Python-3.8.2.eb -r
+#check_exit_code $? "${ok_msg}" "${fail_msg}"
+#
+#echo ">> Installing IPython 7.15.0..."
+#ok_msg="IPython installed, launch your Jupyter Notebooks!"
+#fail_msg="Installation of IPython failed, that's unexpected..."
+#$EB IPython-7.15.0-foss-2020a-Python-3.8.2.eb -r
+#check_exit_code $? "${ok_msg}" "${fail_msg}"
+#
+#echo ">> Installing WRF 3.9.1.1..."
+#ok_msg="WRF installed, it's getting hot in here!"
+#fail_msg="Installation of WRF failed, that's unexpected..."
+#OMPI_MCA_pml=ucx UCX_TLS=tcp $EB WRF-3.9.1.1-foss-2020a-dmpar.eb -r --include-easyblocks-from-pr 2648
+#check_exit_code $? "${ok_msg}" "${fail_msg}"
 
 ### add packages here
-export CaDiCaL_EC="CaDiCaL-1.3.0-GCC-9.3.0.eb"
-echo ">> Installing ${CaDiCaL_EC}..."
-ok_msg="${CaDiCaL_EC} installed, let's solve some problems!"
-fail_msg="Installation of ${CaDiCaL_EC} failed, that's a pity..."
-$EB ${CaDiCaL_EC} --robot
-check_exit_code $? "${ok_msg}" "${fail_msg}"
 
 
 echo ">> Creating/updating Lmod cache..."
