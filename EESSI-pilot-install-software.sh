@@ -265,7 +265,12 @@ echo ">> Installing Qt5..."
 ok_msg="Qt5 installed, phieuw, that was a big one!"
 fail_msg="Installation of Qt5 failed, that's frustrating..."
 $EB Qt5-5.14.1-GCCcore-9.3.0.eb --robot
-check_exit_code $? "${ok_msg}" "${fail_msg}"
+exit_code=$?
+check_exit_code $exit_code "${ok_msg}" "${fail_msg}"
+if [[ "${exit_code} -ne 0 ]]; then
+  eb --last-log
+  cat $(eb --last-log)
+fi
 
 # skip test step when installing SciPy-bundle on aarch64,
 # to dance around problem with broken numpy tests;
