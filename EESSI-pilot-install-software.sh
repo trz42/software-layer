@@ -270,6 +270,8 @@ check_exit_code $exit_code "${ok_msg}" "${fail_msg}"
 if [[ ${exit_code} -ne 0 ]]; then
   eb --last-log
   cat $(eb --last-log)
+  mkdir node_tmp
+  cp -r /tmp/$USER/EESSI node_tmp/.
 fi
 
 # skip test step when installing SciPy-bundle on aarch64,
