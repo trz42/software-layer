@@ -266,7 +266,6 @@ ok_msg="Qt5 installed, phieuw, that was a big one!"
 fail_msg="Installation of Qt5 failed, that's frustrating..."
 $EB --disable-cleanup-tmpdir Qt5-5.14.1-GCCcore-9.3.0.eb --robot
 exit_code=$?
-check_exit_code $exit_code "${ok_msg}" "${fail_msg}"
 if [[ ${exit_code} -ne 0 ]]; then
   echo "Qt5 exit code: '${exit_code}'"
   eb --last-log
@@ -280,6 +279,7 @@ else
   mkdir /eessi_bot_job/node_tmp
   cp -r /tmp/* /eessi_bot_job/node_tmp/.
 fi
+check_exit_code $exit_code "${ok_msg}" "${fail_msg}"
 
 # skip test step when installing SciPy-bundle on aarch64,
 # to dance around problem with broken numpy tests;
