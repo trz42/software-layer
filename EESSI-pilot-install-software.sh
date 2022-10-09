@@ -268,10 +268,17 @@ $EB --disable-cleanup-tmpdir Qt5-5.14.1-GCCcore-9.3.0.eb --robot
 exit_code=$?
 check_exit_code $exit_code "${ok_msg}" "${fail_msg}"
 if [[ ${exit_code} -ne 0 ]]; then
+  echo "Qt5 exit code: '${exit_code}'"
   eb --last-log
   cat $(eb --last-log)
-  mkdir node_tmp
-  cp -r /tmp/* node_tmp/.
+  mkdir /eessi_bot_job/node_tmp
+  cp -r /tmp/* /eessi_bot_job/node_tmp/.
+else
+  echo "Qt5 exit code: '${exit_code}'"
+  eb --last-log
+  cat $(eb --last-log)
+  mkdir /eessi_bot_job/node_tmp
+  cp -r /tmp/* /eessi_bot_job/node_tmp/.
 fi
 
 # skip test step when installing SciPy-bundle on aarch64,
