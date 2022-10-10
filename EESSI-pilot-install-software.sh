@@ -264,7 +264,7 @@ check_exit_code $? "${ok_msg}" "${fail_msg}"
 echo ">> Installing Qt5..."
 ok_msg="Qt5 installed, phieuw, that was a big one!"
 fail_msg="Installation of Qt5 failed, that's frustrating..."
-$EB --disable-cleanup-tmpdir Qt5-5.14.1-GCCcore-9.3.0.eb --robot
+$EB --disable-cleanup-tmpdir --parallel=1 Qt5-5.14.1-GCCcore-9.3.0.eb --robot
 exit_code=$?
 if [[ ${exit_code} -ne 0 ]]; then
   echo "Qt5 exit code: '${exit_code}'"
