@@ -264,20 +264,21 @@ check_exit_code $? "${ok_msg}" "${fail_msg}"
 echo ">> Installing Qt5..."
 ok_msg="Qt5 installed, phieuw, that was a big one!"
 fail_msg="Installation of Qt5 failed, that's frustrating..."
-$EB --disable-cleanup-tmpdir --parallel=1 Qt5-5.14.1-GCCcore-9.3.0.eb --robot
+#$EB --disable-cleanup-tmpdir --parallel=1 Qt5-5.14.1-GCCcore-9.3.0.eb --robot
+$EB Qt5-5.14.1-GCCcore-9.3.0.eb --robot
 exit_code=$?
 if [[ ${exit_code} -ne 0 ]]; then
   echo "Qt5 exit code: '${exit_code}'"
   eb --last-log
   cat $(eb --last-log)
-  mkdir /eessi_bot_job/node_tmp
-  cp -r /tmp/* /eessi_bot_job/node_tmp/.
+#  mkdir /eessi_bot_job/node_tmp
+#  cp -r /tmp/* /eessi_bot_job/node_tmp/.
 else
   echo "Qt5 exit code: '${exit_code}'"
   eb --last-log
   cat $(eb --last-log)
-  mkdir /eessi_bot_job/node_tmp
-  cp -r /tmp/* /eessi_bot_job/node_tmp/.
+#  mkdir /eessi_bot_job/node_tmp
+#  cp -r /tmp/* /eessi_bot_job/node_tmp/.
 fi
 check_exit_code $exit_code "${ok_msg}" "${fail_msg}"
 
@@ -295,12 +296,12 @@ else
 fi
 check_exit_code $? "${ok_msg}" "${fail_msg}"
 
-#echo ">> Installing GROMACS..."
-#ok_msg="GROMACS installed, wow!"
-#fail_msg="Installation of GROMACS failed, damned..."
-#$EB GROMACS-2020.1-foss-2020a-Python-3.8.2.eb GROMACS-2020.4-foss-2020a-Python-3.8.2.eb --robot
-#check_exit_code $? "${ok_msg}" "${fail_msg}"
-#
+echo ">> Installing GROMACS..."
+ok_msg="GROMACS installed, wow!"
+fail_msg="Installation of GROMACS failed, damned..."
+$EB GROMACS-2020.1-foss-2020a-Python-3.8.2.eb GROMACS-2020.4-foss-2020a-Python-3.8.2.eb --robot
+check_exit_code $? "${ok_msg}" "${fail_msg}"
+
 ## note: compiling OpenFOAM is memory hungry (16GB is not enough with 8 cores)!
 ## 32GB is sufficient to build with 16 cores
 #echo ">> Installing OpenFOAM (twice!)..."
@@ -393,13 +394,13 @@ fi
 $TOPDIR/update_lmod_cache.sh ${EPREFIX} ${EASYBUILD_INSTALLPATH}
 
 echo ">> Checking for missing installations..."
-#ok_msg="No missing installations, party time!"
-#fail_msg="On no, some installations are still missing, how did that happen?!"
-#eb_missing_out=$TMPDIR/eb_missing.out
-#$EB --easystack eessi-${EESSI_PILOT_VERSION}.yml --experimental --missing --robot $EASYBUILD_PREFIX/ebfiles_repo | tee ${eb_missing_out}
-#grep "No missing modules" ${eb_missing_out} > /dev/null
-#check_exit_code $? "${ok_msg}" "${fail_msg}"
-echo "No missing modules!"
+ok_msg="No missing installations, party time!"
+fail_msg="On no, some installations are still missing, how did that happen?!"
+eb_missing_out=$TMPDIR/eb_missing.out
+$EB --easystack eessi-${EESSI_PILOT_VERSION}.yml --experimental --missing --robot $EASYBUILD_PREFIX/ebfiles_repo | tee ${eb_missing_out}
+grep "No missing modules" ${eb_missing_out} > /dev/null
+check_exit_code $? "${ok_msg}" "${fail_msg}"
+#echo "No missing modules!"
 
 echo ">> Cleaning up ${TMPDIR}..."
 rm -r ${TMPDIR}
