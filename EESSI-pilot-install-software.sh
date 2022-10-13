@@ -299,14 +299,14 @@ fail_msg="Installation of GROMACS failed, damned..."
 $EB GROMACS-2020.1-foss-2020a-Python-3.8.2.eb GROMACS-2020.4-foss-2020a-Python-3.8.2.eb --robot
 check_exit_code $? "${ok_msg}" "${fail_msg}"
 
-## note: compiling OpenFOAM is memory hungry (16GB is not enough with 8 cores)!
-## 32GB is sufficient to build with 16 cores
-#echo ">> Installing OpenFOAM (twice!)..."
-#ok_msg="OpenFOAM installed, now we're talking!"
-#fail_msg="Installation of OpenFOAM failed, we were so close..."
-#$EB OpenFOAM-8-foss-2020a.eb OpenFOAM-v2006-foss-2020a.eb --robot
-#check_exit_code $? "${ok_msg}" "${fail_msg}"
-#
+# note: compiling OpenFOAM is memory hungry (16GB is not enough with 8 cores)!
+# 32GB is sufficient to build with 16 cores
+echo ">> Installing OpenFOAM (twice!)..."
+ok_msg="OpenFOAM installed, now we're talking!"
+fail_msg="Installation of OpenFOAM failed, we were so close..."
+$EB --parallel=4 OpenFOAM-8-foss-2020a.eb OpenFOAM-v2006-foss-2020a.eb --robot
+check_exit_code $? "${ok_msg}" "${fail_msg}"
+
 #if [ ! "${EESSI_CPU_FAMILY}" = "ppc64le" ]; then
 #    echo ">> Installing QuantumESPRESSO..."
 #    ok_msg="QuantumESPRESSO installed, let's go quantum!"
@@ -394,7 +394,11 @@ echo ">> Checking for missing installations..."
 ok_msg="No missing installations, party time!"
 fail_msg="On no, some installations are still missing, how did that happen?!"
 eb_missing_out=$TMPDIR/eb_missing.out
-$EB --easystack eessi-${EESSI_PILOT_VERSION}.yml --experimental --missing --robot $EASYBUILD_PREFIX/ebfiles_repo | tee ${eb_missing_out}
+if [[ ${EESSI_SOFTWARE_SUBDIR} == "x86_64/intel/haswell" ]]; then
+  $EB --easystack eessi-${EESSI_PILOT_VERSION}-haswell.yml --experimental --missing --robot $EASYBUILD_PREFIX/ebfiles_repo | tee ${eb_missing_out}
+else
+  $EB --easystack eessi-${EESSI_PILOT_VERSION}.yml --experimental --missing --robot $EASYBUILD_PREFIX/ebfiles_repo | tee ${eb_missing_out}
+fi
 grep "No missing modules" ${eb_missing_out} > /dev/null
 check_exit_code $? "${ok_msg}" "${fail_msg}"
 
