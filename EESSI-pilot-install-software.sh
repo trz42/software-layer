@@ -293,12 +293,12 @@ else
 fi
 check_exit_code $? "${ok_msg}" "${fail_msg}"
 
-#echo ">> Installing GROMACS..."
-#ok_msg="GROMACS installed, wow!"
-#fail_msg="Installation of GROMACS failed, damned..."
-#$EB GROMACS-2020.1-foss-2020a-Python-3.8.2.eb GROMACS-2020.4-foss-2020a-Python-3.8.2.eb --robot
-#check_exit_code $? "${ok_msg}" "${fail_msg}"
-#
+echo ">> Installing GROMACS..."
+ok_msg="GROMACS installed, wow!"
+fail_msg="Installation of GROMACS failed, damned..."
+$EB GROMACS-2020.1-foss-2020a-Python-3.8.2.eb GROMACS-2020.4-foss-2020a-Python-3.8.2.eb --robot
+check_exit_code $? "${ok_msg}" "${fail_msg}"
+
 ## note: compiling OpenFOAM is memory hungry (16GB is not enough with 8 cores)!
 ## 32GB is sufficient to build with 16 cores
 #echo ">> Installing OpenFOAM (twice!)..."
@@ -391,13 +391,12 @@ fi
 $TOPDIR/update_lmod_cache.sh ${EPREFIX} ${EASYBUILD_INSTALLPATH}
 
 echo ">> Checking for missing installations..."
-#ok_msg="No missing installations, party time!"
-#fail_msg="On no, some installations are still missing, how did that happen?!"
-#eb_missing_out=$TMPDIR/eb_missing.out
-#$EB --easystack eessi-${EESSI_PILOT_VERSION}.yml --experimental --missing --robot $EASYBUILD_PREFIX/ebfiles_repo | tee ${eb_missing_out}
-#grep "No missing modules" ${eb_missing_out} > /dev/null
-#check_exit_code $? "${ok_msg}" "${fail_msg}"
-echo "No missing modules!"
+ok_msg="No missing installations, party time!"
+fail_msg="On no, some installations are still missing, how did that happen?!"
+eb_missing_out=$TMPDIR/eb_missing.out
+$EB --easystack eessi-${EESSI_PILOT_VERSION}.yml --experimental --missing --robot $EASYBUILD_PREFIX/ebfiles_repo | tee ${eb_missing_out}
+grep "No missing modules" ${eb_missing_out} > /dev/null
+check_exit_code $? "${ok_msg}" "${fail_msg}"
 
 echo ">> Cleaning up ${TMPDIR}..."
 rm -r ${TMPDIR}
