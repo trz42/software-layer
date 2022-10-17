@@ -151,11 +151,15 @@ else
     export PATH=${EB_TMPDIR}/bin:$PATH
     export PYTHONPATH=$(ls -d ${EB_TMPDIR}/lib/python*/site-packages):$PYTHONPATH
     eb_install_out=${TMPDIR}/eb_install.out
-    eb --install-latest-eb-release &> ${eb_install_out}
+    # work around for non-working installation of eb 4.6.1
+    #   see https://github.com/EESSI/software-layer/issues/191
+    eb --install-latest-eb-release --try-amend=use_pip=1 &> ${eb_install_out}
 
     eb --search EasyBuild-${REQ_EB_VERSION}.eb | grep EasyBuild-${REQ_EB_VERSION}.eb > /dev/null
     if [[ $? -eq 0 ]]; then
-        eb EasyBuild-${REQ_EB_VERSION}.eb >> ${eb_install_out} 2>&1
+        # work around for non-working installation of eb 4.6.1
+        #   see https://github.com/EESSI/software-layer/issues/191
+        eb --try-amend=use_pip=1 EasyBuild-${REQ_EB_VERSION}.eb >> ${eb_install_out} 2>&1
     fi
 
     module avail easybuild/${REQ_EB_VERSION} &> ${ml_av_easybuild_out}
