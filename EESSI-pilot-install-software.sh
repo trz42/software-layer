@@ -134,6 +134,25 @@ fi
 
 REQ_EB_VERSION='4.6.0'
 
+# install latest release just to test if v4.6.2 fixes issue https://github.com/EESSI/software-layer/issues/191
+echo_yellow ">> No EasyBuild module yet, installing it..."
+
+EB_TMPDIR=${TMPDIR}/ebtmp
+echo ">> Temporary installation (in ${EB_TMPDIR})..."
+pip_install_out=${TMPDIR}/pip_install.out
+pip3 install --prefix $EB_TMPDIR easybuild &> ${pip_install_out}
+
+echo ">> Final installation in ${EASYBUILD_INSTALLPATH}..."
+export PATH=${EB_TMPDIR}/bin:$PATH
+export PYTHONPATH=$(ls -d ${EB_TMPDIR}/lib/python*/site-packages):$PYTHONPATH
+eb_install_out=${TMPDIR}/eb_install.out
+ok_msg="Latest EasyBuild release fixing issue https://github.com/EESSI/software-layer/issues/191 installed, let's go!"
+fail_msg="Installing latest EasyBuild release failed even with fix for https://github.com/EESSI/software-layer/issues/191, that's not good... (output: ${eb_install_out})"
+# REMOVED work around (--try-amend=use_pip=1) for non-working installation of eb 4.6.1
+#   see https://github.com/EESSI/software-layer/issues/191
+eb --install-latest-eb-release &> ${eb_install_out}
+check_exit_code $? "${ok_msg}" "${fail_msg}"
+
 echo ">> Checking for EasyBuild module..."
 ml_av_easybuild_out=$TMPDIR/ml_av_easybuild.out
 module avail 2>&1 | grep -i easybuild/${REQ_EB_VERSION} &> ${ml_av_easybuild_out}
@@ -155,7 +174,7 @@ else
     fail_msg="Installing latest EasyBuild release failed, that's not good... (output: ${eb_install_out})"
     # work around for non-working installation of eb 4.6.1
     #   see https://github.com/EESSI/software-layer/issues/191
-    eb --try-amend=use_pip=1 --install-latest-eb-release &> ${eb_install_out}
+    eb --install-latest-eb-release &> ${eb_install_out}
     check_exit_code $? "${ok_msg}" "${fail_msg}"
 
     eb --search EasyBuild-${REQ_EB_VERSION}.eb | grep EasyBuild-${REQ_EB_VERSION}.eb > /dev/null
@@ -164,7 +183,7 @@ else
         fail_msg="Installing EasyBuild v${REQ_EB_VERSION}, yikes! (output: ${eb_install_out})"
         # work around for non-working installation of eb 4.6.1
         #   see https://github.com/EESSI/software-layer/issues/191
-        eb --try-amend=use_pip=1 EasyBuild-${REQ_EB_VERSION}.eb >> ${eb_install_out} 2>&1
+        eb EasyBuild-${REQ_EB_VERSION}.eb >> ${eb_install_out} 2>&1
         check_exit_code $? "${ok_msg}" "${fail_msg}"
     fi
 
