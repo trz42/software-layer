@@ -134,25 +134,6 @@ fi
 
 REQ_EB_VERSION='4.6.0'
 
-# install latest release just to test if v4.6.2 fixes issue https://github.com/EESSI/software-layer/issues/191
-echo_yellow ">> No EasyBuild module yet, installing it..."
-
-EB_TMPDIR=${TMPDIR}/ebtmp
-echo ">> Temporary installation (in ${EB_TMPDIR})..."
-pip_install_out=${TMPDIR}/pip_install.out
-pip3 install --prefix $EB_TMPDIR easybuild &> ${pip_install_out}
-
-echo ">> Final installation in ${EASYBUILD_INSTALLPATH}..."
-export PATH=${EB_TMPDIR}/bin:$PATH
-export PYTHONPATH=$(ls -d ${EB_TMPDIR}/lib/python*/site-packages):$PYTHONPATH
-eb_install_out=${TMPDIR}/eb_install.out
-ok_msg="Latest EasyBuild release fixing issue https://github.com/EESSI/software-layer/issues/191 installed, let's go!"
-fail_msg="Installing latest EasyBuild release failed even with fix for https://github.com/EESSI/software-layer/issues/191, that's not good... (output: ${eb_install_out})"
-# REMOVED work around (--try-amend=use_pip=1) for non-working installation of eb 4.6.1
-#   see https://github.com/EESSI/software-layer/issues/191
-eb --install-latest-eb-release &> ${eb_install_out}
-check_exit_code $? "${ok_msg}" "${fail_msg}"
-
 echo ">> Checking for EasyBuild module..."
 ml_av_easybuild_out=$TMPDIR/ml_av_easybuild.out
 module avail 2>&1 | grep -i easybuild/${REQ_EB_VERSION} &> ${ml_av_easybuild_out}
@@ -214,16 +195,16 @@ else
     fatal_error "EasyBuild not working?!"
 fi
 
-#echo_green "All set, let's start installing some software in ${EASYBUILD_INSTALLPATH}..."
-#
-## install Java with fixed custom easyblock that uses patchelf to ensure right glibc is picked up,
-## see https://github.com/EESSI/software-layer/issues/123
-## and https://github.com/easybuilders/easybuild-easyblocks/pull/2557
-#ok_msg="Java installed, off to a good (?) start!"
-#fail_msg="Failed to install Java, woopsie..."
-#$EB Java-11.eb --robot --include-easyblocks-from-pr 2557
-#check_exit_code $? "${ok_msg}" "${fail_msg}"
-#
+echo_green "All set, let's start installing some software in ${EASYBUILD_INSTALLPATH}..."
+
+# install Java with fixed custom easyblock that uses patchelf to ensure right glibc is picked up,
+# see https://github.com/EESSI/software-layer/issues/123
+# and https://github.com/easybuilders/easybuild-easyblocks/pull/2557
+ok_msg="Java installed, off to a good (?) start!"
+fail_msg="Failed to install Java, woopsie..."
+$EB Java-17.eb --robot --include-easyblocks-from-pr 2557
+check_exit_code $? "${ok_msg}" "${fail_msg}"
+
 ## install GCC for foss/2020a
 #export GCC_EC="GCC-9.3.0.eb"
 #echo ">> Starting slow with ${GCC_EC}..."
