@@ -2,7 +2,7 @@
 
 BUILD_CONTAINER="docker://ghcr.io/eessi/build-node:debian10"
 #export TARGET_REPO=pilot.eessi-hpc.org
-export TARGET_REPO=pilot.nessi.uiocloud.no
+export TARGET_REPO=pilot.nessi.no
 
 if [ $# -lt 2 ]; then
     echo "Usage: $0 <shell|run> <path for temporary directories>" >&2
@@ -31,7 +31,7 @@ export SINGULARITY_CACHEDIR=$EESSI_TMPDIR/singularity_cache
 # take into account that $SINGULARITY_BIND may be defined already, to bind additional paths into the build container
 #BIND_PATHS="$EESSI_TMPDIR/var-run-cvmfs:/var/run/cvmfs,$EESSI_TMPDIR/var-lib-cvmfs:/var/lib/cvmfs,$EESSI_TMPDIR"
 BIND_PATHS="$EESSI_TMPDIR/var-run-cvmfs:/var/run/cvmfs,$EESSI_TMPDIR/var-lib-cvmfs:/var/lib/cvmfs,$EESSI_TMPDIR"
-BIND_PATHS="$EESSI_TMPDIR/var-run-cvmfs:/var/run/cvmfs,$EESSI_TMPDIR/var-lib-cvmfs:/var/lib/cvmfs,$EESSI_TMPDIR,nessi.uiocloud.no:/etc/cvmfs/keys/nessi.uiocloud.no,nessi.uiocloud.no.conf:/etc/cvmfs/domain.d/nessi.uiocloud.no.conf,default.local:/etc/cvmfs/default.local"
+BIND_PATHS="$EESSI_TMPDIR/var-run-cvmfs:/var/run/cvmfs,$EESSI_TMPDIR/var-lib-cvmfs:/var/lib/cvmfs,$EESSI_TMPDIR,nessi.no:/etc/cvmfs/keys/nessi.no,nessi.no.conf:/etc/cvmfs/domain.d/nessi.no.conf,default.local:/etc/cvmfs/default.local"
 
 if [ -z $SINGULARITY_BIND ]; then
     export SINGULARITY_BIND="$BIND_PATHS"

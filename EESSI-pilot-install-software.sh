@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Script to install EESSI pilot software stack (version 2022.10)
+# Script to install EESSI pilot software stack (version 2022.11)
 
 # see example parsing of command line arguments at
 #   https://wiki.bash-hackers.org/scripting/posparams#using_a_while_loop
@@ -153,8 +153,6 @@ else
     eb_install_out=${TMPDIR}/eb_install.out
     ok_msg="Latest EasyBuild release installed, let's go!"
     fail_msg="Installing latest EasyBuild release failed, that's not good... (output: ${eb_install_out})"
-    # work around for non-working installation of eb 4.6.1
-    #   see https://github.com/EESSI/software-layer/issues/191
     eb --install-latest-eb-release &> ${eb_install_out}
     check_exit_code $? "${ok_msg}" "${fail_msg}"
 
@@ -162,8 +160,6 @@ else
     if [[ $? -eq 0 ]]; then
         ok_msg="EasyBuild v${REQ_EB_VERSION} installed, alright!"
         fail_msg="Installing EasyBuild v${REQ_EB_VERSION}, yikes! (output: ${eb_install_out})"
-        # work around for non-working installation of eb 4.6.1
-        #   see https://github.com/EESSI/software-layer/issues/191
         eb EasyBuild-${REQ_EB_VERSION}.eb >> ${eb_install_out} 2>&1
         check_exit_code $? "${ok_msg}" "${fail_msg}"
     fi

@@ -16,7 +16,7 @@ echo ">> tmpdir: $tmpdir"
 
 os="linux"
 #cvmfs_repo="/cvmfs/pilot.eessi-hpc.org"
-cvmfs_repo="/cvmfs/pilot.nessi.uiocloud.no"
+cvmfs_repo="/cvmfs/pilot.nessi.no"
 
 software_dir="${cvmfs_repo}/versions/${pilot_version}/software/${os}/${cpu_arch_subdir}"
 if [ ! -d ${software_dir} ]; then

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #SOFTWARE_LAYER_TARBALL_URL=https://github.com/EESSI/software-layer/tarball/main
-SOFTWARE_LAYER_TARBALL_URL=https://github.com/trz42/software-layer/tarball/nessi-2022.10
+SOFTWARE_LAYER_TARBALL_URL=https://github.com/trz42/software-layer/tarball/nessi.no-2022.11
 
 set -eo pipefail
 

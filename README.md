@@ -9,14 +9,14 @@ See also https://eessi.github.io/docs/software_layer.
 You can set up your environment by sourcing the init script:
 
 ```
-$ source /cvmfs/pilot.nessi.uiocloud.no/versions/2022.10/init/bash
-Found EESSI pilot repo @ /cvmfs/pilot.nessi.uiocloud.no/versions/2022.10!
+$ source /cvmfs/pilot.nessi.no/versions/2022.11/init/bash
+Found EESSI pilot repo @ /cvmfs/pilot.nessi.no/versions/2022.11!
 Derived subdirectory for software layer: x86_64/intel/haswell
 Using x86_64/intel/haswell subdirectory for software layer (HARDCODED)
 Initializing Lmod...
-Prepending /cvmfs/pilot.nessi.uiocloud.no/versions/2022.10/software/x86_64/intel/haswell/modules/all to $MODULEPATH...
+Prepending /cvmfs/pilot.nessi.no/versions/2022.11/software/x86_64/intel/haswell/modules/all to $MODULEPATH...
 Environment set up to use EESSI pilot software stack, have fun!
-[EESSI pilot 2022.10] $
+[EESSI pilot 2022.11] $
 ```
 
 # License
