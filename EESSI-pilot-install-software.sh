@@ -201,25 +201,25 @@ fail_msg="Failed to install Java, woopsie..."
 $EB Java-17.eb --robot --include-easyblocks-from-pr 2557
 check_exit_code $? "${ok_msg}" "${fail_msg}"
 
-## install GCC for foss/2020a
-#export GCC_EC="GCC-9.3.0.eb"
-#echo ">> Starting slow with ${GCC_EC}..."
-#ok_msg="${GCC_EC} installed, yippy! Off to a good start..."
-#fail_msg="Installation of ${GCC_EC} failed!"
-## pull in easyconfig from https://github.com/easybuilders/easybuild-easyconfigs/pull/14453,
-## which includes patch to fix build of GCC 9.3 when recent kernel headers are in place
-##$EB ${GCC_EC} --robot --from-pr 14453 GCCcore-9.3.0.eb
-#$EB ${GCC_EC} --robot
-#check_exit_code $? "${ok_msg}" "${fail_msg}"
-#
-## install GCC for foss/2021a
-#export GCC_EC="GCC-10.3.0.eb"
-#echo ">> Continuing with ${GCC_EC}..."
-#ok_msg="${GCC_EC} installed too, yippy! Off to a good start..."
-#fail_msg="Installation of ${GCC_EC} failed!"
-#$EB ${GCC_EC} --robot
-#check_exit_code $? "${ok_msg}" "${fail_msg}"
-#
+# install GCC for foss/2020a
+export GCC_EC="GCC-9.3.0.eb"
+echo ">> Starting slow with ${GCC_EC}..."
+ok_msg="${GCC_EC} installed, yippy! Off to a good start..."
+fail_msg="Installation of ${GCC_EC} failed!"
+# pull in easyconfig from https://github.com/easybuilders/easybuild-easyconfigs/pull/14453,
+# which includes patch to fix build of GCC 9.3 when recent kernel headers are in place
+#$EB ${GCC_EC} --robot --from-pr 14453 GCCcore-9.3.0.eb
+$EB ${GCC_EC} --robot
+check_exit_code $? "${ok_msg}" "${fail_msg}"
+
+# install GCC for foss/2021a
+export GCC_EC="GCC-10.3.0.eb"
+echo ">> Continuing with ${GCC_EC}..."
+ok_msg="${GCC_EC} installed too, yippy! Off to a good start..."
+fail_msg="Installation of ${GCC_EC} failed!"
+$EB ${GCC_EC} --robot
+check_exit_code $? "${ok_msg}" "${fail_msg}"
+
 ## install CMake with custom easyblock that patches CMake when --sysroot is used
 #echo ">> Install CMake with fixed easyblock to take into account --sysroot"
 #ok_msg="CMake installed!"
