@@ -220,6 +220,21 @@ fail_msg="Installation of ${GCC_EC} failed!"
 $EB ${GCC_EC} --robot
 check_exit_code $? "${ok_msg}" "${fail_msg}"
 
+# install OpenSSL-1.1 (dependcy for some of the following built with GCC/10.3.0)
+echo ">> Installing OpenSSL-1.1 .. skipping sanity check on proxied nodes"
+ok_msg="Yeah, got OpenSSL-1.1 installed"
+fail_msg="Oh no, installing OpenSSL-1.1 failed"
+if [[ "x${http_proxy}" == "x" ]]; then
+  echo "no proxy configured, assume build node has direct access to internet; not skipping sanity checks"
+  $EB OpenSSL-1.1.eb --robot
+else
+  echo "proxy configured '${http_proxy}', assume build node has NO direct access to internet; skipping sanity checks"
+  $EB --copy-ec OpenSSL-1.1.eb
+  patch OpenSSL-1.1.eb < patches/easyconfigs/o/OpenSSL-1.1.eb.sanity-check-patch
+  $EB OpenSSL-1.1.eb --robot
+fi
+check_exit_code $? "${ok_msg}" "${fail_msg}"
+
 # install CMake with custom easyblock that patches CMake when --sysroot is used
 echo ">> Install CMake with fixed easyblock to take into account --sysroot"
 ok_msg="CMake installed!"
