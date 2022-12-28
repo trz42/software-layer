@@ -384,6 +384,12 @@ check_exit_code $? "${ok_msg}" "${fail_msg}"
 #
 #### add packages here
 
+echo "Installing CaDiCaL/1.3.0 for GCC/9.3.0..."
+ok_msg="CaDiCaL installed. Nice!"
+fail_msg="Installation of CaDiCaL failed, that's unexpected..."
+$EB CaDiCaL-1.3.0-GCC-9.3.0.eb --robot
+check_exit_code $? "${ok_msg}" "${fail_msg}"
+
 echo ">> Creating/updating Lmod cache..."
 export LMOD_RC="${EASYBUILD_INSTALLPATH}/.lmod/lmodrc.lua"
 if [ ! -f $LMOD_RC ]; then
@@ -393,14 +399,12 @@ fi
 
 $TOPDIR/update_lmod_cache.sh ${EPREFIX} ${EASYBUILD_INSTALLPATH}
 
-# Nothing really to be checked here yet (no application software should be installed)
-#   We do fake the check and just print the expected message.
 echo ">> Checking for missing installations..."
 ok_msg="No missing installations, party time!"
 fail_msg="On no, some installations are still missing, how did that happen?! -> exiting $0"
 eb_missing_out=$TMPDIR/eb_missing.out
-#$EB --easystack eessi-${EESSI_PILOT_VERSION}.yml --experimental --missing --robot $EASYBUILD_PREFIX/ebfiles_repo | tee ${eb_missing_out}
-echo "No missing modules!" | tee ${eb_missing_out}
+$EB --easystack eessi-${EESSI_PILOT_VERSION}.yml --experimental --missing --robot $EASYBUILD_PREFIX/ebfiles_repo | tee ${eb_missing_out}
+#echo "No missing modules!" | tee ${eb_missing_out}
 grep "No missing modules" ${eb_missing_out} > /dev/null
 check_exit_code $? "${ok_msg}" "${fail_msg}"
 
