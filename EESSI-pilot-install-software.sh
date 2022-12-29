@@ -383,6 +383,11 @@ check_exit_code $? "${ok_msg}" "${fail_msg}"
 #check_exit_code $? "${ok_msg}" "${fail_msg}"
 #
 #### add packages here
+echo ">> Installing M4 1.4.18..."
+ok_msg="M4 installed, good start!"
+fail_msg="Installation of M4 failed, that's unexpected..."
+$EB M4-1.4.18.eb --robot
+check_exit_code $? "${ok_msg}" "${fail_msg}"
 
 echo ">> Creating/updating Lmod cache..."
 export LMOD_RC="${EASYBUILD_INSTALLPATH}/.lmod/lmodrc.lua"
@@ -399,8 +404,8 @@ echo ">> Checking for missing installations..."
 ok_msg="No missing installations, party time!"
 fail_msg="On no, some installations are still missing, how did that happen?! -> exiting $0"
 eb_missing_out=$TMPDIR/eb_missing.out
-#$EB --easystack eessi-${EESSI_PILOT_VERSION}.yml --experimental --missing --robot $EASYBUILD_PREFIX/ebfiles_repo | tee ${eb_missing_out}
-echo "No missing modules!" | tee ${eb_missing_out}
+$EB --easystack eessi-${EESSI_PILOT_VERSION}.yml --experimental --missing --robot $EASYBUILD_PREFIX/ebfiles_repo | tee ${eb_missing_out}
+#echo "No missing modules!" | tee ${eb_missing_out}
 grep "No missing modules" ${eb_missing_out} > /dev/null
 check_exit_code $? "${ok_msg}" "${fail_msg}"
 
