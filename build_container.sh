@@ -1,8 +1,6 @@
 #!/bin/bash
 
-env | grep -i EASYBUILD_OPTARCH | sed -e 's/^/build_container.sh:/'
-
-BUILD_CONTAINER="docker://ghcr.io/eessi/build-node:debian10"
+BUILD_CONTAINER="docker://ghcr.io/eessi/build-node:debian11"
 
 if [ $# -lt 2 ]; then
     echo "Usage: $0 <shell|run> <path for temporary directories>" >&2
@@ -20,22 +18,6 @@ fi
 # make sure specified temporary directory exists
 mkdir -p $EESSI_TMPDIR
 
-# make sure that specified location has support for extended attributes,
-# since that's required by CernVM-FS
-command -v attr &> /dev/null
-if [ $? -eq 0 ]; then
-    testfile=$(mktemp -p $EESSI_TMPDIR)
-    attr -s test -V test $testfile > /dev/null
-    if [ $? -ne 0 ]; then
-        echo "ERROR: $EESSI_TMPDIR does not support extended attributes!" >&2
-        #exit 2
-    else
-        rm $testfile
-    fi
-else
-    echo "WARNING: 'attr' command not available, so can't check support for extended attributes..." >&2
-fi
-
 echo "Using $EESSI_TMPDIR as parent for temporary directories..."
 
 # create temporary directories
@@ -45,7 +27,7 @@ mkdir -p $EESSI_TMPDIR/{var-lib-cvmfs,var-run-cvmfs}
 export SINGULARITY_CACHEDIR=$EESSI_TMPDIR/singularity_cache
 
 # take into account that $SINGULARITY_BIND may be defined already, to bind additional paths into the build container
-BIND_PATHS="$EESSI_TMPDIR/var-run-cvmfs:/var/run/cvmfs,$EESSI_TMPDIR/var-lib-cvmfs:/var/lib/cvmfs,$EESSI_TMPDIR,nessi.uiocloud.no:/etc/cvmfs/keys/nessi.uiocloud.no,nessi.uiocloud.no.conf:/etc/cvmfs/domain.d/nessi.uiocloud.no.conf,default.local:/etc/cvmfs/default.local"
+BIND_PATHS="$EESSI_TMPDIR/var-run-cvmfs:/var/run/cvmfs,$EESSI_TMPDIR/var-lib-cvmfs:/var/lib/cvmfs,$EESSI_TMPDIR"
 if [ -z $SINGULARITY_BIND ]; then
     export SINGULARITY_BIND="$BIND_PATHS"
 else
@@ -58,8 +40,15 @@ if [ -z $SINGULARITY_HOME ]; then
 fi
 
 # set environment variables for fuse mounts in Singularity container
-export EESSI_PILOT_READONLY="container:cvmfs2 pilot.nessi.uiocloud.no /cvmfs_ro/pilot.nessi.uiocloud.no"
-export EESSI_PILOT_WRITABLE_OVERLAY="container:fuse-overlayfs -o lowerdir=/cvmfs_ro/pilot.nessi.uiocloud.no -o upperdir=$EESSI_TMPDIR/overlay-upper -o workdir=$EESSI_TMPDIR/overlay-work /cvmfs/pilot.nessi.uiocloud.no"
+export EESSI_PILOT_READONLY="container:cvmfs2 pilot.eessi-hpc.org /cvmfs_ro/pilot.eessi-hpc.org"
+export EESSI_PILOT_WRITABLE_OVERLAY="container:fuse-overlayfs -o lowerdir=/cvmfs_ro/pilot.eessi-hpc.org -o upperdir=$EESSI_TMPDIR/overlay-upper -o workdir=$EESSI_TMPDIR/overlay-work /cvmfs/pilot.eessi-hpc.org"
+
+# pass $EESSI_SOFTWARE_SUBDIR_OVERRIDE into build container (if set)
+if [ ! -z ${EESSI_SOFTWARE_SUBDIR_OVERRIDE} ]; then
+    export SINGULARITYENV_EESSI_SOFTWARE_SUBDIR_OVERRIDE=${EESSI_SOFTWARE_SUBDIR_OVERRIDE}
+    # also specify via $APPTAINERENV_* (future proof, cfr. https://apptainer.org/docs/user/latest/singularity_compatibility.html#singularity-environment-variable-compatibility)
+    export APPTAINERENV_EESSI_SOFTWARE_SUBDIR_OVERRIDE=${EESSI_SOFTWARE_SUBDIR_OVERRIDE}
+fi
 
 if [ "$SHELL_OR_RUN" == "shell" ]; then
     # start shell in Singularity container, with EESSI repository mounted with writable overlay
