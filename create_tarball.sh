@@ -15,7 +15,8 @@ tmpdir=`mktemp -d`
 echo ">> tmpdir: $tmpdir"
 
 os="linux"
-cvmfs_repo="/cvmfs/pilot.eessi-hpc.org"
+#cvmfs_repo="/cvmfs/pilot.eessi-hpc.org"
+cvmfs_repo="/cvmfs/pilot.nessi.no"
 
 software_dir="${cvmfs_repo}/versions/${pilot_version}/software/${os}/${cpu_arch_subdir}"
 if [ ! -d ${software_dir} ]; then
@@ -43,13 +44,13 @@ if [ -d ${pilot_version}/software/${os}/${cpu_arch_subdir}/.lmod ]; then
 fi
 if [ -d ${pilot_version}/software/${os}/${cpu_arch_subdir}/modules ]; then
     # module files
-    find ${pilot_version}/software/${os}/${cpu_arch_subdir}/modules -type f | grep -v '/\.wh\.' >> ${files_list}
+    find ${pilot_version}/software/${os}/${cpu_arch_subdir}/modules -type f >> ${files_list}
     # module symlinks
-    find ${pilot_version}/software/${os}/${cpu_arch_subdir}/modules -type l | grep -v '/\.wh\.' >> ${files_list}
+    find ${pilot_version}/software/${os}/${cpu_arch_subdir}/modules -type l >> ${files_list}
 fi
 if [ -d ${pilot_version}/software/${os}/${cpu_arch_subdir}/software ]; then
     # installation directories
-    ls -d ${pilot_version}/software/${os}/${cpu_arch_subdir}/software/*/* | grep -v '/\.wh\.' >> ${files_list}
+    ls -d ${pilot_version}/software/${os}/${cpu_arch_subdir}/software/*/* >> ${files_list}
 fi
 
 topdir=${cvmfs_repo}/versions/
