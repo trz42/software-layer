@@ -459,6 +459,18 @@ echo_green "All set, let's start installing some software in ${EASYBUILD_INSTALL
 #cat $($EB --last-log)
 #check_exit_code $exit_code "${ok_msg}" "${fail_msg}"
 
+## add latest EasyBuild to stack
+echo ">> Adding latest EasyBuild to stack. So far we have:"
+module --ignore_cache avail EasyBuild 2>&1 | grep EasyBuild
+ok_msg="Latest EasyBuild got installed ... great!"
+fail_msg="Installation of latest EasyBuild failed! Disappointed."
+$EB --robot --install-latest-eb-release
+exit_code=$?
+# get what versions are available now
+echo ">> Now, we have:"
+module --ignore_cache avail EasyBuild 2>&1 | grep EasyBuild
+check_exit_code $? "${ok_msg}" "${fail_msg}"
+
 
 echo ">> Creating/updating Lmod cache..."
 export LMOD_RC="${EASYBUILD_INSTALLPATH}/.lmod/lmodrc.lua"
