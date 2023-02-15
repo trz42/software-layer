@@ -1,5 +1,5 @@
 #!/bin/bash
-#
+
 # Script to install EESSI pilot software stack (version set through init/eessi_defaults)
 
 # see example parsing of command line arguments at
@@ -235,8 +235,8 @@ echo_green "All set, let's start installing some software in ${EASYBUILD_INSTALL
 #echo ">> Starting slow with ${GCC_EC}..."
 #ok_msg="${GCC_EC} installed, yippy! Off to a good start..."
 #fail_msg="Installation of ${GCC_EC} failed!"
-## pull in easyconfig from https://github.com/easybuilders/easybuild-easyconfigs/pull/14453,
-## which includes patch to fix build of GCC 9.3 when recent kernel headers are in place
+# pull in easyconfig from https://github.com/easybuilders/easybuild-easyconfigs/pull/14453,
+# which includes patch to fix build of GCC 9.3 when recent kernel headers are in place
 #$EB ${GCC_EC} --robot --from-pr 14453 GCCcore-9.3.0.eb
 #check_exit_code $? "${ok_msg}" "${fail_msg}"
 
@@ -277,7 +277,7 @@ echo_green "All set, let's start installing some software in ${EASYBUILD_INSTALL
 #ok_msg="Perl installed, making progress..."
 #fail_msg="Installation of Perl failed, this never happens..."
 # use enhanced Perl easyblock from https://github.com/easybuilders/easybuild-easyblocks/pull/2640
-## to avoid trouble when using long installation prefix (for example with EESSI pilot 2021.12 on skylake_avx512...)
+# to avoid trouble when using long installation prefix (for example with EESSI pilot 2021.12 on skylake_avx512...)
 #$EB Perl-5.30.2-GCCcore-9.3.0.eb --robot --include-easyblocks-from-pr 2640
 #check_exit_code $? "${ok_msg}" "${fail_msg}"
 
