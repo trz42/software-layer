@@ -16,7 +16,7 @@ jobs:
 #        - container
 #        - resume
 #        - readwrite
-#        - build_container
+        - build_container
 #        - rwdeb10
 #        - save
     steps:
@@ -108,6 +108,7 @@ jobs:
                 echo "dpkg -L fuse3" >> explore_script.sh
                 echo "fuse-overlayfs -V" >> explore_script.sh
                 echo "uname -a" >> explore_script.sh
+                echo "find /proc -mindepth 2 -maxdepth 2 -name exe -exec ls -lh {} \; 2>/dev/null" >> explore_script.sh
                 chmod +x explore_script.sh
                 echo "touch /cvmfs/pilot.eessi-hpc.org/${fn}" > test_script.sh
                 chmod u+x test_script.sh
