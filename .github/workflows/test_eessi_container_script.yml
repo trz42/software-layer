@@ -32,6 +32,9 @@ jobs:
               mount
               df -h
               cat /etc/apptainer/apptainer.conf
+              ls -l $(which singularity)
+              ls -l $(which apptainer)
+              ls -l /dev/fuse
 
         - name: Test eessi_container.sh script
           run: |
