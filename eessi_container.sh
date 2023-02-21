@@ -409,6 +409,7 @@ if [[ "${ACCESS}" == "rw" ]]; then
   EESSI_FUSE_MOUNTS+=("--fusemount" "${EESSI_PILOT_READONLY}")
 
   EESSI_PILOT_WRITABLE_OVERLAY="container:fuse-overlayfs"
+  EESSI_PILOT_WRITABLE_OVERLAY+=" -o noacl"
   EESSI_PILOT_WRITABLE_OVERLAY+=" -o lowerdir=/cvmfs_ro/${repo_name}"
   EESSI_PILOT_WRITABLE_OVERLAY+=" -o upperdir=/tmp/overlay-upper"
   EESSI_PILOT_WRITABLE_OVERLAY+=" -o workdir=/tmp/overlay-work"
