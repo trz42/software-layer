@@ -87,12 +87,12 @@ jobs:
                 chmod u+x test_script.sh
                 export SINGULARITY_BIND="$PWD:/test"
                 singularity version
-                ./eessi_container.sh --verbose --access rw --mode run /test/explore_script.sh 2>&1 | tee -a ${outfile0}
-                ./eessi_container.sh --verbose --access rw --mode run /test/test_script.sh > ${outfile}
+                ./eessi_container.sh --verbose --access rw --mode run --storage $HOME /test/explore_script.sh 2>&1 | tee -a ${outfile0}
+                ./eessi_container.sh --verbose --access rw --mode run --storage $HOME /test/test_script.sh > ${outfile}
 
                 tmpdir=$(grep "\-\-resume" ${outfile} | sed "s/.*--resume \([^']*\).*/\1/g")
                 # note: must use '--access rw' again here, since touched file is in overlay upper dir
-                ./eessi_container.sh --verbose --resume ${tmpdir} --access rw --mode shell <<< "ls -l /cvmfs/pilot.eessi-hpc.org/${fn}" > ${outfile}
+                ./eessi_container.sh --verbose --resume ${tmpdir} --access rw --storage $HOME --mode shell <<< "ls -l /cvmfs/pilot.eessi-hpc.org/${fn}" > ${outfile}
                 grep "/cvmfs/pilot.eessi-hpc.org/${fn}$" $outfile
 
               # test use of build_container.sh script
