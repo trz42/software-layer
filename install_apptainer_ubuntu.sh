@@ -18,6 +18,6 @@ sudo apt update
 sudo apt install -y apptainer
 
 # test versions installed
-apptainer --version
+echo "apptainer --version ==> $(apptainer --version)"
 # also check whether 'singularity' command is still provided by Apptainer installation
-singularity --version
+echo "singularity --version ==> $(singularity --version)"
