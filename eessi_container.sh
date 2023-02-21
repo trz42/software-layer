@@ -437,6 +437,8 @@ echo "Launching container with command (next line):"
 echo "singularity ${MODE} ${EESSI_FUSE_MOUNTS[@]} ${CONTAINER} $@"
 # TODO for now we run singularity with '-q' (quiet), later adjust this to the log level
 #      provided to the script
+umask 000
+umask
 singularity -q ${MODE} "${EESSI_FUSE_MOUNTS[@]}" ${CONTAINER} "$@"
 exit_code=$?
 
