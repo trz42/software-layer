@@ -395,6 +395,7 @@ echo_green "All set, let's start installing some software in ${EASYBUILD_INSTALL
 echo ">> Installing Nextflow 22.10.1..."
 ok_msg="Nextflow installed, the work must flow..."
 fail_msg="Installation of Nextflow failed, that's unexpected..."
+# Comment from Axel: PR 16531 was merged so --from-pr not needed anymore (but was used in this build)
 $EB -r --from-pr 16531 Nextflow-22.10.1.eb
 check_exit_code $? "${ok_msg}" "${fail_msg}"
 
