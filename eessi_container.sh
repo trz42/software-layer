@@ -119,7 +119,7 @@ COMMAND_SEPARATOR=0
 
 POSITIONAL_ARGS=()
 
-while [[ $# -gt 0 ]]; do
+while [[ $# -gt 0 && ${COMMAND_SEPARATOR} -eq 0 ]]; do
   case $1 in
     -a|--access)
       ACCESS="$2"
@@ -180,12 +180,7 @@ while [[ $# -gt 0 ]]; do
       shift
       ;;
     -*|--*)
-      if [[ ${COMMAND_SEPARATOR} -eq 0 ]]; then
-        fatal_error "Unknown option: $1" "${CMDLINE_ARG_UNKNOWN_EXITCODE}"
-      else
-        POSITIONAL_ARGS+=("$1") # save positional arg
-        shift
-      fi
+      fatal_error "Unknown option: $1" "${CMDLINE_ARG_UNKNOWN_EXITCODE}"
       ;;
     *)  # No more options
       POSITIONAL_ARGS+=("$1") # save positional arg
