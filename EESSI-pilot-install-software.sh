@@ -284,7 +284,7 @@ echo_green "All set, let's start installing some software in ${EASYBUILD_INSTALL
 echo ">> Installing Qt5..."
 ok_msg="Qt5 installed, phieuw, that was a big one!"
 fail_msg="Installation of Qt5 failed, that's frustrating..."
-$EB Qt5-5.14.1-GCCcore-9.3.0.eb --robot
+$EB Qt5-5.14.1-GCCcore-9.3.0.eb --robot --disable-cleanup-tmpdir
 check_exit_code $? "${ok_msg}" "${fail_msg}"
 
 # skip test step when installing SciPy-bundle on aarch64,
