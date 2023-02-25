@@ -115,11 +115,9 @@ SAVE=
 HTTP_PROXY=${http_proxy:-}
 HTTPS_PROXY=${https_proxy:-}
 
-COMMAND_SEPARATOR=0
-
 POSITIONAL_ARGS=()
 
-while [[ $# -gt 0 && ${COMMAND_SEPARATOR} -eq 0 ]]; do
+while [[ $# -gt 0 ]]; do
   case $1 in
     -a|--access)
       ACCESS="$2"
@@ -176,8 +174,9 @@ while [[ $# -gt 0 && ${COMMAND_SEPARATOR} -eq 0 ]]; do
       shift 2
       ;;
     --)
-      COMMAND_SEPARATOR=1
       shift
+      POSITIONAL_ARGS+=("$@") # save positional args
+      break
       ;;
     -*|--*)
       fatal_error "Unknown option: $1" "${CMDLINE_ARG_UNKNOWN_EXITCODE}"
