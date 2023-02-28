@@ -401,7 +401,7 @@ echo_green "All set, let's start installing some software in ${EASYBUILD_INSTALL
 #echo ">> Installing OSU-Micro-Benchmarks/5.7.1-gompi-2021a..."
 #ok_msg="OSU-Micro-Benchmarks installed, yihaa!"
 #fail_msg="Installation of OSU-Micro-Benchmarks failed, that's unexpected..."
-#$EB OSU-Micro-Benchmarks-5.7.1-gompi-2021a.eb -r
+$EB OSU-Micro-Benchmarks-5.7.1-gompi-2021a.eb -r
 #check_exit_code $? "${ok_msg}" "${fail_msg}"
 
 #echo ">> Installing EasyBuild 4.5.1..."
