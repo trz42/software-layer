@@ -319,6 +319,7 @@ if [ ! "${EESSI_CPU_FAMILY}" = "ppc64le" ]; then
     echo ">> Installing QuantumESPRESSO..."
     ok_msg="QuantumESPRESSO installed, let's go quantum!"
     fail_msg="Installation of QuantumESPRESSO failed, did somebody observe it?!"
+    $EB QuantumESPRESSO-6.6-foss-2020a.eb --robot --fetch --force
     $EB QuantumESPRESSO-6.6-foss-2020a.eb --robot
     check_exit_code $? "${ok_msg}" "${fail_msg}"
 fi
