@@ -315,14 +315,13 @@ echo_green "All set, let's start installing some software in ${EASYBUILD_INSTALL
 #$EB OpenFOAM-8-foss-2020a.eb OpenFOAM-v2006-foss-2020a.eb --robot
 #check_exit_code $? "${ok_msg}" "${fail_msg}"
 
-if [ ! "${EESSI_CPU_FAMILY}" = "ppc64le" ]; then
-    echo ">> Installing QuantumESPRESSO..."
-    ok_msg="QuantumESPRESSO installed, let's go quantum!"
-    fail_msg="Installation of QuantumESPRESSO failed, did somebody observe it?!"
-    $EB QuantumESPRESSO-6.6-foss-2020a.eb --robot --fetch --force
-    $EB QuantumESPRESSO-6.6-foss-2020a.eb --robot
-    check_exit_code $? "${ok_msg}" "${fail_msg}"
-fi
+#if [ ! "${EESSI_CPU_FAMILY}" = "ppc64le" ]; then
+#    echo ">> Installing QuantumESPRESSO..."
+#    ok_msg="QuantumESPRESSO installed, let's go quantum!"
+#    fail_msg="Installation of QuantumESPRESSO failed, did somebody observe it?!"
+#    $EB QuantumESPRESSO-6.6-foss-2020a.eb --robot
+#    check_exit_code $? "${ok_msg}" "${fail_msg}"
+#fi
 
 #echo ">> Installing R 4.0.0 (better be patient)..."
 #ok_msg="R installed, wow!"
@@ -455,6 +454,7 @@ $EB Python-3.9.5-GCCcore-10.3.0.eb --robot
 $EB OpenMPI-4.1.1-GCC-10.3.0.eb  --robot 
 # this Package has been added to reduce the complexity of building large packages such as R
 $EB ImageMagick-7.0.11-14-GCCcore-10.3.0.eb --robot
+$EB libxc-4.3.4-GCC-9.3.0.eb --robot
 # example block showing a few debugging means
 #echo "Installing CaDiCaL/1.3.0 for GCC/9.3.0..."
 #ok_msg="CaDiCaL installed. Nice!"
