@@ -206,6 +206,9 @@ fi
 
 echo_green "All set, let's start installing some software in ${EASYBUILD_INSTALLPATH}..."
 
+echo "check rate limits before first -[-include-easyblock]-from-pr"
+./check_rate_limits.sh ALL
+
 # install Java with fixed custom easyblock that uses patchelf to ensure right glibc is picked up,
 # see https://github.com/EESSI/software-layer/issues/123
 # and https://github.com/easybuilders/easybuild-easyblocks/pull/2557
@@ -415,6 +418,10 @@ $EB --from-pr 14584 Rust-1.52.1-GCCcore-10.3.0.eb --robot
 # use OpenBLAS easyconfig from https://github.com/easybuilders/easybuild-easyconfigs/pull/15885
 # which includes a patch to fix installation on POWER
 $EB $openblas_include_easyblocks_from_pr --from-pr 15885 OpenBLAS-0.3.15-GCC-10.3.0.eb --robot
+
+echo "check rate limits after last -[-include-easyblock]-from-pr"
+./check_rate_limits.sh ALL
+
 # ignore failing FlexiBLAS tests when building on POWER;
 # some tests are failing due to a segmentation fault due to "invalid memory reference",
 # see also https://github.com/easybuilders/easybuild-easyconfigs/pull/12476;

@@ -156,11 +156,17 @@ fi
 # create tmp file for output of build step
 build_outerr=$(mktemp build.outerr.XXXX)
 
+echo "check rate limits before launching build step"
+./check_rate_limits.sh ALL
+
 echo "Executing command to build software:"
 echo "./eessi_container.sh ${COMMON_ARGS[@]} ${BUILD_STEP_ARGS[@]}"
 echo "                     -- ./install_software_layer.sh ${GENERIC_OPT} \"$@\" 2>&1 | tee -a ${build_outerr}"
 ./eessi_container.sh "${COMMON_ARGS[@]}" "${BUILD_STEP_ARGS[@]}" \
                      -- ./install_software_layer.sh ${GENERIC_OPT} "$@" 2>&1 | tee -a ${build_outerr}
+
+echo "check rate limits after running build step"
+./check_rate_limits.sh ALL
 
 # prepare directory to store tarball of tmp for tarball step
 TARBALL_TMP_TARBALL_STEP_DIR=${PREVIOUS_TMP_DIR}/tarball_step
