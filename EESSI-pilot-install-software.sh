@@ -477,7 +477,7 @@ exit_code=$?
 check_exit_code ${exit_code} "${ok_msg}" "${fail_msg}"
 
 
-echo ">> Creating/updating Lmod cache..."
+echo ">> Creating/updating Lmod cache on $(date) (nr 1) ..."
 export LMOD_RC="${EASYBUILD_INSTALLPATH}/.lmod/lmodrc.lua"
 if [ ! -f $LMOD_RC ]; then
     python3 $TOPDIR/create_lmodrc.py ${EASYBUILD_INSTALLPATH}
