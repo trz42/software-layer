@@ -177,10 +177,6 @@ else
     eb --install-latest-eb-release &> ${eb_install_out}
     check_exit_code $? "${ok_msg}" "${fail_msg}"
 
-    # restore origin $PATH and $PYTHONPATH values
-    export PATH=${ORIG_PATH}
-    export PYTHONPATH=${ORIG_PYTHONPATH}
-
     eb --search EasyBuild-${REQ_EB_VERSION}.eb | grep EasyBuild-${REQ_EB_VERSION}.eb > /dev/null
     if [[ $? -eq 0 ]]; then
         ok_msg="EasyBuild v${REQ_EB_VERSION} installed, alright!"
@@ -188,6 +184,10 @@ else
         eb EasyBuild-${REQ_EB_VERSION}.eb >> ${eb_install_out} 2>&1
         check_exit_code $? "${ok_msg}" "${fail_msg}"
     fi
+
+    # restore origin $PATH and $PYTHONPATH values
+    export PATH=${ORIG_PATH}
+    export PYTHONPATH=${ORIG_PYTHONPATH}
 
     module avail easybuild/${REQ_EB_VERSION} &> ${ml_av_easybuild_out}
     if [[ $? -eq 0 ]]; then
@@ -380,11 +380,11 @@ check_exit_code $? "${ok_msg}" "${fail_msg}"
 #$EB IPython-7.15.0-foss-2020a-Python-3.8.2.eb -r
 #check_exit_code $? "${ok_msg}" "${fail_msg}"
 
-#echo ">> Installing WRF 3.9.1.1..."
-#ok_msg="WRF installed, it's getting hot in here!"
-#fail_msg="Installation of WRF failed, that's unexpected..."
-#OMPI_MCA_pml=ucx UCX_TLS=tcp $EB WRF-3.9.1.1-foss-2020a-dmpar.eb -r --include-easyblocks-from-pr 2648
-#check_exit_code $? "${ok_msg}" "${fail_msg}"
+echo ">> Installing WRF 3.9.1.1..."
+ok_msg="WRF installed, it's getting hot in here!"
+fail_msg="Installation of WRF failed, that's unexpected..."
+OMPI_MCA_pml=ucx UCX_TLS=tcp $EB WRF-3.9.1.1-foss-2020a-dmpar.eb -r --include-easyblocks-from-pr 2648
+check_exit_code $? "${ok_msg}" "${fail_msg}"
 
 #echo ">> Installing R 4.1.0 (better be patient)..."
 #ok_msg="R installed, wow!"
@@ -399,11 +399,11 @@ fail_msg="Installation of Nextflow failed, that's unexpected..."
 $EB -r --from-pr 16531 Nextflow-22.10.1.eb
 check_exit_code $? "${ok_msg}" "${fail_msg}"
 
-#echo ">> Installing OSU-Micro-Benchmarks/5.7.1-gompi-2021a..."
-#ok_msg="OSU-Micro-Benchmarks installed, yihaa!"
-#fail_msg="Installation of OSU-Micro-Benchmarks failed, that's unexpected..."
-#$EB OSU-Micro-Benchmarks-5.7.1-gompi-2021a.eb -r
-#check_exit_code $? "${ok_msg}" "${fail_msg}"
+echo ">> Installing OSU-Micro-Benchmarks/5.7.1-gompi-2021a..."
+ok_msg="OSU-Micro-Benchmarks installed, yihaa!"
+fail_msg="Installation of OSU-Micro-Benchmarks failed, that's unexpected..."
+$EB OSU-Micro-Benchmarks-5.7.1-gompi-2021a.eb -r
+check_exit_code $? "${ok_msg}" "${fail_msg}"
 
 #echo ">> Installing EasyBuild 4.5.1..."
 #ok_msg="EasyBuild v4.5.1 installed"
@@ -464,20 +464,8 @@ $EB ImageMagick-7.0.11-14-GCCcore-10.3.0.eb --robot
 #cat $($EB --last-log)
 #check_exit_code $exit_code "${ok_msg}" "${fail_msg}"
 
-# add latest EasyBuild to stack
-echo ">> Adding latest EasyBuild to stack..."
-ok_msg="Latest EasyBuild got installed ... great!"
-fail_msg="Installation of latest EasyBuild failed! Disappointed."
-if [[ ${EESSI_CVMFS_REPO} == /cvmfs/pilot.eessi-hpc.org ]]; then
-    $EB --from-pr 14545 --include-easyblocks-from-pr 2805 --robot --install-latest-eb-release
-else
-    $EB --robot --install-latest-eb-release
-fi
-exit_code=$?
-check_exit_code ${exit_code} "${ok_msg}" "${fail_msg}"
 
-
-echo ">> Creating/updating Lmod cache..."
+echo ">> Creating/updating Lmod cache on $(date) (nr 1) ..."
 export LMOD_RC="${EASYBUILD_INSTALLPATH}/.lmod/lmodrc.lua"
 if [ ! -f $LMOD_RC ]; then
     python3 $TOPDIR/create_lmodrc.py ${EASYBUILD_INSTALLPATH}
