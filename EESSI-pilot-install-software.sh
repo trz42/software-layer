@@ -347,20 +347,20 @@ check_exit_code $? "${ok_msg}" "${fail_msg}"
 #$EB Horovod-0.21.3-foss-2020a-TensorFlow-2.3.1-Python-3.8.2.eb --robot
 #check_exit_code $? "${ok_msg}" "${fail_msg}"
 
-#if [ ! "${EESSI_CPU_FAMILY}" = "ppc64le" ]; then
+if [ ! "${EESSI_CPU_FAMILY}" = "ppc64le" ]; then
 
-#    echo ">> Installing code-server 3.7.3..."
-#    ok_msg="code-server 3.7.3 installed, now you can use VS Code!"
-#    fail_msg="Installation of code-server failed, that's going to be hard to fix..."
-#    $EB code-server-3.7.3.eb --robot
-#    check_exit_code $? "${ok_msg}" "${fail_msg}"
-#fi
+    echo ">> Installing code-server 3.7.3..."
+    ok_msg="code-server 3.7.3 installed, now you can use VS Code!"
+    fail_msg="Installation of code-server failed, that's going to be hard to fix..."
+    $EB code-server-3.7.3.eb --robot
+    check_exit_code $? "${ok_msg}" "${fail_msg}"
+fi
 
-#echo ">> Installing RStudio-Server 1.3.1093..."
-#ok_msg="RStudio-Server installed, enjoy!"
-#fail_msg="Installation of RStudio-Server failed, might be OS deps..."
-#$EB RStudio-Server-1.3.1093-foss-2020a-Java-11-R-4.0.0.eb --robot
-#check_exit_code $? "${ok_msg}" "${fail_msg}"
+echo ">> Installing RStudio-Server 1.3.1093..."
+ok_msg="RStudio-Server installed, enjoy!"
+fail_msg="Installation of RStudio-Server failed, might be OS deps..."
+$EB RStudio-Server-1.3.1093-foss-2020a-Java-11-R-4.0.0.eb --robot
+check_exit_code $? "${ok_msg}" "${fail_msg}"
 
 echo ">> Installing OSU-Micro-Benchmarks 5.6.3..."
 ok_msg="OSU-Micro-Benchmarks installed, yihaa!"
@@ -374,11 +374,11 @@ fail_msg="Installation of Spark failed, no fireworks this time..."
 $EB Spark-3.1.1-foss-2020a-Python-3.8.2.eb --robot
 check_exit_code $? "${ok_msg}" "${fail_msg}"
 
-#echo ">> Installing IPython 7.15.0..."
-#ok_msg="IPython installed, launch your Jupyter Notebooks!"
-#fail_msg="Installation of IPython failed, that's unexpected..."
-#$EB IPython-7.15.0-foss-2020a-Python-3.8.2.eb -r
-#check_exit_code $? "${ok_msg}" "${fail_msg}"
+echo ">> Installing IPython 7.15.0..."
+ok_msg="IPython installed, launch your Jupyter Notebooks!"
+fail_msg="Installation of IPython failed, that's unexpected..."
+$EB IPython-7.15.0-foss-2020a-Python-3.8.2.eb --robot
+check_exit_code $? "${ok_msg}" "${fail_msg}"
 
 echo ">> Installing WRF 3.9.1.1..."
 ok_msg="WRF installed, it's getting hot in here!"
