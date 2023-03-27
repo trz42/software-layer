@@ -329,11 +329,11 @@ fail_msg="Installation of R failed, so sad..."
 $EB R-4.0.0-foss-2020a.eb --robot --parallel-extensions-install --experimental
 check_exit_code $? "${ok_msg}" "${fail_msg}"
 
-echo ">> Installing Bioconductor 3.11 bundle..."
-ok_msg="Bioconductor installed, enjoy!"
-fail_msg="Installation of Bioconductor failed, that's annoying..."
-$EB R-bundle-Bioconductor-3.11-foss-2020a-R-4.0.0.eb --robot
-check_exit_code $? "${ok_msg}" "${fail_msg}"
+#echo ">> Installing Bioconductor 3.11 bundle..."
+#ok_msg="Bioconductor installed, enjoy!"
+#fail_msg="Installation of Bioconductor failed, that's annoying..."
+#$EB R-bundle-Bioconductor-3.11-foss-2020a-R-4.0.0.eb --robot
+#check_exit_code $? "${ok_msg}" "${fail_msg}"
 
 #echo ">> Installing TensorFlow 2.3.1..."
 #ok_msg="TensorFlow 2.3.1 installed, w00!"
