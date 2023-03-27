@@ -362,11 +362,11 @@ check_exit_code $? "${ok_msg}" "${fail_msg}"
 #$EB RStudio-Server-1.3.1093-foss-2020a-Java-11-R-4.0.0.eb --robot
 #check_exit_code $? "${ok_msg}" "${fail_msg}"
 
-#echo ">> Installing OSU-Micro-Benchmarks 5.6.3..."
-#ok_msg="OSU-Micro-Benchmarks installed, yihaa!"
-#fail_msg="Installation of OSU-Micro-Benchmarks failed, that's unexpected..."
-#$EB OSU-Micro-Benchmarks-5.6.3-gompi-2020a.eb -r
-#check_exit_code $? "${ok_msg}" "${fail_msg}"
+echo ">> Installing OSU-Micro-Benchmarks 5.6.3..."
+ok_msg="OSU-Micro-Benchmarks installed, yihaa!"
+fail_msg="Installation of OSU-Micro-Benchmarks failed, that's unexpected..."
+$EB OSU-Micro-Benchmarks-5.6.3-gompi-2020a.eb -r
+check_exit_code $? "${ok_msg}" "${fail_msg}"
 
 echo ">> Installing Spark 3.1.1..."
 ok_msg="Spark installed, set off the fireworks!"
