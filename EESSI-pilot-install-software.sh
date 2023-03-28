@@ -437,12 +437,15 @@ $EB CMake-3.20.1-GCCcore-10.3.0.eb --robot --include-easyblocks-from-pr 2248
 # see also https://github.com/easybuilders/easybuild-easyconfigs/pull/12476;
 # using -fstack-protector-strong -fstack-clash-protection should fix that,
 # but it doesn't for some reason when building for ppc64le/generic...
-#if [ "${EESSI_SOFTWARE_SUBDIR}" = "ppc64le/generic" ]; then
-#    $EB FlexiBLAS-3.0.4-GCC-10.3.0.eb --ignore-test-failure
-#else
-#    $EB FlexiBLAS-3.0.4-GCC-10.3.0.eb
-#fi
-#
+echo ">> Installing FlexiBlas-3.0.4-foss-2021a..."
+ok_msg="FlexiBlas. Nice!"
+fail_msg="Installation of FlexiBlas failed, that's unexpected..."
+if [ "${EESSI_SOFTWARE_SUBDIR}" = "ppc64le/generic" ]; then
+    $EB FlexiBLAS-3.0.4-GCC-10.3.0.eb --ignore-test-failure
+else
+    $EB FlexiBLAS-3.0.4-GCC-10.3.0.eb
+    check_exit_code $? "${ok_msg}" "${fail_msg}"
+fi
 #$EB SciPy-bundle-2021.05-foss-2021a.eb --robot
 #check_exit_code $? "${ok_msg}" "${fail_msg}"
 
