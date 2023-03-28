@@ -441,9 +441,9 @@ echo ">> Installing FlexiBlas-3.0.4-foss-2021a..."
 ok_msg="FlexiBlas. Nice!"
 fail_msg="Installation of FlexiBlas failed, that's unexpected..."
 if [ "${EESSI_SOFTWARE_SUBDIR}" = "ppc64le/generic" ]; then
-    $EB FlexiBLAS-3.0.4-GCC-10.3.0.eb --ignore-test-failure
+    $EB FlexiBLAS-3.0.4-GCC-10.3.0.eb --robot --ignore-test-failure
 else
-    $EB FlexiBLAS-3.0.4-GCC-10.3.0.eb
+    $EB FlexiBLAS-3.0.4-GCC-10.3.0.eb --robot
     check_exit_code $? "${ok_msg}" "${fail_msg}"
 fi
 #$EB SciPy-bundle-2021.05-foss-2021a.eb --robot
