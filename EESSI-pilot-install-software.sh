@@ -309,11 +309,11 @@ check_exit_code $? "${ok_msg}" "${fail_msg}"
 
 # note: compiling OpenFOAM is memory hungry (16GB is not enough with 8 cores)!
 # 32GB is sufficient to build with 16 cores
-#echo ">> Installing OpenFOAM (twice!)..."
-#ok_msg="OpenFOAM installed, now we're talking!"
-#fail_msg="Installation of OpenFOAM failed, we were so close..."
-#$EB OpenFOAM-8-foss-2020a.eb OpenFOAM-v2006-foss-2020a.eb --robot
-#check_exit_code $? "${ok_msg}" "${fail_msg}"
+echo ">> Installing OpenFOAM (twice!)..."
+ok_msg="OpenFOAM installed, now we're talking!"
+fail_msg="Installation of OpenFOAM failed, we were so close..."
+$EB OpenFOAM-8-foss-2020a.eb OpenFOAM-v2006-foss-2020a.eb --robot
+check_exit_code $? "${ok_msg}" "${fail_msg}"
 
 #if [ ! "${EESSI_CPU_FAMILY}" = "ppc64le" ]; then
 #    echo ">> Installing QuantumESPRESSO..."
