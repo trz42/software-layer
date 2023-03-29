@@ -319,7 +319,7 @@ check_exit_code $? "${ok_msg}" "${fail_msg}"
 echo ">> Installing ELPA"
 ok_msg="ELPA installed, wow!"
 fail_msg="Installation of ELPA failed, so sad..."
-$EB eb --from-pr 17357 ELPA-2019.11.001-foss-2020a.eb --robot
+$EB --from-pr 17357 ELPA-2019.11.001-foss-2020a.eb --robot
 check_exit_code $? "${ok_msg}" "${fail_msg}"
 
 #if [ ! "${EESSI_CPU_FAMILY}" = "ppc64le" ]; then
