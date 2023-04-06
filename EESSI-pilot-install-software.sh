@@ -430,6 +430,7 @@ $EB SciPy-bundle-2021.05-foss-2021a.eb --robot
 check_exit_code $? "${ok_msg}" "${fail_msg}"
 
 ### add packages here
+echo "a devel PR for EESSI"
 $EB CaDiCaL-1.3.0-GCC-9.3.0.eb --robot
 
 echo ">> Creating/updating Lmod cache..."
