@@ -315,19 +315,23 @@ check_exit_code $? "${ok_msg}" "${fail_msg}"
 #$EB OpenFOAM-8-foss-2020a.eb OpenFOAM-v2006-foss-2020a.eb --robot
 #check_exit_code $? "${ok_msg}" "${fail_msg}"
 
-#if [ ! "${EESSI_CPU_FAMILY}" = "ppc64le" ]; then
-#    echo ">> Installing QuantumESPRESSO..."
-#    ok_msg="QuantumESPRESSO installed, let's go quantum!"
-#    fail_msg="Installation of QuantumESPRESSO failed, did somebody observe it?!"
-#    $EB QuantumESPRESSO-6.6-foss-2020a.eb --robot
-#    check_exit_code $? "${ok_msg}" "${fail_msg}"
-#fi
 
-#echo ">> Installing R 4.0.0 (better be patient)..."
-#ok_msg="R installed, wow!"
-#fail_msg="Installation of R failed, so sad..."
-#$EB R-4.0.0-foss-2020a.eb --robot --parallel-extensions-install --experimental
-#check_exit_code $? "${ok_msg}" "${fail_msg}"
+if [ ! "${EESSI_CPU_FAMILY}" = "ppc64le" ]; then
+    echo ">> Installing QuantumESPRESSO..."
+    ok_msg="QuantumESPRESSO installed, let's go quantum!"
+    fail_msg="Installation of QuantumESPRESSO failed, did somebody observe it?!"
+   # ELPA source url has changed between EasyBuild 4.7.0 and 4.7.1, need to use --from-pr
+   # until 4.7.1 is installed
+    $EB --from-pr 17357 ELPA-2019.11.001-foss-2020a.eb --robot
+    $EB QuantumESPRESSO-6.6-foss-2020a.eb --robot
+    check_exit_code $? "${ok_msg}" "${fail_msg}"
+fi
+
+echo ">> Installing R 4.0.0 (better be patient)..."
+ok_msg="R installed, wow!"
+fail_msg="Installation of R failed, so sad..."
+$EB R-4.0.0-foss-2020a.eb --robot --parallel-extensions-install --experimental
+check_exit_code $? "${ok_msg}" "${fail_msg}"
 
 #echo ">> Installing Bioconductor 3.11 bundle..."
 #ok_msg="Bioconductor installed, enjoy!"
@@ -362,16 +366,16 @@ check_exit_code $? "${ok_msg}" "${fail_msg}"
 #$EB RStudio-Server-1.3.1093-foss-2020a-Java-11-R-4.0.0.eb --robot
 #check_exit_code $? "${ok_msg}" "${fail_msg}"
 
-#echo ">> Installing OSU-Micro-Benchmarks 5.6.3..."
-#ok_msg="OSU-Micro-Benchmarks installed, yihaa!"
-#fail_msg="Installation of OSU-Micro-Benchmarks failed, that's unexpected..."
-#$EB OSU-Micro-Benchmarks-5.6.3-gompi-2020a.eb -r
-#check_exit_code $? "${ok_msg}" "${fail_msg}"
+echo ">> Installing OSU-Micro-Benchmarks 5.6.3..."
+ok_msg="OSU-Micro-Benchmarks installed, yihaa!"
+fail_msg="Installation of OSU-Micro-Benchmarks failed, that's unexpected..."
+$EB OSU-Micro-Benchmarks-5.6.3-gompi-2020a.eb --robot
+check_exit_code $? "${ok_msg}" "${fail_msg}"
 
 echo ">> Installing Spark 3.1.1..."
 ok_msg="Spark installed, set off the fireworks!"
 fail_msg="Installation of Spark failed, no fireworks this time..."
-$EB Spark-3.1.1-foss-2020a-Python-3.8.2.eb -r
+$EB Spark-3.1.1-foss-2020a-Python-3.8.2.eb --robot
 check_exit_code $? "${ok_msg}" "${fail_msg}"
 
 #echo ">> Installing IPython 7.15.0..."
@@ -383,7 +387,7 @@ check_exit_code $? "${ok_msg}" "${fail_msg}"
 echo ">> Installing WRF 3.9.1.1..."
 ok_msg="WRF installed, it's getting hot in here!"
 fail_msg="Installation of WRF failed, that's unexpected..."
-OMPI_MCA_pml=ucx UCX_TLS=tcp $EB WRF-3.9.1.1-foss-2020a-dmpar.eb -r --include-easyblocks-from-pr 2648
+OMPI_MCA_pml=ucx UCX_TLS=tcp $EB WRF-3.9.1.1-foss-2020a-dmpar.eb --robot --include-easyblocks-from-pr 2648
 check_exit_code $? "${ok_msg}" "${fail_msg}"
 
 #echo ">> Installing R 4.1.0 (better be patient)..."
@@ -396,13 +400,13 @@ echo ">> Installing Nextflow 22.10.1..."
 ok_msg="Nextflow installed, the work must flow..."
 fail_msg="Installation of Nextflow failed, that's unexpected..."
 # Comment from Axel: PR 16531 was merged so --from-pr not needed anymore (but was used in this build)
-$EB -r --from-pr 16531 Nextflow-22.10.1.eb
+$EB --from-pr 16531 Nextflow-22.10.1.eb --robot
 check_exit_code $? "${ok_msg}" "${fail_msg}"
 
 echo ">> Installing OSU-Micro-Benchmarks/5.7.1-gompi-2021a..."
 ok_msg="OSU-Micro-Benchmarks installed, yihaa!"
 fail_msg="Installation of OSU-Micro-Benchmarks failed, that's unexpected..."
-$EB OSU-Micro-Benchmarks-5.7.1-gompi-2021a.eb -r
+$EB OSU-Micro-Benchmarks-5.7.1-gompi-2021a.eb --robot
 check_exit_code $? "${ok_msg}" "${fail_msg}"
 
 #echo ">> Installing EasyBuild 4.5.1..."
