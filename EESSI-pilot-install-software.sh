@@ -289,6 +289,8 @@ fail_msg="Installation of Qt5 failed, that's frustrating..."
 $EB Qt5-5.14.1-GCCcore-9.3.0.eb --robot --disable-cleanup-tmpdir
 check_exit_code $? "${ok_msg}" "${fail_msg}"
 
+exit 0
+
 # skip test step when installing SciPy-bundle on aarch64,
 # to dance around problem with broken numpy tests;
 # cfr. https://github.com/easybuilders/easybuild-easyconfigs/issues/11959
