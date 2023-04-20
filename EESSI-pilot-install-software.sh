@@ -151,6 +151,8 @@ esac
 echo "REQ_EB_VERSION=${REQ_EB_VERSION}"
 module avail 2>&1 | grep -i easybuild
 
+export JOB_PROGRESS_FILE="_bot_job${SLURM_JOB_ID}.progress"
+
 echo ">> Checking for EasyBuild module..."
 ml_av_easybuild_out=$TMPDIR/ml_av_easybuild.out
 module avail 2>&1 | grep -i easybuild/${REQ_EB_VERSION} &> ${ml_av_easybuild_out}
