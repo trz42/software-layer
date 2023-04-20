@@ -55,7 +55,7 @@ def parse_hook(ec, *args, **kwargs):
     if job_progress_file:
         with open(job_progress_file, "w") as jpf:
             jpf.write(f"[PROGRESS]\nsummary = {ec.filename()}\n")
-    
+
     if ec.name in PARSE_HOOKS:
         PARSE_HOOKS[ec.name](ec, eprefix)
 
