@@ -208,11 +208,9 @@ else
     fatal_error "EasyBuild not working?!"
 fi
 
-${EB:-eb} --robot GCC-10.3.0.eb --include-easyblocks=${PWD}/easyblocks/g/gcc.py
-
-#echo_green "All set, let's start installing some software in ${EASYBUILD_INSTALLPATH}..."
-#eb_install_easystack_out=${TMPDIR}/eb_install_easystack.out
-#${EB:-eb} --robot --easystack eessi-${EESSI_PILOT_VERSION}.yml --experimental | tee ${eb_install_easystack_out}
+echo_green "All set, let's start installing some software in ${EASYBUILD_INSTALLPATH}..."
+eb_install_easystack_out=${TMPDIR}/eb_install_easystack.out
+${EB:-eb} --robot --easystack eessi-${EESSI_PILOT_VERSION}.yml --experimental | tee ${eb_install_easystack_out}
 
 echo ">> Creating/updating Lmod cache on $(date) (nr 1) ..."
 export LMOD_RC="${EASYBUILD_INSTALLPATH}/.lmod/lmodrc.lua"
