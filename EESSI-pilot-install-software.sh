@@ -448,8 +448,9 @@ if [ "${EESSI_SOFTWARE_SUBDIR}" = "ppc64le/generic" ]; then
     $EB FlexiBLAS-3.0.4-GCC-10.3.0.eb --robot --ignore-test-failure
 else
     $EB FlexiBLAS-3.0.4-GCC-10.3.0.eb --robot
-    check_exit_code $? "${ok_msg}" "${fail_msg}"
 fi
+check_exit_code $? "${ok_msg}" "${fail_msg}"
+
 #$EB SciPy-bundle-2021.05-foss-2021a.eb --robot
 #check_exit_code $? "${ok_msg}" "${fail_msg}"
 
