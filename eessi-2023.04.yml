@@ -2,7 +2,7 @@ easyconfigs:
 #  - GCC-9.3.0.eb
   - GCC-10.3.0.eb:
       options:
-        include-easyblocks: 'easyblocks/g/gcc.py'
+        include-easyblocks-from-pr: 2921
 #  - GCC-11.3.0.eb
   - GCC-12.2.0.eb:
       options:
