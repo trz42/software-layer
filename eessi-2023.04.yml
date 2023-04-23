@@ -9,4 +9,4 @@ easyconfigs:
         include-easyblocks-from-pr: 2921
   - OpenSSL-1.1.eb
       options:
-        include-easyblocks: 'easyblocks/o/openssl_wrapper.py'
+        include-easyblocks-from-pr: 2922
