@@ -7,4 +7,4 @@ easyconfigs:
 #  - GCC-12.2.0.eb
   - OpenSSL-1.1.eb:
       options:
-        include-easyblocks: 'easyblocks/o/openssl_wrapper.py'
+        include-easyblocks-from-pr: 2922
