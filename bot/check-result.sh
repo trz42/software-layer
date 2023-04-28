@@ -238,27 +238,27 @@ CoDeList=""
 
 success_msg="job output file <code>${job_out}</code>"
 failure_msg="no job output file matching <code>${GP_slurm_out}</code>"
-CoDeList="${CoDeList}$(add_detail ${SLURM} 1 ${success_msg} ${failure_msg})"
+CoDeList=${CoDeList}$(add_detail ${SLURM} 1 "${success_msg}" "${failure_msg}")
 
 success_msg="no message matching <code>${GP_error}</code>"
 failure_msg="found message matching <code>${GP_error}</code>"
-CoDeList="${CoDeList}$(add_detail ${ERROR} 0 ${success_msg} ${failure_msg})"
+CoDeList=${CoDeList}$(add_detail ${ERROR} 0 "${success_msg}" "${failure_msg}")
 
 success_msg="no message matching <code>${GP_failed}</code>"
 failure_msg="found message matching <code>${GP_failed}</code>"
-CoDeList="${CoDeList}$(add_detail ${FAILED} 0 ${success_msg} ${failure_msg})"
+CoDeList=${CoDeList}$(add_detail ${FAILED} 0 "${success_msg}" "${failure_msg}")
 
 success_msg="no message matching <code>${GP_req_missing}</code>"
 failure_msg="found message matching <code>${GP_req_missing}</code>"
-CoDeList="${CoDeList}$(add_detail ${MISSING} 0 ${success_msg} ${failure_msg})"
+CoDeList=${CoDeList}$(add_detail ${MISSING} 0 "${success_msg}" "${failure_msg}")
 
 success_msg="found message(s) matching <code>${GP_no_missing}</code>"
 failure_msg="no message matching <code>${GP_no_missing}</code>"
-CoDeList="${CoDeList}$(add_detail ${NO_MISSING} 1 ${success_msg} ${failure_msg})"
+CoDeList=${CoDeList}$(add_detail ${NO_MISSING} 1 "${success_msg}" "${failure_msg}")
 
 success_msg="found message matching <code>${GP_tgz_created}</code>"
 failure_msg="no message matching <code>${GP_tgz_created}</code>"
-CoDeList="${CoDeList}$(add_detail ${TGZ} 1 ${success_msg} ${failure_msg})"
+CoDeList=${CoDeList}$(add_detail ${TGZ} 1 "${success_msg}" "${failure_msg}")
 
 comment_details="${comment_details_fmt/__DETAILS_LIST__/${CoDeList}}"
 
