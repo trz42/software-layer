@@ -4,8 +4,8 @@
 # Intended use is that it is called by a (batch) job running on a compute
 # node.
 #
-# This script is part of the EESSI compatibility layer, see
-# https://github.com/EESSI/compatibility-layer.git
+# This script is part of the EESSI software layer, see
+# https://github.com/EESSI/software-layer.git
 #
 # author: Thomas Roeblitz (@trz42)
 #
@@ -147,64 +147,131 @@ if [[ ${SLURM} -eq 1 ]] && \
    [[ ${TGZ} -eq 1 ]] && \
    [[ ! -z ${TARBALL} ]]; then
     # SUCCESS
-    echo "[RESULT]" > ${job_result_file}
-    echo "summary = :grin: SUCCESS" >> ${job_result_file}
-    echo "details =" >> ${job_result_file}
+    summary=":grin: SUCCESS"
+    status="success"
 else
     # FAILURE
-    echo "[RESULT]" > ${job_result_file}
-    echo "summary = :cry: FAILURE" >> ${job_result_file}
-    echo "details =" >> ${job_result_file}
+    summary=":cry: FAILURE"
+    status="failure"
 fi
 
-function succeeded() {
-    echo "    :heavy_check_mark: ${1}"
+### Example details/descriptions
+#
+# <details><summary>:cry: FAILURE _(click triangle for detailed information)_</summary>Details:<br/>&nbsp;&nbsp;&nbsp;&nbsp;:heavy_check_mark: job output file <code>slurm-470503.out</code><br/>&nbsp;&nbsp;&nbsp;&nbsp;:heavy_multiplication_x: found message matching <code>ERROR: </code><br/>&nbsp;&nbsp;&nbsp;&nbsp;:heavy_multiplication_x: found message matching <code>FAILED: </code><br/>&nbsp;&nbsp;&nbsp;&nbsp;:heavy_multiplication_x: found message matching <code> required modules missing:</code><br/>&nbsp;&nbsp;&nbsp;&nbsp;:heavy_check_mark: found message(s) matching <code>No missing modules!</code><br/>&nbsp;&nbsp;&nbsp;&nbsp;:heavy_check_mark: found message matching <code>tar.gz created!</code><br/>Artefacts:<li><code>eessi-2023.04-software-linux-x86_64-amd-zen2-1682384569.tar.gz</code></li></details>
+#
+# <details><summary>:grin: SUCCESS _(click triangle for detailed information)_</summary>Details:<br/>&nbsp;&nbsp;&nbsp;&nbsp;:heavy_check_mark: job output file <code>slurm-470503.out</code><br/>&nbsp;&nbsp;&nbsp;&nbsp;:heavy_check_mark: found message matching <code>ERROR: </code><br/>&nbsp;&nbsp;&nbsp;&nbsp;:heavy_check_mark: found message matching <code>FAILED: </code><br/>&nbsp;&nbsp;&nbsp;&nbsp;:heavy_check_mark: found message matching <code> required modules missing:</code><br/>&nbsp;&nbsp;&nbsp;&nbsp;:heavy_check_mark: found message(s) matching <code>No missing modules!</code><br/>&nbsp;&nbsp;&nbsp;&nbsp;:heavy_check_mark: found message matching <code>tar.gz created!</code><br/>Artefacts:<li><code>eessi-2023.04-software-linux-x86_64-amd-zen2-1682384569.tar.gz</code></li></details>
+#
+###
+
+# construct and write complete PR comment details
+comment_template="<details>__SUMMARY_FMT____DETAILS_FMT____ARTEFACTS_FMT__</details>"
+comment_summary_fmt="<summary>__SUMMARY__ _(click triangle for detailed information)_</summary>"
+comment_details_fmt="Details:<br/>__DETAILS_LIST__"
+comment_artefacts_fmt="Artefacts:<br/>__ARTEFACTS_LIST__"
+comment_success_item_fmt=":heavy_check_mark: __ITEM__"
+comment_failure_item_fmt=":heavy_multiplication_x: __ITEM__"
+
+function print_br_item() {
+    format="${1}"
+    item="${2}"
+    echo -n "&nbsp;&nbsp;&nbsp;&nbsp;${format//__ITEM__/${item}}<br/>"
 }
 
-function failed() {
-    echo "    :heavy_multiplication_x: ${1}"
+function print_list_item() {
+    format="${1}"
+    item="${2}"
+    echo -n "<li>${format//__ITEM__/${item}}</li>"
 }
 
-if [[ ${SLURM} -eq 1 ]]; then
-    succeeded "job output file <code>${job_out}</code>" >> ${job_result_file}
-else
-    failed "no job output file matching <code>${GP_slurm_out}</code>" >> ${job_result_file}
-fi
+function success() {
+    format="${comment_success_item_fmt}"
+    item="$1"
+    print_br_item "${format}" "${item}"
+}
 
-if [[ ${ERROR} -eq 0 ]]; then
-    succeeded "no message matching <code>${GP_error}</code>" >> ${job_result_file}
-else
-    failed "found message matching <code>${GP_error}</code>" >> ${job_result_file}
-fi
+function failure() {
+    format="${comment_failure_item_fmt}"
+    item="$1"
+    print_br_item "${format}" "${item}"
+}
 
-if [[ ${FAILED} -eq 0 ]]; then
-    succeeded "no message matching <code>${GP_failed}</code>" >> ${job_result_file}
-else
-    failed "found message matching <code>${GP_failed}</code>" >> ${job_result_file}
-fi
+function add_detail() {
+    actual=${1}
+    expected=${2}
+    success_msg="${3}"
+    failure_msg="${4}"
+    if [[ ${actual} -eq ${expected} ]]; then
+        success "${success_msg}"
+    else
+        failure "${failure_msg}"
+    fi
+}
 
-if [[ ${MISSING} -eq 0 ]]; then
-    succeeded "no message matching <code>${GP_req_missing}</code>" >> ${job_result_file}
-else
-    failed "found message matching <code>${GP_req_missing}</code>" >> ${job_result_file}
-fi
+echo "[RESULT]" > ${job_result_file}
+echo -n "comment_description = " >> ${job_result_file}
 
-if [[ ${NO_MISSING} -eq 1 ]]; then
-    succeeded "found message(s) matching <code>${GP_no_missing}</code>" >> ${job_result_file}
-else
-    failed "no message matching <code>${GP_no_missing}</code>" >> ${job_result_file}
-fi
+# construct values for placeholders in comment_template:
+# - __SUMMARY_FMT__ -> variable $comment_summary
+# - __DETAILS_FMT__ -> variable $comment_details
+# - __ARTEFACTS_FMT__ -> variable $comment_artefacts
 
-if [[ ${TGZ} -eq 1 ]]; then
-    succeeded "found message matching <code>${GP_tgz_created}</code>" >> ${job_result_file}
-else
-    failed "no message matching <code>${GP_tgz_created}</code>" >> ${job_result_file}
-fi
+comment_summary="${comment_summary_fmt/__SUMMARY__/${summary}}"
 
-echo "artefacts =" >> ${job_result_file}
+# first construct comment_details_list, abbreviated CoDeList
+# then use it to set comment_details
+CoDeList=""
 
+success_msg="job output file <code>${job_out}</code>"
+failure_msg="no job output file matching <code>${GP_slurm_out}</code>"
+CoDeList="${CoDeList}$(add_detail ${SLURM} 1 ${success_msg} ${failure_msg})"
+
+success_msg="no message matching <code>${GP_error}</code>"
+failure_msg="found message matching <code>${GP_error}</code>"
+CoDeList="${CoDeList}$(add_detail ${ERROR} 0 ${success_msg} ${failure_msg})"
+
+success_msg="no message matching <code>${GP_failed}</code>"
+failure_msg="found message matching <code>${GP_failed}</code>"
+CoDeList="${CoDeList}$(add_detail ${FAILED} 0 ${success_msg} ${failure_msg})"
+
+success_msg="no message matching <code>${GP_req_missing}</code>"
+failure_msg="found message matching <code>${GP_req_missing}</code>"
+CoDeList="${CoDeList}$(add_detail ${MISSING} 0 ${success_msg} ${failure_msg})"
+
+success_msg="found message(s) matching <code>${GP_no_missing}</code>"
+failure_msg="no message matching <code>${GP_no_missing}</code>"
+CoDeList="${CoDeList}$(add_detail ${NO_MISSING} 1 ${success_msg} ${failure_msg})"
+
+success_msg="found message matching <code>${GP_tgz_created}</code>"
+failure_msg="no message matching <code>${GP_tgz_created}</code>"
+CoDeList="${CoDeList}$(add_detail ${TGZ} 1 ${success_msg} ${failure_msg})"
+
+comment_details="${comment_details_fmt/__DETAILS_LIST__/${CoDeList}}"
+
+
+# first construct comment_artefacts_list, abbreviated CoArList
+# then use it to set comment_artefacts
+CoArList=""
+
+# TARBALL should only contain a single tarball
 if [[ ! -z ${TARBALL} ]]; then
-    echo "    ${TARBALL}" >> ${job_result_file}
+    CoArList="${CoArList}$(print_list_item '<code>__ITEM__</code>' ${TARBALL})"
+else
+    CoArList="${CoArList}$(print_list_item 'No artefacts were created/found.' '')"
 fi
+comment_artefacts="${comment_artefacts_fmt/__ARTEFACTS_LIST__/${CoArList}}"
+
+# now put all pieces together creating comment_details from comment_template
+comment_description=${comment_template/__SUMMARY_FMT__/${comment_summary}}
+comment_description=${comment_description/__DETAILS_FMT__/${comment_details}}
+comment_description=${comment_description/__ARTEFACTS_FMT__/${comment_artefacts}}
+
+echo "${comment_description}" >> ${job_result_file}
+
+# add overall result: SUCCESS, FAILURE, UNKNOWN + artefacts
+# - this should make use of subsequent steps such as deploying a tarball more
+#   efficient
+echo "status = ${status}" >> ${job_result_file}
+echo "artefacts = " >> ${job_result_file}
+echo "${TARBALL}" | sed -e 's/^/    /g' >> ${job_result_file}
 
 exit 0
