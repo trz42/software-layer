@@ -88,46 +88,61 @@ job_out=$(ls ${job_dir} | grep "${GP_slurm_out}")
 [[ ${VERBOSE} -ne 0 ]] && echo ">> searching for job output file(s) matching '"${GP_slurm_out}"'"
 [[ ${VERBOSE} -ne 0 ]] && echo "   found slurm output file '"${job_out}"'"
 
-GP_error='ERROR: '
-grep_out=$(grep "${GP_error}" ${job_dir}/${job_out})
-[[ $? -eq 0 ]] && ERROR=1 || ERROR=0
-# have to be careful to not add searched for pattern into slurm out file
-[[ ${VERBOSE} -ne 0 ]] && echo ">> searching for '"${GP_error}"'"
-[[ ${VERBOSE} -ne 0 ]] && echo "${grep_out}"
-
-GP_failed='FAILED: '
-grep_out=$(grep "${GP_failed}" ${job_dir}/${job_out})
-[[ $? -eq 0 ]] && FAILED=1 || FAILED=0
-# have to be careful to not add searched for pattern into slurm out file
-[[ ${VERBOSE} -ne 0 ]] && echo ">> searching for '"${GP_failed}"'"
-[[ ${VERBOSE} -ne 0 ]] && echo "${grep_out}"
-
-GP_req_missing=' required modules missing:'
-grep_out=$(grep "${GP_req_missing}" ${job_dir}/${job_out})
-[[ $? -eq 0 ]] && MISSING=1 || MISSING=0
-# have to be careful to not add searched for pattern into slurm out file
-[[ ${VERBOSE} -ne 0 ]] && echo ">> searching for '"${GP_req_missing}"'"
-[[ ${VERBOSE} -ne 0 ]] && echo "${grep_out}"
-
-GP_no_missing='No missing modules!'
-grep_out=$(grep "${GP_no_missing}" ${job_dir}/${job_out})
-[[ $? -eq 0 ]] && NO_MISSING=1 || NO_MISSING=0
-# have to be careful to not add searched for pattern into slurm out file
-[[ ${VERBOSE} -ne 0 ]] && echo ">> searching for '"${GP_no_missing}"'"
-[[ ${VERBOSE} -ne 0 ]] && echo "${grep_out}"
-
-GP_tgz_created="tar.gz created!"
-TARBALL=
-grep_out=$(grep "${GP_tgz_created}" ${job_dir}/${job_out})
-if [[ $? -eq 0 ]]; then
-    TGZ=1
-    TARBALL=$(echo ${grep_out} | sed -e 's@^.*\(eessi[^/ ]*\) .*$@\1@')
-else
-    TGZ=0
+ERROR=-1
+if [[ ${SLURM} -eq 1 ]]; then
+  GP_error='ERROR: '
+  grep_out=$(grep "${GP_error}" ${job_dir}/${job_out})
+  [[ $? -eq 0 ]] && ERROR=1 || ERROR=0
+  # have to be careful to not add searched for pattern into slurm out file
+  [[ ${VERBOSE} -ne 0 ]] && echo ">> searching for '"${GP_error}"'"
+  [[ ${VERBOSE} -ne 0 ]] && echo "${grep_out}"
 fi
-# have to be careful to not add searched for pattern into slurm out file
-[[ ${VERBOSE} -ne 0 ]] && echo ">> searching for '"${GP_tgz_created}"'"
-[[ ${VERBOSE} -ne 0 ]] && echo "${grep_out}"
+
+FAILED=-1
+if [[ ${SLURM} -eq 1 ]]; then
+  GP_failed='FAILED: '
+  grep_out=$(grep "${GP_failed}" ${job_dir}/${job_out})
+  [[ $? -eq 0 ]] && FAILED=1 || FAILED=0
+  # have to be careful to not add searched for pattern into slurm out file
+  [[ ${VERBOSE} -ne 0 ]] && echo ">> searching for '"${GP_failed}"'"
+  [[ ${VERBOSE} -ne 0 ]] && echo "${grep_out}"
+fi
+
+MISSING=-1
+if [[ ${SLURM} -eq 1 ]]; then
+  GP_req_missing=' required modules missing:'
+  grep_out=$(grep "${GP_req_missing}" ${job_dir}/${job_out})
+  [[ $? -eq 0 ]] && MISSING=1 || MISSING=0
+  # have to be careful to not add searched for pattern into slurm out file
+  [[ ${VERBOSE} -ne 0 ]] && echo ">> searching for '"${GP_req_missing}"'"
+  [[ ${VERBOSE} -ne 0 ]] && echo "${grep_out}"
+fi
+
+NO_MISSING=-1
+if [[ ${SLURM} -eq 1 ]]; then
+  GP_no_missing='No missing modules!'
+  grep_out=$(grep "${GP_no_missing}" ${job_dir}/${job_out})
+  [[ $? -eq 0 ]] && NO_MISSING=1 || NO_MISSING=0
+  # have to be careful to not add searched for pattern into slurm out file
+  [[ ${VERBOSE} -ne 0 ]] && echo ">> searching for '"${GP_no_missing}"'"
+  [[ ${VERBOSE} -ne 0 ]] && echo "${grep_out}"
+fi
+
+TGZ=-1
+TARBALL=
+if [[ ${SLURM} -eq 1 ]]; then
+  GP_tgz_created="tar.gz created!"
+  grep_out=$(grep "${GP_tgz_created}" ${job_dir}/${job_out})
+  if [[ $? -eq 0 ]]; then
+      TGZ=1
+      TARBALL=$(echo ${grep_out} | sed -e 's@^.*\(eessi[^/ ]*\) .*$@\1@')
+  else
+      TGZ=0
+  fi
+  # have to be careful to not add searched for pattern into slurm out file
+  [[ ${VERBOSE} -ne 0 ]] && echo ">> searching for '"${GP_tgz_created}"'"
+  [[ ${VERBOSE} -ne 0 ]] && echo "${grep_out}"
+fi
 
 [[ ${VERBOSE} -ne 0 ]] && echo "SUMMARY: ${job_dir}/${job_out}"
 [[ ${VERBOSE} -ne 0 ]] && echo "  test name  : result (expected result)"
