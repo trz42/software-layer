@@ -182,7 +182,7 @@ def wrf_preconfigure(self, *args, **kwargs):
 
 
 def Rustv(ec, eprefix):
-    """ For the new compat layer we use Rust-1.60.0 Rust-1.52.1""" 
+    """ For the new compat layer we use Rust-1.60.0 instead of Rust-1.52.1""" 
     print_msg(f"#normal_deps {len(ec['dependencies'])}" )
     for dep in ec['dependencies']:
         for i in range(len(ec['dependencies'])):
