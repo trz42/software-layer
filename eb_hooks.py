@@ -50,6 +50,10 @@ def parse_hook(ec, *args, **kwargs):
     # determine path to Prefix installation in compat layer via $EPREFIX
     eprefix = get_eessi_envvar('EPREFIX')
 
+
+    # always replace Rust/1.52.1 with Rust/1.60.0
+    Rust_ver_replace(ec, eprefix)
+
     if ec.name in PARSE_HOOKS:
         PARSE_HOOKS[ec.name](ec, eprefix)
 
@@ -181,27 +185,34 @@ def wrf_preconfigure(self, *args, **kwargs):
         raise EasyBuildError("WRF-specific hook triggered for non-WRF easyconfig?!")
 
 
-def Rustv(ec, eprefix):
-    """ For the new compat layer we use Rust-1.60.0 instead of Rust-1.52.1""" 
-    for dep in ec['dependencies']:
-        for i in range(len(ec['dependencies'])):
-         dep = ec['dependencies'][i]
-         if isinstance(dep, (list,tuple)) and (dep[0] == "Rust" and dep[1] == '1.52.1'):
-            print_msg("NOTE: Rust version has been modified to 1.60.0")
-            ec['dependencies'][i] = ["Rust", "1.60.0"]
-    for dep in ec['hiddendependencies']:
-        for i in range(len(ec['hiddendependencies'])):
-         dep = ec['hiddendependencies'][i]
-         if isinstance(dep, (list,tuple)) and (dep[0] == "Rust" and dep[1] == '1.52.1'):
-            print_msg("NOTE: Rust version has been modified to 1.60.0")
-            ec['hiddendependencies'][i] = ["Rust", "1.60.0"]
-    for dep in ec['builddependencies']:
-        for i in range(len(ec['builddependencies'])):
-         dep = ec['builddependencies'][i]
-         if isinstance(dep, (list,tuple)) and (dep[0] == "Rust" and dep[1] == '1.52.1'):
-            print_msg("NOTE: Rust version has been modified to 1.60.0")
-            ec['builddependencies'][i] = ["Rust", "1.60.0"]
+def Rust_ver_replace(ec, eprefix):
+    """When using the new compat layer, building Rust/1.52.1 fails while Rust/1.60.0 succeeds ,the goal is to replace 
+       Rust/1.52.1 when found as dependency/hiddendependency/buildependency by Rust/1.60.0 while building software""" 
+    for index in range(len(ec['dependencies'])):
+        dep = ec['dependencies'][index]
+        if isinstance(dep, (list,tuple)) and (dep[0] == "Rust" and dep[1] == '1.52.1'):
+            print_msg("NOTE:Rust dependency version has been modified from Rust/1.52.1 --> Rust/1.60.0")
+            if isinstance(dep, list):
+                ec['dependencies'][index] = ["Rust", "1.60.0"]
+            else:
+                ec['dependencies'][index] = ("Rust", "1.60.0")
 
+    for index in range(len(ec['hiddendependencies'])):
+        dep = ec['hiddendependencies'][index]
+        if isinstance(dep, (list,tuple)) and (dep[0] == "Rust" and dep[1] == '1.52.1'):
+            print_msg("NOTE:Rust hiddendependency version has been modified from Rust/1.52.1 --> Rust/1.60.0 ")
+            if isinstance(dep, list):
+                ec['hiddendependencies'][index] = ["Rust", "1.60.0"]
+            else:
+                ec['hiddendependencies'][index] = ("Rust", "1.60.0")
+    for index in range(len(ec['builddependencies'])):
+        dep = ec['builddependencies'][index]
+        if isinstance(dep, (list,tuple)) and (dep[0] == "Rust" and dep[1] == '1.52.1'):
+            print_msg("NOTE:Rust builddependency version has been modified from Rust/1.52.1 --> Rust/1.60.0")
+            if isinstance(dep, list):
+                ec['builddependencies'][index] = ["Rust", "1.60.0"]
+            else:
+                ec['builddependencies'][index] = ("Rust", "1.60.0")
 
 PARSE_HOOKS = {
     'CGAL': cgal_toolchainopts_precise,
