@@ -209,6 +209,18 @@ else
 fi
 
 echo_green "All set, let's start installing some software in ${EASYBUILD_INSTALLPATH}..."
+
+# add OpenBLAS: requires special handling for GENERIC CPU targets
+# If we're building OpenBLAS for GENERIC, we need https://github.com/easybuilders/easybuild-easyblocks/pull/1946
+if [[ $GENERIC -eq 1 ]]; then
+    echo ">> Installing OpenBLAS..."
+    ok_msg="Done with OpenBLAS (GENERIC architecture)!"
+    fail_msg="Installation of OpenBLAS (GENERIC architecture) failed!"
+    echo_yellow ">> Using https://github.com/easybuilders/easybuild-easyblocks/pull/1946 to build generic OpenBLAS."
+    $EB --include-easyblocks-from-pr 1946 OpenBLAS-0.3.15-GCC-10.3.0.eb --robot
+    check_exit_code $? "${ok_msg}" "${fail_msg}"
+fi
+
 eb_install_easystack_out=${TMPDIR}/eb_install_easystack.out
 ${EB:-eb} --robot --easystack eessi-${EESSI_PILOT_VERSION}.yml --experimental | tee ${eb_install_easystack_out}
 
