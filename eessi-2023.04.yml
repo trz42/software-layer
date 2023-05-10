@@ -1,5 +1,6 @@
 easyconfigs:
 #  - GCC-9.3.0.eb
+  - FFTW-3.3.9-gompi-2021a.eb
   - GCC-10.3.0.eb:
       options:
         include-easyblocks-from-pr: 2921
