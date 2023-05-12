@@ -212,13 +212,24 @@ echo_green "All set, let's start installing some software in ${EASYBUILD_INSTALL
 
 # add OpenBLAS: requires special handling for GENERIC CPU targets
 # If we're building OpenBLAS for GENERIC, we need https://github.com/easybuilders/easybuild-easyblocks/pull/1946
+# we need to specify --parallel 1 or run into weird linking issues supposedly
+# introduced by GNU make v4.4, see for example
+# https://github.com/xianyi/OpenBLAS/issues/3899 and https://github.com/xianyi/OpenBLAS/issues/3979
+# a fix may be provided with https://github.com/xianyi/OpenBLAS/pull/3983
 if [[ $GENERIC -eq 1 ]]; then
     echo ">> Installing OpenBLAS..."
     ok_msg="Done with OpenBLAS (GENERIC architecture)!"
     fail_msg="Installation of OpenBLAS (GENERIC architecture) failed!"
     echo_yellow ">> Using https://github.com/easybuilders/easybuild-easyblocks/pull/1946 to build generic OpenBLAS."
-    #$EB --include-easyblocks-from-pr 1946 OpenBLAS-0.3.15-GCC-10.3.0.eb --robot
     $EB --parallel 1 --include-easyblocks easyblocks/o/openblas-pr1946-cc74e45.py OpenBLAS-0.3.15-GCC-10.3.0.eb --robot
+    check_exit_code $? "${ok_msg}" "${fail_msg}"
+else
+    # also install OpenBLAS for non-GENERIC targets because it seems 'parallel'
+    # does not work yet via the easystack file
+    echo ">> Installing OpenBLAS..."
+    ok_msg="Done with OpenBLAS (non-GENERIC architecture)!"
+    fail_msg="Installation of OpenBLAS (non-GENERIC architecture) failed!"
+    $EB --parallel 1 OpenBLAS-0.3.15-GCC-10.3.0.eb --robot
     check_exit_code $? "${ok_msg}" "${fail_msg}"
 fi
 
