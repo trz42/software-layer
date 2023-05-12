@@ -18,7 +18,7 @@ patches = [
     'OpenBLAS-%(version)s_icelake-detection.patch',
     'OpenBLAS-%(version)s_fix-aarch64.patch',
     'OpenBLAS-%(version)s_workaround-gcc-miscompilation.patch',
-    'patches/OpenBLAS-%(version)s_fix-race-build-targets.patch',
+    'patches/OpenBLAS-%(version)s_fix-race-build-targets-2.patch',
 
 ]
 checksums = [
@@ -29,7 +29,9 @@ checksums = [
     'ba7bd45af9fe0516f8c9b1cf047eec7b833996e481bc925d4fb2563865d3db38',  # OpenBLAS-0.3.15_fix-aarch64.patch
     # OpenBLAS-0.3.15_workaround-gcc-miscompilation.patch
     'e6b326fb8c4a8a6fd07741d9983c37a72c55c9ff9a4f74a80e1352ce5f975971',
-    '7478ea187620591c0485bcc713a31d9667c19b0a90a7b2391e8cbffc5281d250',  # OpenBLAS-0.3.15_fix-race-build-targets.patch
+    # '7478ea187620591c0485bcc713a31d9667c19b0a90a7b2391e8cbffc5281d250',  # OpenBLAS-0.3.15_fix-race-build-targets.patch
+    'e2d642a14c2339eb1e699e568061a4da889e590e644c48cc14e486c17d3df14b',  # OpenBLAS-0.3.15_fix-race-build-targets-2.patch
+
 ]
 
 # extensive testing can be enabled by uncommenting the line below
