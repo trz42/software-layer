@@ -210,25 +210,6 @@ fi
 
 echo_green "All set, let's start installing some software in ${EASYBUILD_INSTALLPATH}..."
 
-# we try to use a modified ec file for OpenBLAS shipped with this PR
-if [[ $GENERIC -eq 1 ]]; then
-    echo ">> Installing modified OpenBLAS..."
-    ok_msg="Done with OpenBLAS (GENERIC architecture)!"
-    fail_msg="Installation of OpenBLAS (GENERIC architecture) failed!"
-    echo_yellow ">> Using https://github.com/easybuilders/easybuild-easyblocks/pull/1946 to build generic OpenBLAS."
-    #$EB --include-easyblocks-from-pr 1946 OpenBLAS-0.3.15-GCC-10.3.0.eb --robot
-    $EB --include-easyblocks easyblocks/o/openblas-pr1946-cc74e45.py ./OpenBLAS-0.3.15-GCC-10.3.0.eb --robot
-    check_exit_code $? "${ok_msg}" "${fail_msg}"
-else
-    echo ">> Installing modified OpenBLAS..."
-    ok_msg="Done with OpenBLAS (NON-GENERIC architecture)!"
-    fail_msg="Installation of OpenBLAS (NON-GENERIC architecture) failed!"
-    echo_yellow ">> Using https://github.com/easybuilders/easybuild-easyblocks/pull/1946 to build generic OpenBLAS."
-    #$EB --include-easyblocks-from-pr 1946 OpenBLAS-0.3.15-GCC-10.3.0.eb --robot
-    $EB ./OpenBLAS-0.3.15-GCC-10.3.0.eb --robot
-    check_exit_code $? "${ok_msg}" "${fail_msg}"
-fi
-
 # add OpenBLAS: requires special handling for GENERIC CPU targets
 # If we're building OpenBLAS for GENERIC, we need https://github.com/easybuilders/easybuild-easyblocks/pull/1946
 if [[ $GENERIC -eq 1 ]]; then
@@ -237,7 +218,7 @@ if [[ $GENERIC -eq 1 ]]; then
     fail_msg="Installation of OpenBLAS (GENERIC architecture) failed!"
     echo_yellow ">> Using https://github.com/easybuilders/easybuild-easyblocks/pull/1946 to build generic OpenBLAS."
     #$EB --include-easyblocks-from-pr 1946 OpenBLAS-0.3.15-GCC-10.3.0.eb --robot
-    $EB --include-easyblocks easyblocks/o/openblas-pr1946-cc74e45.py OpenBLAS-0.3.15-GCC-10.3.0.eb --robot
+    $EB --parallel 1 --include-easyblocks easyblocks/o/openblas-pr1946-cc74e45.py OpenBLAS-0.3.15-GCC-10.3.0.eb --robot
     check_exit_code $? "${ok_msg}" "${fail_msg}"
 fi
 
