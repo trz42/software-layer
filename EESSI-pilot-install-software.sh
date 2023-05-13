@@ -221,7 +221,7 @@ if [[ $GENERIC -eq 1 ]]; then
     ok_msg="Done with OpenBLAS (GENERIC architecture)!"
     fail_msg="Installation of OpenBLAS (GENERIC architecture) failed!"
     echo_yellow ">> Using https://github.com/easybuilders/easybuild-easyblocks/pull/1946 to build generic OpenBLAS."
-    $EB --parallel 1 --include-easyblocks easyblocks/o/openblas-pr1946-cc74e45.py OpenBLAS-0.3.15-GCC-10.3.0.eb --robot
+    $EB --include-easyblocks easyblocks/o/openblas-pr1946-cc74e45.py OpenBLAS-0.3.15-GCC-10.3.0.eb --robot
     check_exit_code $? "${ok_msg}" "${fail_msg}"
 #else
 #    # also install OpenBLAS for non-GENERIC targets because it seems 'parallel'

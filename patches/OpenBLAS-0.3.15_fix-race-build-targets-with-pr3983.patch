@@ -1,0 +1,57 @@
+diff --git a/Makefile b/Makefile
+index 555d1c46..2c3f9660 100644
+--- a/Makefile
++++ b/Makefile
+@@ -37,9 +37,9 @@ LAPACK_NOOPT := $(filter-out -O0 -O1 -O2 -O3 -Ofast,$(LAPACK_FFLAGS))
+ SUBDIRS_ALL = $(SUBDIRS) test ctest utest exports benchmark ../laswp ../bench cpp_thread_test
+ 
+ .PHONY : all libs netlib $(RELA) test ctest shared install
+-.NOTPARALLEL : all libs $(RELA) prof lapack-test install blas-test
++.NOTPARALLEL : shared
+ 
+-all :: libs netlib $(RELA) tests shared
++all :: tests
+ 	@echo
+ 	@echo " OpenBLAS build complete. ($(LIB_COMPONENTS))"
+ 	@echo
+@@ -116,7 +116,7 @@ endif
+ 	@echo "To install the library, you can run \"make PREFIX=/path/to/your/installation install\"."
+ 	@echo
+ 
+-shared :
++shared : libs netlib $(RELA)
+ ifneq ($(NO_SHARED), 1)
+ ifeq ($(OSNAME), $(filter $(OSNAME),Linux SunOS Android Haiku FreeBSD DragonFly))
+ 	@$(MAKE) -C exports so
+@@ -140,7 +140,7 @@ ifeq ($(OSNAME), CYGWIN_NT)
+ endif
+ endif
+ 
+-tests :
++tests : shared
+ ifeq ($(NOFORTRAN), $(filter 0,$(NOFORTRAN)))
+ 	touch $(LIBNAME)
+ ifndef NO_FBLAS
+diff --git a/getarch.c b/getarch.c
+index f48944f3..4bd93e3a 100644
+--- a/getarch.c
++++ b/getarch.c
+@@ -1547,15 +1547,15 @@ printf("ELF_VERSION=2\n");
+ 
+ #ifdef MAKE_NB_JOBS
+   #if MAKE_NB_JOBS > 0
+-    printf("MAKE += -j %d\n", MAKE_NB_JOBS);
++    printf("MAKEFLAGS += -j %d\n", MAKE_NB_JOBS);
+   #else
+     // Let make use parent -j argument or -j1 if there
+     // is no make parent
+   #endif
+ #elif NO_PARALLEL_MAKE==1
+-    printf("MAKE += -j 1\n");
++    printf("MAKEFLAGS += -j 1\n");
+ #else
+-    printf("MAKE += -j %d\n", get_num_cores());
++    printf("MAKEFLAGS += -j %d\n", get_num_cores());
+ #endif
+ 
+     break;
