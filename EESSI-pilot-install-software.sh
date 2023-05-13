@@ -223,14 +223,14 @@ if [[ $GENERIC -eq 1 ]]; then
     echo_yellow ">> Using https://github.com/easybuilders/easybuild-easyblocks/pull/1946 to build generic OpenBLAS."
     $EB --parallel 1 --include-easyblocks easyblocks/o/openblas-pr1946-cc74e45.py OpenBLAS-0.3.15-GCC-10.3.0.eb --robot
     check_exit_code $? "${ok_msg}" "${fail_msg}"
-else
-    # also install OpenBLAS for non-GENERIC targets because it seems 'parallel'
-    # does not work yet via the easystack file
-    echo ">> Installing OpenBLAS..."
-    ok_msg="Done with OpenBLAS (non-GENERIC architecture)!"
-    fail_msg="Installation of OpenBLAS (non-GENERIC architecture) failed!"
-    $EB --parallel 1 OpenBLAS-0.3.15-GCC-10.3.0.eb --robot
-    check_exit_code $? "${ok_msg}" "${fail_msg}"
+#else
+#    # also install OpenBLAS for non-GENERIC targets because it seems 'parallel'
+#    # does not work yet via the easystack file
+#    echo ">> Installing OpenBLAS..."
+#    ok_msg="Done with OpenBLAS (non-GENERIC architecture)!"
+#    fail_msg="Installation of OpenBLAS (non-GENERIC architecture) failed!"
+#    $EB --parallel 1 OpenBLAS-0.3.15-GCC-10.3.0.eb --robot
+#    check_exit_code $? "${ok_msg}" "${fail_msg}"
 fi
 
 eb_install_easystack_out=${TMPDIR}/eb_install_easystack.out
