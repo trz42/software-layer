@@ -12,7 +12,5 @@ easyconfigs:
       options:
         include-easyblocks-from-pr: 2248
   - Perl-5.32.1-GCCcore-10.3.0.eb
-  - OpenBLAS-0.3.15-GCC-10.3.0.eb:
-      options:
-        parallel: "1"
+  - OpenBLAS-0.3.15-GCC-10.3.0.eb
   - OpenMPI-4.1.1-GCC-10.3.0.eb
