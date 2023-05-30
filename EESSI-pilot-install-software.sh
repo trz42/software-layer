@@ -6,6 +6,8 @@
 #   https://wiki.bash-hackers.org/scripting/posparams#using_a_while_loop
 #   https://stackoverflow.com/questions/192249/how-do-i-parse-command-line-arguments-in-bash
 
+echo "test run for bot PR 172"
+
 display_help() {
   echo "usage: $0 [OPTIONS]"
   echo "  -g | --generic         -  instructs script to build for generic architecture target"
