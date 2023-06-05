@@ -22,3 +22,5 @@ easyconfigs:
   - OpenBLAS-0.3.15-GCC-10.3.0.eb:
       options:
         from-pr: 17924
+  - ScaLAPACK-2.1.0-gompi-2021a-fb.eb
+  - FFTW-3.3.9-gompi-2021a.eb
