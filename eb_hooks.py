@@ -54,23 +54,6 @@ def get_rpath_override_dirs(software_name):
     return rpath_injection_dirs
 
 
-def parse_hook(ec, *args, **kwargs):
-    """Main parse hook: trigger custom functions based on software name."""
-
-    # determine path to Prefix installation in compat layer via $EPREFIX
-    eprefix = get_eessi_envvar('EPREFIX')
-
-    if ec.name in PARSE_HOOKS:
-        PARSE_HOOKS[ec.name](ec, eprefix)
-
-
-#def pre_configure_hook(self, *args, **kwargs):
-#    """Main pre-configure hook: trigger custom functions based on software name."""
-#
-#    if self.name in PRE_CONFIGURE_HOOKS:
-#        PRE_CONFIGURE_HOOKS[self.name](self, *args, **kwargs)
-
-
 def pre_prepare_hook(self, *args, **kwargs):
     """Main pre-prepare hook: trigger custom functions."""
 
@@ -97,6 +80,19 @@ def pre_prepare_hook(self, *args, **kwargs):
         update_build_option('rpath_override_dirs', rpath_override_dirs)
         print_msg("Updated rpath_override_dirs (to allow overriding MPI family %s): %s",
                   mpi_family, rpath_override_dirs)
+
+
+def post_prepare_hook(self, *args, **kwargs):
+    """Main post-prepare hook: trigger custom functions."""
+
+    if hasattr(self, EESSI_RPATH_OVERRIDE_ATTR):
+        # Reset the value of 'rpath_override_dirs' now that we are finished with it
+        update_build_option('rpath_override_dirs', getattr(self, EESSI_RPATH_OVERRIDE_ATTR))
+        print_msg("Resetting rpath_override_dirs to original value: %s", getattr(self, EESSI_RPATH_OVERRIDE_ATTR))
+        delattr(self, EESSI_RPATH_OVERRIDE_ATTR)
+
+    if self.name in POST_PREPARE_HOOKS:
+        POST_PREPARE_HOOKS[self.name](self, *args, **kwargs)
 
 
 def post_prepare_hook_gcc_prefixed_ld_rpath_wrapper(self, *args, **kwargs):
@@ -131,17 +127,14 @@ def post_prepare_hook_gcc_prefixed_ld_rpath_wrapper(self, *args, **kwargs):
         raise EasyBuildError("GCCcore-specific hook triggered for non-GCCcore easyconfig?!")
 
 
-def post_prepare_hook(self, *args, **kwargs):
-    """Main post-prepare hook: trigger custom functions."""
+def parse_hook(ec, *args, **kwargs):
+    """Main parse hook: trigger custom functions based on software name."""
 
-    if hasattr(self, EESSI_RPATH_OVERRIDE_ATTR):
-        # Reset the value of 'rpath_override_dirs' now that we are finished with it
-        update_build_option('rpath_override_dirs', getattr(self, EESSI_RPATH_OVERRIDE_ATTR))
-        print_msg("Resetting rpath_override_dirs to original value: %s", getattr(self, EESSI_RPATH_OVERRIDE_ATTR))
-        delattr(self, EESSI_RPATH_OVERRIDE_ATTR)
+    # determine path to Prefix installation in compat layer via $EPREFIX
+    eprefix = get_eessi_envvar('EPREFIX')
 
-    if self.name in POST_PREPARE_HOOKS:
-        POST_PREPARE_HOOKS[self.name](self, *args, **kwargs)
+    if ec.name in PARSE_HOOKS:
+        PARSE_HOOKS[ec.name](ec, eprefix)
 
 
 def parse_hook_cgal_toolchainopts_precise(ec, eprefix):
