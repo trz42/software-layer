@@ -20,7 +20,7 @@
 #    - no message ERROR
 #    - no message FAILED
 #    - no message ' required modules missing:'
-#    - one or more of 'No missing modules!'
+#    - message 'No missing installations'
 #    - message regarding created tarball
 #  - FAILED (one of ... implemented as NOT SUCCESS)
 #    - no slurm-JOBID.out file
@@ -109,7 +109,7 @@ grep_out=$(grep "${GP_req_missing}" ${job_dir}/${job_out})
 [[ ${VERBOSE} -ne 0 ]] && echo ">> searching for '"${GP_req_missing}"'"
 [[ ${VERBOSE} -ne 0 ]] && echo "${grep_out}"
 
-GP_no_missing='No missing modules!'
+GP_no_missing='No missing installations'
 grep_out=$(grep "${GP_no_missing}" ${job_dir}/${job_out})
 [[ $? -eq 0 ]] && NO_MISSING=1 || NO_MISSING=0
 # have to be careful to not add searched for pattern into slurm out file
