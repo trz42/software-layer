@@ -11,6 +11,14 @@ from easybuild.tools.run import run_cmd
 from easybuild.tools.systemtools import AARCH64, POWER, X86_64, get_cpu_architecture, get_cpu_features
 from easybuild.tools.toolchain.compiler import OPTARCH_GENERIC
 
+# prefer importing LooseVersion from easybuild.tools, but fall back to distutils
+# in case EasyBuild <= 4.7.0 is used
+try:
+    from easybuild.tools import LooseVersion
+except ImportError:
+    from distutils.version import LooseVersion
+
+
 EESSI_RPATH_OVERRIDE_ATTR = 'orig_rpath_override_dirs'
 
 
@@ -46,23 +54,6 @@ def get_rpath_override_dirs(software_name):
     return rpath_injection_dirs
 
 
-def parse_hook(ec, *args, **kwargs):
-    """Main parse hook: trigger custom functions based on software name."""
-
-    # determine path to Prefix installation in compat layer via $EPREFIX
-    eprefix = get_eessi_envvar('EPREFIX')
-
-    if ec.name in PARSE_HOOKS:
-        PARSE_HOOKS[ec.name](ec, eprefix)
-
-
-def pre_configure_hook(self, *args, **kwargs):
-    """Main pre-configure hook: trigger custom functions based on software name."""
-
-    if self.name in PRE_CONFIGURE_HOOKS:
-        PRE_CONFIGURE_HOOKS[self.name](self, *args, **kwargs)
-
-
 def pre_prepare_hook(self, *args, **kwargs):
     """Main pre-prepare hook: trigger custom functions."""
 
@@ -91,10 +82,24 @@ def pre_prepare_hook(self, *args, **kwargs):
                   mpi_family, rpath_override_dirs)
 
 
-def gcc_postprepare(self, *args, **kwargs):
+def post_prepare_hook(self, *args, **kwargs):
+    """Main post-prepare hook: trigger custom functions."""
+
+    if hasattr(self, EESSI_RPATH_OVERRIDE_ATTR):
+        # Reset the value of 'rpath_override_dirs' now that we are finished with it
+        update_build_option('rpath_override_dirs', getattr(self, EESSI_RPATH_OVERRIDE_ATTR))
+        print_msg("Resetting rpath_override_dirs to original value: %s", getattr(self, EESSI_RPATH_OVERRIDE_ATTR))
+        delattr(self, EESSI_RPATH_OVERRIDE_ATTR)
+
+    if self.name in POST_PREPARE_HOOKS:
+        POST_PREPARE_HOOKS[self.name](self, *args, **kwargs)
+
+
+def post_prepare_hook_gcc_prefixed_ld_rpath_wrapper(self, *args, **kwargs):
     """
     Post-configure hook for GCCcore:
-    - copy RPATH wrapper script for linker commands to also have a wrapper in place with system type prefix like 'x86_64-pc-linux-gnu'
+    - copy RPATH wrapper script for linker commands to also have a wrapper in
+      place with system type prefix like 'x86_64-pc-linux-gnu'
     """
     if self.name == 'GCCcore':
         config_guess = obtain_config_guess()
@@ -121,20 +126,18 @@ def gcc_postprepare(self, *args, **kwargs):
     else:
         raise EasyBuildError("GCCcore-specific hook triggered for non-GCCcore easyconfig?!")
 
-def post_prepare_hook(self, *args, **kwargs):
-    """Main post-prepare hook: trigger custom functions."""
 
-    if hasattr(self, EESSI_RPATH_OVERRIDE_ATTR):
-        # Reset the value of 'rpath_override_dirs' now that we are finished with it
-        update_build_option('rpath_override_dirs', getattr(self, EESSI_RPATH_OVERRIDE_ATTR))
-        print_msg("Resetting rpath_override_dirs to original value: %s", getattr(self, EESSI_RPATH_OVERRIDE_ATTR))
-        delattr(self, EESSI_RPATH_OVERRIDE_ATTR)
+def parse_hook(ec, *args, **kwargs):
+    """Main parse hook: trigger custom functions based on software name."""
 
-    if self.name in POST_PREPARE_HOOKS:
-        POST_PREPARE_HOOKS[self.name](self, *args, **kwargs)
+    # determine path to Prefix installation in compat layer via $EPREFIX
+    eprefix = get_eessi_envvar('EPREFIX')
+
+    if ec.name in PARSE_HOOKS:
+        PARSE_HOOKS[ec.name](ec, eprefix)
 
 
-def cgal_toolchainopts_precise(ec, eprefix):
+def parse_hook_cgal_toolchainopts_precise(ec, eprefix):
     """Enable 'precise' rather than 'strict' toolchain option for CGAL on POWER."""
     if ec.name == 'CGAL':
         if get_cpu_architecture() == POWER:
@@ -147,7 +150,7 @@ def cgal_toolchainopts_precise(ec, eprefix):
         raise EasyBuildError("CGAL-specific hook triggered for non-CGAL easyconfig?!")
 
 
-def fontconfig_add_fonts(ec, eprefix):
+def parse_hook_fontconfig_add_fonts(ec, eprefix):
     """Inject --with-add-fonts configure option for fontconfig."""
     if ec.name == 'fontconfig':
         # make fontconfig aware of fonts included with compat layer
@@ -158,7 +161,7 @@ def fontconfig_add_fonts(ec, eprefix):
         raise EasyBuildError("fontconfig-specific hook triggered for non-fontconfig easyconfig?!")
 
 
-def ucx_eprefix(ec, eprefix):
+def parse_hook_ucx_eprefix(ec, eprefix):
     """Make UCX aware of compatibility layer via additional configuration options."""
     if ec.name == 'UCX':
         ec.update('configopts', '--with-sysroot=%s' % eprefix)
@@ -174,7 +177,19 @@ def pre_configure_hook(self, *args, **kwargs):
         PRE_CONFIGURE_HOOKS[self.name](self, *args, **kwargs)
 
 
-def libfabric_disable_psm3_x86_64_generic(self, *args, **kwargs):
+def pre_configure_hook_openblas_optarch_generic(self, *args, **kwargs):
+    """
+    Pre-configure hook for OpenBLAS: add DYNAMIC_ARCH=1 to build/test/install options when using --optarch=GENERIC
+    """
+    if self.name == 'OpenBLAS':
+        if build_option('optarch') == OPTARCH_GENERIC:
+            for step in ('build', 'test', 'install'):
+                self.cfg.update(f'{step}opts', "DYNAMIC_ARCH=1")
+    else:
+        raise EasyBuildError("OpenBLAS-specific hook triggered for non-OpenBLAS easyconfig?!")
+
+
+def pre_configure_hook_libfabric_disable_psm3_x86_64_generic(self, *args, **kwargs):
     """Add --disable-psm3 to libfabric configure options when building with --optarch=GENERIC on x86_64."""
     if self.name == 'libfabric':
         if get_cpu_architecture() == X86_64:
@@ -187,7 +202,7 @@ def libfabric_disable_psm3_x86_64_generic(self, *args, **kwargs):
         raise EasyBuildError("libfabric-specific hook triggered for non-libfabric easyconfig?!")
 
 
-def metabat_preconfigure(self, *args, **kwargs):
+def pre_configure_hook_metabat_filtered_zlib_dep(self, *args, **kwargs):
     """
     Pre-configure hook for MetaBAT:
     - take into account that zlib is a filtered dependency,
@@ -201,7 +216,7 @@ def metabat_preconfigure(self, *args, **kwargs):
         raise EasyBuildError("MetaBAT-specific hook triggered for non-MetaBAT easyconfig?!")
 
 
-def wrf_preconfigure(self, *args, **kwargs):
+def pre_configure_hook_wrf_aarch64(self, *args, **kwargs):
     """
     Pre-configure hook for WRF:
     - patch arch/configure_new.defaults so building WRF with foss toolchain works on aarch64
@@ -217,17 +232,18 @@ def wrf_preconfigure(self, *args, **kwargs):
 
 
 PARSE_HOOKS = {
-    'CGAL': cgal_toolchainopts_precise,
-    'fontconfig': fontconfig_add_fonts,
-    'UCX': ucx_eprefix,
+    'CGAL': parse_hook_cgal_toolchainopts_precise,
+    'fontconfig': parse_hook_fontconfig_add_fonts,
+    'UCX': parse_hook_ucx_eprefix,
 }
 
 POST_PREPARE_HOOKS = {
-    'GCCcore': gcc_postprepare,
+    'GCCcore': post_prepare_hook_gcc_prefixed_ld_rpath_wrapper,
 }
 
 PRE_CONFIGURE_HOOKS = {
-    'libfabric': libfabric_disable_psm3_x86_64_generic,
-    'MetaBAT': metabat_preconfigure,
-    'WRF': wrf_preconfigure,
+    'libfabric': pre_configure_hook_libfabric_disable_psm3_x86_64_generic,
+    'MetaBAT': pre_configure_hook_metabat_filtered_zlib_dep,
+    'OpenBLAS': pre_configure_hook_openblas_optarch_generic,
+    'WRF': pre_configure_hook_wrf_aarch64,
 }
