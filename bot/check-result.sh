@@ -105,7 +105,7 @@ job_out=$(ls ${job_dir} | grep "${GP_slurm_out}")
 ERROR=-1
 if [[ ${SLURM} -eq 1 ]]; then
   GP_error='ERROR: '
-  grep_out=$(grep "${GP_error}" ${job_dir}/${job_out})
+  grep_out=$(grep -v "^>> searching for " ${job_dir}/${job_out} | grep "${GP_error}")
   [[ $? -eq 0 ]] && ERROR=1 || ERROR=0
   # have to be careful to not add searched for pattern into slurm out file
   [[ ${VERBOSE} -ne 0 ]] && echo ">> searching for '"${GP_error}"'"
@@ -115,7 +115,7 @@ fi
 FAILED=-1
 if [[ ${SLURM} -eq 1 ]]; then
   GP_failed='FAILED: '
-  grep_out=$(grep "${GP_failed}" ${job_dir}/${job_out})
+  grep_out=$(grep -v "^>> searching for " ${job_dir}/${job_out} | grep "${GP_failed}")
   [[ $? -eq 0 ]] && FAILED=1 || FAILED=0
   # have to be careful to not add searched for pattern into slurm out file
   [[ ${VERBOSE} -ne 0 ]] && echo ">> searching for '"${GP_failed}"'"
@@ -125,7 +125,7 @@ fi
 MISSING=-1
 if [[ ${SLURM} -eq 1 ]]; then
   GP_req_missing=' required modules missing:'
-  grep_out=$(grep "${GP_req_missing}" ${job_dir}/${job_out})
+  grep_out=$(grep -v "^>> searching for " ${job_dir}/${job_out} | grep "${GP_req_missing}")
   [[ $? -eq 0 ]] && MISSING=1 || MISSING=0
   # have to be careful to not add searched for pattern into slurm out file
   [[ ${VERBOSE} -ne 0 ]] && echo ">> searching for '"${GP_req_missing}"'"
@@ -135,7 +135,7 @@ fi
 NO_MISSING=-1
 if [[ ${SLURM} -eq 1 ]]; then
   GP_no_missing='No missing installations'
-  grep_out=$(grep "${GP_no_missing}" ${job_dir}/${job_out})
+  grep_out=$(grep -v "^>> searching for " ${job_dir}/${job_out} | grep "${GP_no_missing}")
   [[ $? -eq 0 ]] && NO_MISSING=1 || NO_MISSING=0
   # have to be careful to not add searched for pattern into slurm out file
   [[ ${VERBOSE} -ne 0 ]] && echo ">> searching for '"${GP_no_missing}"'"
@@ -145,8 +145,8 @@ fi
 TGZ=-1
 TARBALL=
 if [[ ${SLURM} -eq 1 ]]; then
-  GP_tgz_created="tar.gz created!"
-  grep_out=$(grep "${GP_tgz_created}" ${job_dir}/${job_out})
+  GP_tgz_created="\.tar\.gz created!"
+  grep_out=$(grep -v "^>> searching for " ${job_dir}/${job_out} | grep "${GP_tgz_created}" | sort -u)
   if [[ $? -eq 0 ]]; then
       TGZ=1
       TARBALL=$(echo ${grep_out} | sed -e 's@^.*\(eessi[^/ ]*\) .*$@\1@')
@@ -404,7 +404,7 @@ if [[ ! -z ${TARBALL} ]]; then
     size_mib=$((${size} >> 20))
     tmpfile=$(mktemp --tmpdir=. tarfiles.XXXX)
     tar tf ${TARBALL} > ${tmpfile}
-    entries=$(wc -l ${tmpfile})
+    entries=$(cat ${tmpfile} | wc -l)
     # determine prefix from job config: VERSION/software/OS_TYPE/CPU_FAMILY/ARCHITECTURE
     # 2023.04/software/linux/x86_64/intel/skylake_avx512
     # repo_version = 2022.11
@@ -419,8 +419,9 @@ if [[ ! -z ${TARBALL} ]]; then
     software_entries=$(grep "${prefix}/software" ${tmpfile})
     lmod_entries=$(grep "${prefix}/.lmod/cache" ${tmpfile})
     other_entries=$(cat ${tmpfile} | grep -v "${prefix}/modules" | grep -v "${prefix}/software")
-    modules=$(echo "${modules_entries}" | grep "/all/.*/.*lua$" | sed -e 's@^.*/\([^/]*/[^/]*.lua\)$@\1@')
-    software_pkgs=$(echo "${software_entries}" | sed -e "s@${prefix}/software/@@" | awk -F/ '{print $1 "/" $2}' | sort -u)
+    other_shortened=$(echo "${other_entries}" | sed -e "s@^.*${prefix}/@@" | sort -u)
+    modules=$(echo "${modules_entries}" | grep "/all/.*/.*lua$" | sed -e 's@^.*/\([^/]*/[^/]*.lua\)$@\1@' | sort -u)
+    software_pkgs=$(echo "${software_entries}" | sed -e "s@${prefix}/software/@@" | awk -F/ '{if (NR >= 2) {print $1 "/" $2}}' | sort -u)
     lmod_shortened=$(echo "${lmod_entries}" | sed -e "s@${prefix}/@@")
 
     artefact_summary="<summary>$(print_code_item '__ITEM__' ${TARBALL})</summary>"
@@ -430,9 +431,9 @@ if [[ ! -z ${TARBALL} ]]; then
     CoArList="${CoArList}$(print_br_item 'modules under ___ITEM___' ${prefix}/modules/all)"
     CoArList="${CoArList}<pre>"
     if [[ ! -z ${modules} ]]; then
-        for mod in $(echo "${modules}" | sort); do
-            CoArList="${CoArList}$(print_br_item '__ITEM__' ${mod})"
-        done
+        while IFS= read -r mod ; do
+            CoArList="${CoArList}$(print_br_item '<code>__ITEM__</code>' ${mod})"
+        done <<< "${modules}"
     else
         CoArList="${CoArList}$(print_br_item '__ITEM__' 'no module files in tarball')"
     fi
@@ -440,19 +441,19 @@ if [[ ! -z ${TARBALL} ]]; then
     CoArList="${CoArList}$(print_br_item 'software under ___ITEM___' ${prefix}/software)"
     CoArList="${CoArList}<pre>"
     if [[ ! -z ${software_pkgs} ]]; then
-        for sw_pkg in $(echo "${software_pkgs}" | sort); do
-            CoArList="${CoArList}$(print_br_item '__ITEM__' ${sw_pkg})"
-        done
+        while IFS= read -r sw_pkg ; do
+            CoArList="${CoArList}$(print_br_item '<code>__ITEM__</code>' ${sw_pkg})"
+        done <<< "${software_pkgs}"
     else
         CoArList="${CoArList}$(print_br_item '__ITEM__' 'no software packages in tarball')"
     fi
     CoArList="${CoArList}</pre>"
     CoArList="${CoArList}$(print_br_item 'other under ___ITEM___' ${prefix})"
     CoArList="${CoArList}<pre>"
-    if [[ ! -z ${other_entries} ]]; then
-        for other in $(echo "${other_entries}" | sort); do
-            CoArList="${CoArList}$(print_br_item '__ITEM__' ${other})"
-        done
+    if [[ ! -z ${other_shortened} ]]; then
+        while IFS= read -r other ; do
+            CoArList="${CoArList}$(print_br_item '<code>__ITEM__</code>' ${other})"
+        done <<< "${other_shortened}"
     else
         CoArList="${CoArList}$(print_br_item '__ITEM__' 'no other files in tarball')"
     fi
@@ -463,7 +464,7 @@ fi
 
 comment_artefacts_details="${comment_artefact_details_fmt/__ARTEFACT_SUMMARY__/${artefact_summary}}"
 comment_artefacts_details="${comment_artefacts_details/__ARTEFACT_DETAILS__/${CoArList}}"
-comment_artefacts="${comment_artefacts_fmt/__ARTEFACTS_DETAILS_LIST__/${comment_artefacts_details}}"
+comment_artefacts="${comment_artefacts_fmt/__ARTEFACTS_LIST__/${comment_artefacts_details}}"
 
 # now put all pieces together creating comment_details from comment_template
 comment_description=${comment_template/__SUMMARY_FMT__/${comment_summary}}
