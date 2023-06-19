@@ -143,7 +143,7 @@ for eb_version in '4.7.2'; do
 
     echo_green "All set, let's start installing some software with EasyBuild v${eb_version} in ${EASYBUILD_INSTALLPATH}..."
 
-    for gen in '2021a'; do
+    for gen in '2021a' '2022b'; do
 
         es="eessi-${EESSI_PILOT_VERSION}-eb-${eb_version}-${gen}.yml"
 
