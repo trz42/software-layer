@@ -1,2 +1,3 @@
 easyconfigs: []
+  # remove above '[]' when adding easyconfigs from the below list
   #- GCC-11.3.0

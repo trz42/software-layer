@@ -1,5 +1,4 @@
 easyconfigs:
-  # comment to make PR only for testing bot code update 27june2023
   - OpenSSL-1.1.eb:
       options:
         include-easyblocks-from-pr: 2922
