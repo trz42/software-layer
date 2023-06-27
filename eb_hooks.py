@@ -11,8 +11,7 @@ from easybuild.tools.run import run_cmd
 from easybuild.tools.systemtools import AARCH64, POWER, X86_64, get_cpu_architecture, get_cpu_features
 from easybuild.tools.toolchain.compiler import OPTARCH_GENERIC
 
-# prefer importing LooseVersion from easybuild.tools, but fall back to distutils
-# in case EasyBuild <= 4.7.0 is used
+# prefer importing LooseVersion from easybuild.tools, but fall back to distuils in case EasyBuild <= 4.7.0 is used
 try:
     from easybuild.tools import LooseVersion
 except ImportError:
@@ -54,6 +53,16 @@ def get_rpath_override_dirs(software_name):
     return rpath_injection_dirs
 
 
+def parse_hook(ec, *args, **kwargs):
+    """Main parse hook: trigger custom functions based on software name."""
+
+    # determine path to Prefix installation in compat layer via $EPREFIX
+    eprefix = get_eessi_envvar('EPREFIX')
+
+    if ec.name in PARSE_HOOKS:
+        PARSE_HOOKS[ec.name](ec, eprefix)
+
+
 def pre_prepare_hook(self, *args, **kwargs):
     """Main pre-prepare hook: trigger custom functions."""
 
@@ -82,24 +91,10 @@ def pre_prepare_hook(self, *args, **kwargs):
                   mpi_family, rpath_override_dirs)
 
 
-def post_prepare_hook(self, *args, **kwargs):
-    """Main post-prepare hook: trigger custom functions."""
-
-    if hasattr(self, EESSI_RPATH_OVERRIDE_ATTR):
-        # Reset the value of 'rpath_override_dirs' now that we are finished with it
-        update_build_option('rpath_override_dirs', getattr(self, EESSI_RPATH_OVERRIDE_ATTR))
-        print_msg("Resetting rpath_override_dirs to original value: %s", getattr(self, EESSI_RPATH_OVERRIDE_ATTR))
-        delattr(self, EESSI_RPATH_OVERRIDE_ATTR)
-
-    if self.name in POST_PREPARE_HOOKS:
-        POST_PREPARE_HOOKS[self.name](self, *args, **kwargs)
-
-
 def post_prepare_hook_gcc_prefixed_ld_rpath_wrapper(self, *args, **kwargs):
     """
     Post-configure hook for GCCcore:
-    - copy RPATH wrapper script for linker commands to also have a wrapper in
-      place with system type prefix like 'x86_64-pc-linux-gnu'
+    - copy RPATH wrapper script for linker commands to also have a wrapper in place with system type prefix like 'x86_64-pc-linux-gnu'
     """
     if self.name == 'GCCcore':
         config_guess = obtain_config_guess()
@@ -127,14 +122,17 @@ def post_prepare_hook_gcc_prefixed_ld_rpath_wrapper(self, *args, **kwargs):
         raise EasyBuildError("GCCcore-specific hook triggered for non-GCCcore easyconfig?!")
 
 
-def parse_hook(ec, *args, **kwargs):
-    """Main parse hook: trigger custom functions based on software name."""
+def post_prepare_hook(self, *args, **kwargs):
+    """Main post-prepare hook: trigger custom functions."""
 
-    # determine path to Prefix installation in compat layer via $EPREFIX
-    eprefix = get_eessi_envvar('EPREFIX')
+    if hasattr(self, EESSI_RPATH_OVERRIDE_ATTR):
+        # Reset the value of 'rpath_override_dirs' now that we are finished with it
+        update_build_option('rpath_override_dirs', getattr(self, EESSI_RPATH_OVERRIDE_ATTR))
+        print_msg("Resetting rpath_override_dirs to original value: %s", getattr(self, EESSI_RPATH_OVERRIDE_ATTR))
+        delattr(self, EESSI_RPATH_OVERRIDE_ATTR)
 
-    if ec.name in PARSE_HOOKS:
-        PARSE_HOOKS[ec.name](ec, eprefix)
+    if self.name in POST_PREPARE_HOOKS:
+        POST_PREPARE_HOOKS[self.name](self, *args, **kwargs)
 
 
 def parse_hook_cgal_toolchainopts_precise(ec, eprefix):
