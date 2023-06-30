@@ -162,10 +162,10 @@ def parse_hook_fontconfig_add_fonts(ec, eprefix):
 def parse_hook_openblas_relax_lapack_tests_num_errors(ec, eprefix):
     """Relax number of failing numerical LAPACK tests."""
     if ec.name == 'OpenBLAS':
+        cfg_option = 'max_failing_lapack_tests_num_errors'
+        num_errors = 302
         if get_cpu_architecture() == AARCH64:
             # relax number of failed numerical LAPACK tests
-            num_errors = 302
-            cfg_option = 'max_failing_lapack_tests_num_errors'
             ec[cfg_option] = num_errors
             print_msg("Set '%s = %d' in easyconfig for %s on AARCH64", cfg_option, num_errors, ec.name)
         else:
