@@ -7,3 +7,4 @@ easyconfigs:
   - OpenMPI-4.1.4-GCC-12.2.0.eb
   - FFTW.MPI-3.3.10-gompi-2022b.eb
   - Python-3.10.8-GCCcore-12.2.0.eb
+  - foss-2022b.eb
