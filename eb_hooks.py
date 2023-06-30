@@ -164,10 +164,10 @@ def parse_hook_openblas_relax_lapack_tests_num_errors(ec, eprefix):
     if ec.name == 'OpenBLAS':
         if get_cpu_architecture() == AARCH64:
             # relax number of failed numerical LAPACK tests
-            num_errors = '302'
+            num_errors = 302
             cfg_option = 'max_failing_lapack_tests_num_errors'
             ec[cfg_option] = num_errors
-            print_msg("Set '%s = %s' in easyconfig for %s on AARCH64", cfg_option, num_errors, ec.name)
+            print_msg("Set '%s = %d' in easyconfig for %s on AARCH64", cfg_option, num_errors, ec.name)
         else:
             print_msg("Not changing option %s for %s on non-AARCH64", cfg_option, ec.name)
     else:
