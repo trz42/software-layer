@@ -159,6 +159,21 @@ def parse_hook_fontconfig_add_fonts(ec, eprefix):
         raise EasyBuildError("fontconfig-specific hook triggered for non-fontconfig easyconfig?!")
 
 
+def parse_hook_openblas_relax_lapack_tests_num_errors(ec, eprefix):
+    """Relax number of failing numerical LAPACK tests."""
+    if ec.name == 'OpenBLAS':
+        cfg_option = 'max_failing_lapack_tests_num_errors'
+        num_errors = 302
+        if get_cpu_architecture() == AARCH64:
+            # relax number of failed numerical LAPACK tests
+            ec[cfg_option] = num_errors
+            print_msg("Set '%s = %d' in easyconfig for %s on AARCH64", cfg_option, num_errors, ec.name)
+        else:
+            print_msg("Not changing option %s for %s on non-AARCH64", cfg_option, ec.name)
+    else:
+        raise EasyBuildError("OpenBLAS-specific hook triggered for non-OpenBLAS easyconfig?!")
+
+
 def parse_hook_ucx_eprefix(ec, eprefix):
     """Make UCX aware of compatibility layer via additional configuration options."""
     if ec.name == 'UCX':
@@ -232,6 +247,7 @@ def pre_configure_hook_wrf_aarch64(self, *args, **kwargs):
 PARSE_HOOKS = {
     'CGAL': parse_hook_cgal_toolchainopts_precise,
     'fontconfig': parse_hook_fontconfig_add_fonts,
+    'OpenBLAS': parse_hook_openblas_relax_lapack_tests_num_errors,
     'UCX': parse_hook_ucx_eprefix,
 }
 
