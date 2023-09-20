@@ -248,7 +248,7 @@ def pre_configure_hook_wrf_aarch64(self, *args, **kwargs):
     else:
         raise EasyBuildError("WRF-specific hook triggered for non-WRF easyconfig?!")
 
-PARSE_HOOKS{
+PARSE_HOOKS = {
     'CGAL': parse_hook_cgal_toolchainopts_precise,
     'fontconfig': parse_hook_fontconfig_add_fonts,
     'OpenBLAS': parse_hook_openblas_relax_lapack_tests_num_errors,
