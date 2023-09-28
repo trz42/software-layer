@@ -37,11 +37,11 @@ jobs:
         - name: Test check_missing_installations.sh script
           run: |
               source /cvmfs/pilot.nessi.no/versions/${{matrix.EESSI_VERSION}}/init/bash
+              export EESSI_SOFTWARE_SUBDIR_OVERRIDE=${{matrix.EESSI_SOFTWARE_SUBDIR_OVERRIDE}}
               module load EasyBuild
               eb --version
               export EESSI_PREFIX=/cvmfs/pilot.nessi.no/versions/${{matrix.EESSI_VERSION}}
               export EESSI_OS_TYPE=linux
-              export EESSI_SOFTWARE_SUBDIR_OVERRIDE=${{matrix.EESSI_SOFTWARE_SUBDIR_OVERRIDE}}
               env | grep ^EESSI | sort
               echo "just run check_missing_installations.sh (should use eessi-${{matrix.EESSI_VERSION}}.yml)"
               ./check_missing_installations.sh ${{matrix.EASYSTACK_FILE}}
@@ -49,11 +49,11 @@ jobs:
         - name: Test check_missing_installations.sh with missing package (GCC/8.3.0)
           run: |
               source /cvmfs/pilot.nessi.no/versions/${{matrix.EESSI_VERSION}}/init/bash
+              export EESSI_SOFTWARE_SUBDIR_OVERRIDE=${{matrix.EESSI_SOFTWARE_SUBDIR_OVERRIDE}}
               module load EasyBuild
               eb --version
               export EESSI_PREFIX=/cvmfs/pilot.nessi.no/versions/${{matrix.EESSI_VERSION}}
               export EESSI_OS_TYPE=linux
-              export EESSI_SOFTWARE_SUBDIR_OVERRIDE=${{matrix.EESSI_SOFTWARE_SUBDIR_OVERRIDE}}
               env | grep ^EESSI | sort
               echo "modify easystack file by adding a missing package (GCC/8.3.0)"
               echo "  - GCC-8.3.0:" >> ${{matrix.EASYSTACK_FILE}}
