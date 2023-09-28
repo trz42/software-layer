@@ -39,6 +39,7 @@ jobs:
               export EESSI_SOFTWARE_SUBDIR_OVERRIDE=${{matrix.EESSI_SOFTWARE_SUBDIR_OVERRIDE}}
               source /cvmfs/pilot.nessi.no/versions/${{matrix.EESSI_VERSION}}/init/bash
               module load EasyBuild
+              which eb
               eb --version
               export EESSI_PREFIX=/cvmfs/pilot.nessi.no/versions/${{matrix.EESSI_VERSION}}
               export EESSI_OS_TYPE=linux
@@ -51,6 +52,7 @@ jobs:
               export EESSI_SOFTWARE_SUBDIR_OVERRIDE=${{matrix.EESSI_SOFTWARE_SUBDIR_OVERRIDE}}
               source /cvmfs/pilot.nessi.no/versions/${{matrix.EESSI_VERSION}}/init/bash
               module load EasyBuild
+              which eb
               eb --version
               export EESSI_PREFIX=/cvmfs/pilot.nessi.no/versions/${{matrix.EESSI_VERSION}}
               export EESSI_OS_TYPE=linux
