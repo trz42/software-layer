@@ -11,7 +11,7 @@ jobs:
       matrix:
         EESSI_VERSION:
         - 2023.06
-        EESSI_SOFTWARE_SUBDIR:
+        EESSI_SOFTWARE_SUBDIR_OVERRIDE:
         - aarch64/generic
         - x86_64/amd/zen2
         - x86_64/intel/broadwell
@@ -41,7 +41,7 @@ jobs:
               eb --version
               export EESSI_PREFIX=/cvmfs/pilot.nessi.no/versions/${{matrix.EESSI_VERSION}}
               export EESSI_OS_TYPE=linux
-              export EESSI_SOFTWARE_SUBDIR=${{matrix.EESSI_SOFTWARE_SUBDIR}}
+              export EESSI_SOFTWARE_SUBDIR_OVERRIDE=${{matrix.EESSI_SOFTWARE_SUBDIR_OVERRIDE}}
               env | grep ^EESSI | sort
               echo "just run check_missing_installations.sh (should use eessi-${{matrix.EESSI_VERSION}}.yml)"
               ./check_missing_installations.sh ${{matrix.EASYSTACK_FILE}}
@@ -53,7 +53,7 @@ jobs:
               eb --version
               export EESSI_PREFIX=/cvmfs/pilot.nessi.no/versions/${{matrix.EESSI_VERSION}}
               export EESSI_OS_TYPE=linux
-              export EESSI_SOFTWARE_SUBDIR=${{matrix.EESSI_SOFTWARE_SUBDIR}}
+              export EESSI_SOFTWARE_SUBDIR_OVERRIDE=${{matrix.EESSI_SOFTWARE_SUBDIR_OVERRIDE}}
               env | grep ^EESSI | sort
               echo "modify easystack file by adding a missing package (GCC/8.3.0)"
               echo "  - GCC-8.3.0:" >> ${{matrix.EASYSTACK_FILE}}
