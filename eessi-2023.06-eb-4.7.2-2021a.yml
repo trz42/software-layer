@@ -18,3 +18,4 @@ easyconfigs:
   - BAGEL-1.2.2-foss-2021a.eb:
         options:
           from-pr: 18446
+  - WRF-4.3-foss-2021a-dmpar.eb
