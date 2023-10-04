@@ -1,14 +1,16 @@
 easyconfigs:
   - GCC-11.2.0
   - git-2.33.1-GCCcore-11.2.0-nodocs.eb
-  # - CMake-3.21.1-GCCcore-11.2.0.eb
-  - CMake-3.21.1-GCCcore-11.2.0.eb:
-      options:
-        include-easyblocks-from-pr: 2248
+  - CMake-3.21.1-GCCcore-11.2.0.eb
+  # - CMake-3.21.1-GCCcore-11.2.0.eb:
+  #     options:
+  #       include-easyblocks-from-pr: 2248
   - OpenMPI-4.1.1-GCC-11.2.0.eb
   - FFTW-3.3.10-gompi-2021b.eb
   - BLIS-0.8.1-GCC-11.2.0.eb
   - foss-2021b.eb
+  # note, the below CMake has never been installed, just put here to use the
+  # same version as easy does
   # - CMake-3.22.1-GCCcore-11.2.0.eb:
   #     options:
   #       include-easyblocks-from-pr: 2248
