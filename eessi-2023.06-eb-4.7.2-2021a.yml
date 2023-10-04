@@ -20,3 +20,7 @@ easyconfigs:
         options:
           from-pr: 18446
   - WRF-4.3-foss-2021a-dmpar.eb
+  - Yambo-5.1.1-foss-2021a.eb:
+        options:
+          from-pr: 18905
+      
