@@ -4,7 +4,7 @@ on: [push, pull_request, workflow_dispatch]
 permissions:
   contents: read # to fetch code (actions/checkout)
 jobs:
-  eessi_pilot_repo:
+  pilot:
     runs-on: ubuntu-20.04
     strategy:
       fail-fast: false
@@ -39,13 +39,15 @@ jobs:
 
         - name: Test check_missing_installations.sh script
           run: |
-              export EESSI_SOFTWARE_SUBDIR_OVERRIDE=${{matrix.EESSI_SOFTWARE_SUBDIR_OVERRIDE}}
+              # export EESSI_SOFTWARE_SUBDIR_OVERRIDE=${{matrix.EESSI_SOFTWARE_SUBDIR_OVERRIDE}}
               source /cvmfs/pilot.nessi.no/versions/${{matrix.EESSI_VERSION}}/init/bash
               module load EasyBuild
               which eb
               eb --version
+              eb --show-config
               export EESSI_PREFIX=/cvmfs/pilot.nessi.no/versions/${{matrix.EESSI_VERSION}}
               export EESSI_OS_TYPE=linux
+              export EESSI_SOFTWARE_SUBDIR=${{matrix.EESSI_SOFTWARE_SUBDIR_OVERRIDE}}
               env | grep ^EESSI | sort
               echo "just run check_missing_installations.sh (should use eessi-${{matrix.EESSI_VERSION}}.yml)"
               ./check_missing_installations.sh ${{matrix.EASYSTACK_FILE}}
