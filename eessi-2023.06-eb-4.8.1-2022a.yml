@@ -8,3 +8,4 @@ easyconfigs:
   - gzip-1.12-GCCcore-11.3.0.eb
   - lz4-1.9.3-GCCcore-11.3.0.eb
   - zstd-1.5.2-GCCcore-11.3.0.eb
+  - NCO-5.1.0-foss-2022a.eb
