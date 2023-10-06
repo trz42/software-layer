@@ -1,2 +1,12 @@
 easyconfigs:
+  - BAMM-2.5.0-foss-2022a.eb
+  - BamTools-2.5.2-GCC-11.3.0.eb
+  - BCFtools-1.15.1-GCC-11.3.0.eb
+  - Bowtie2-2.4.5-GCC-11.3.0.eb
+  - FastTree-2.1.11-GCCcore-11.3.0.eb
+  - SAMtools-1.16.1-GCC-11.3.0.eb
+  - Pillow-9.1.1-GCCcore-11.3.0.eb:
+      # avoid that hardcoded paths like /usr/include are used in build commands
+        options:
+          from-pr: 18881  
   - ASE-3.22.1-foss-2022a.eb
