@@ -1,0 +1,3 @@
+easyconfigs:
+  # wraps around Java/11.0.20
+  - Java-11.eb
