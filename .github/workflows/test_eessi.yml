@@ -37,9 +37,22 @@ jobs:
               cvmfs_http_proxy: DIRECT
               cvmfs_repositories: pilot.nessi.no
 
-        - name: Test check_missing_installations.sh script
+        - name: Test check_missing_installations.sh script with EESSI_SOFTWARE_SUBDIR_OVERRIDE
           run: |
-              # export EESSI_SOFTWARE_SUBDIR_OVERRIDE=${{matrix.EESSI_SOFTWARE_SUBDIR_OVERRIDE}}
+              export EESSI_SOFTWARE_SUBDIR_OVERRIDE=${{matrix.EESSI_SOFTWARE_SUBDIR_OVERRIDE}}
+              source /cvmfs/pilot.nessi.no/versions/${{matrix.EESSI_VERSION}}/init/bash
+              module load EasyBuild
+              which eb
+              eb --version
+              eb --show-config
+              export EESSI_PREFIX=/cvmfs/pilot.nessi.no/versions/${{matrix.EESSI_VERSION}}
+              export EESSI_OS_TYPE=linux
+              env | grep ^EESSI | sort
+              echo "just run check_missing_installations.sh (should use ${{matrix.EASYSTACK_FILE}})"
+              ./check_missing_installations.sh ${{matrix.EASYSTACK_FILE}}
+
+        - name: Test check_missing_installations.sh script without EESSI_SOFTWARE_SUBDIR_OVERRIDE
+          run: |
               source /cvmfs/pilot.nessi.no/versions/${{matrix.EESSI_VERSION}}/init/bash
               module load EasyBuild
               which eb
@@ -49,7 +62,7 @@ jobs:
               export EESSI_OS_TYPE=linux
               export EESSI_SOFTWARE_SUBDIR=${{matrix.EESSI_SOFTWARE_SUBDIR_OVERRIDE}}
               env | grep ^EESSI | sort
-              echo "just run check_missing_installations.sh (should use eessi-${{matrix.EESSI_VERSION}}.yml)"
+              echo "just run check_missing_installations.sh (should use ${{matrix.EASYSTACK_FILE}})"
               ./check_missing_installations.sh ${{matrix.EASYSTACK_FILE}}
 
         - name: Test check_missing_installations.sh with missing package (GCC/8.3.0)
