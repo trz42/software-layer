@@ -18,6 +18,14 @@ jobs:
         - x86_64/intel/cascadelake
         - x86_64/intel/skylake_avx512
         - x86_64/generic
+        EASYSTACK_FILE:
+        - eessi-2023.06-eb-4.7.2-2021a.yml
+        - eessi-2023.06-eb-4.7.2-2021b.yml
+        - eessi-2023.06-eb-4.7.2-2022a.yml
+        - eessi-2023.06-eb-4.7.2-2022b.yml
+        - eessi-2023.06-eb-4.7.2-system.yml
+        - eessi-2023.06-eb-4.8.0-system.yml
+        - eessi-2023.06-eb-4.8.1-2022a.yml
     steps:
         - name: Check out software-layer repository
           uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # v3.1.0
@@ -39,12 +47,8 @@ jobs:
               export EESSI_PREFIX=/cvmfs/pilot.nessi.no/versions/${{matrix.EESSI_VERSION}}
               export EESSI_OS_TYPE=linux
               env | grep ^EESSI | sort
-              for easystack_file in $(ls eessi-${{matrix.EESSI_VERSION}}-eb-*.yml); do
-                  echo "check missing installations for ${easystack_file}..."
-                  ./check_missing_installations.sh ${easystack_file}
-                  ec=$?
-                  if [[ ${ec} -ne 0 ]]; then echo "missing installations found for ${easystack_file}!" >&2; exit ${ec}; fi
-              done
+              echo "just run check_missing_installations.sh (should use ${{matrix.EASYSTACK_FILE}})"
+              ./check_missing_installations.sh ${{matrix.EASYSTACK_FILE}}
 
         - name: Test check_missing_installations.sh script without EESSI_SOFTWARE_SUBDIR_OVERRIDE
           if: '!cancelled()'
@@ -56,12 +60,8 @@ jobs:
               export EESSI_OS_TYPE=linux
               export EESSI_SOFTWARE_SUBDIR=${{matrix.EESSI_SOFTWARE_SUBDIR}}
               env | grep ^EESSI | sort
-              for easystack_file in $(ls eessi-${{matrix.EESSI_VERSION}}-eb-*.yml); do
-                  echo "check missing installations for ${easystack_file}..."
-                  ./check_missing_installations.sh ${easystack_file}
-                  ec=$?
-                  if [[ ${ec} -ne 0 ]]; then echo "missing installations found for ${easystack_file}!" >&2; exit ${ec}; fi
-              done
+              echo "just run check_missing_installations.sh (should use ${{matrix.EASYSTACK_FILE}})"
+              ./check_missing_installations.sh ${{matrix.EASYSTACK_FILE}}
 
         - name: Test check_missing_installations.sh with missing package (GCC/8.3.0)
           if: '!cancelled()'
