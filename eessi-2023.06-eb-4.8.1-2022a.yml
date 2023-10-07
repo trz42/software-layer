@@ -25,3 +25,4 @@ easyconfigs:
   - elfutils-0.187-GCCcore-11.3.0.eb
   - Ninja-1.10.2-GCCcore-11.3.0.eb
   - Z3-4.10.2-GCCcore-11.3.0.eb
+  - SciPy-bundle-2022.05-foss-2022a.eb
