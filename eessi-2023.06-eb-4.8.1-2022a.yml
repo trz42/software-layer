@@ -8,6 +8,7 @@ easyconfigs:
   - gzip-1.12-GCCcore-11.3.0.eb
   - lz4-1.9.3-GCCcore-11.3.0.eb
   - zstd-1.5.2-GCCcore-11.3.0.eb
+  - Boost.Python-1.79.0-GCC-11.3.0.eb
   - AdapterRemoval-2.3.3-GCC-11.3.0.eb
   - BEDTools-2.30.0-GCC-11.3.0.eb
   - Bio-DB-HTS-3.01-GCC-11.3.0.eb
