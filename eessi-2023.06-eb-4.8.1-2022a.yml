@@ -17,3 +17,11 @@ easyconfigs:
   - NCO-5.1.0-foss-2022a.eb
   - AdapterRemoval-2.3.3-GCC-11.3.0.eb
   - BEDTools-2.30.0-GCC-11.3.0.eb
+  - Pysam-0.20.0-GCC-11.3.0.eb
+  - TransDecoder-5.5.0-GCC-11.3.0.eb
+  - VCFtools-0.1.16-GCC-11.3.0.eb
+  - XML-LibXML-2.0207-GCCcore-11.3.0.eb
+  - CMake-3.24.3-GCCcore-11.3.0.eb
+  - elfutils-0.187-GCCcore-11.3.0.eb
+  - Ninja-1.10.2-GCCcore-11.3.0.eb
+  - Z3-4.10.2-GCCcore-11.3.0.eb
