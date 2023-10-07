@@ -15,3 +15,4 @@ easyconfigs:
       options:
         include-easyblocks-from-pr: 3012
   - NCO-5.1.0-foss-2022a.eb
+  - tbb-2021.5.0-GCCcore-11.3.0.eb
