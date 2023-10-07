@@ -17,4 +17,3 @@ easyconfigs:
   - NCO-5.1.0-foss-2022a.eb
   - AdapterRemoval-2.3.3-GCC-11.3.0.eb
   - BEDTools-2.30.0-GCC-11.3.0.eb
-  - BWA-0.7.17-GCCcore-11.3.0.eb
