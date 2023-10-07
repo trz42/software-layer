@@ -8,6 +8,7 @@ easyconfigs:
   - gzip-1.12-GCCcore-11.3.0.eb
   - lz4-1.9.3-GCCcore-11.3.0.eb
   - zstd-1.5.2-GCCcore-11.3.0.eb
+  - Boost.Python-1.79.0-GCC-11.3.0.eb
   - netCDF-4.9.0-gompi-2022a.eb:
       # use updated CMakeMake easyblock to avoid that -DCMAKE_SKIP_RPATH=ON is used, which breaks the netCDF test step
       # see https://github.com/easybuilders/easybuild-easyblocks/pull/3012
