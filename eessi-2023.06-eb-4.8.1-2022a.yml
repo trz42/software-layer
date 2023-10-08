@@ -40,3 +40,12 @@ easyconfigs:
   - ecCodes-2.27.0-gompi-2022a.eb:
         options:
           download-timeout: 1000
+  - GLPK-5.0-GCCcore-11.3.0.eb
+  - libgit2-1.4.3-GCCcore-11.3.0.eb
+  - libGLU-9.0.2-GCCcore-11.3.0.eb
+  - libsndfile-1.1.0-GCCcore-11.3.0.eb
+  - LibTIFF-4.3.0-GCCcore-11.3.0.eb
+  - MPFR-4.1.0-GCCcore-11.3.0.eb
+  - NLopt-2.7.1-GCCcore-11.3.0.eb
+  - PCRE2-10.40-GCCcore-11.3.0.eb
+  - Tk-8.6.12-GCCcore-11.3.0.eb
