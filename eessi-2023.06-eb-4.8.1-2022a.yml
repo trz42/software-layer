@@ -34,9 +34,21 @@ easyconfigs:
   #     options:
   #       from-pr: 18834
   - tbb-2021.5.0-GCCcore-11.3.0.eb
-  # seems downloading nodejs (dependency of R) ran into timeout across jobs,
-  # hence increasing the timeout for downloading it
+  - CMSeq-1.0.4-foss-2022a.eb
+  - Pango-1.50.7-GCCcore-11.3.0.eb
   - nodejs-16.15.1-GCCcore-11.3.0.eb:
       options:
         download-timeout: 1000
+  - ecCodes-2.27.0-gompi-2022a.eb:
+        options:
+          download-timeout: 1000
+  - GLPK-5.0-GCCcore-11.3.0.eb
+  - libgit2-1.4.3-GCCcore-11.3.0.eb
+  - libGLU-9.0.2-GCCcore-11.3.0.eb
+  - libsndfile-1.1.0-GCCcore-11.3.0.eb
+  - LibTIFF-4.3.0-GCCcore-11.3.0.eb
+  - MPFR-4.1.0-GCCcore-11.3.0.eb
+  - NLopt-2.7.1-GCCcore-11.3.0.eb
+  - PCRE2-10.40-GCCcore-11.3.0.eb
+  - Tk-8.6.12-GCCcore-11.3.0.eb
   - R-4.2.1-foss-2022a.eb
