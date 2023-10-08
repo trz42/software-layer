@@ -33,4 +33,6 @@ easyconfigs:
         from-pr: 18834
   - tbb-2021.5.0-GCCcore-11.3.0.eb
   - CMSeq-1.0.4-foss-2022a.eb
-  - ecCodes-2.27.0-gompi-2022a.eb
+  - ecCodes-2.27.0-gompi-2022a.eb:
+        options:
+          download-timeout: 1000
