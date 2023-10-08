@@ -32,6 +32,7 @@ easyconfigs:
       options:
         from-pr: 18834
   - tbb-2021.5.0-GCCcore-11.3.0.eb
+  - CMSeq-1.0.4-foss-2022a.eb
   - GLPK-5.0-GCCcore-11.3.0.eb
   - libgit2-1.4.3-GCCcore-11.3.0.eb
   - libGLU-9.0.2-GCCcore-11.3.0.eb
