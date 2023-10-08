@@ -34,3 +34,6 @@ easyconfigs:
   - tbb-2021.5.0-GCCcore-11.3.0.eb
   - CMSeq-1.0.4-foss-2022a.eb
   - Pango-1.50.7-GCCcore-11.3.0.eb
+  - nodejs-16.15.1-GCCcore-11.3.0.eb:
+      options:
+        download-timeout: 1000
