@@ -37,3 +37,6 @@ easyconfigs:
   - nodejs-16.15.1-GCCcore-11.3.0.eb:
       options:
         download-timeout: 1000
+  - ecCodes-2.27.0-gompi-2022a.eb:
+        options:
+          download-timeout: 1000
