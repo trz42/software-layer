@@ -34,4 +34,9 @@ easyconfigs:
   #     options:
   #       from-pr: 18834
   - tbb-2021.5.0-GCCcore-11.3.0.eb
+  # seems downloading nodejs (dependency of R) ran into timeout across jobs,
+  # hence increasing the timeout for downloading it
+  - nodejs-16.15.1-GCCcore-11.3.0.eb:
+      options:
+        download-timeout: 1000
   - R-4.2.1-foss-2022a.eb
