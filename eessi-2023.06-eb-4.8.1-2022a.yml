@@ -49,3 +49,4 @@ easyconfigs:
   - NLopt-2.7.1-GCCcore-11.3.0.eb
   - PCRE2-10.40-GCCcore-11.3.0.eb
   - Tk-8.6.12-GCCcore-11.3.0.eb
+  - GROMACS-2023.1-foss-2022a.eb
