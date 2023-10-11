@@ -55,4 +55,8 @@ easyconfigs:
   - Tk-8.6.12-GCCcore-11.3.0.eb
   - GROMACS-2023.1-foss-2022a.eb
   - MUMPS-5.5.1-foss-2022a-metis.eb
+  - Pillow-9.1.1-GCCcore-11.3.0.eb:
+      # Uses a custom hook since has zlib as dependency which has hard coded header and library path within Pillow code.
+      options:
+        from-pr: 18881
   - ASE-3.22.1-foss-2022a.eb
