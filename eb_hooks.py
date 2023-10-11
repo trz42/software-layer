@@ -178,7 +178,7 @@ def parse_hook_openblas_relax_lapack_tests_num_errors(ec, eprefix):
 
 
 def parse_hook_pillow_set_cpath_library_path(ec, eprefix):
-    """Get CPATH and LIBRARY_PATH environment variables from the environment"""
+    """Extend CPATH and LIBRARY_PATH environment variables using EESSI_EPREFIX."""
     if ec.name == 'Pillow':
         EESSI_CPATH = os.getenv('EESSI_EPREFIX') + '/usr/include'
         EESSI_LIB_PATH = os.getenv('EESSI_EPREFIX') + '/usr/lib64'
