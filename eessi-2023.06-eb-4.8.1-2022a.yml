@@ -51,3 +51,4 @@ easyconfigs:
   - Tk-8.6.12-GCCcore-11.3.0.eb
   - GROMACS-2023.1-foss-2022a.eb
   - MUMPS-5.5.1-foss-2022a-metis.eb
+  - OpenBabel-3.1.1-gompi-2022a.eb
