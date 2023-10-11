@@ -66,6 +66,23 @@ def parse_hook(ec, *args, **kwargs):
         PARSE_HOOKS[ec.name](ec, eprefix)
 
 
+def parse_hook_pillow_set_cpath_library_path(ec, eprefix):
+    """Get EESSI_CPATH environment variable from the environment"""
+    if ec.name == 'Pillow':
+        EESSI_CPATH = os.getenv('EESSI_EPREFIX') + '/usr/include'
+        EESSI_LIB_PATH = os.getenv('EESSI_EPREFIX') + '/usr/lib64'
+        print_msg("NOTE:Pillow has zlib as a dependancy,the original CPATH value: (%s) has been extended with (%s)",
+                  os.getenv('CPATH'),  EESSI_CPATH)
+        print_msg("NOTE:Pillow has zlib as a dependancy,the original LIBRARY_PATH value: (%s) has been extended with (%s)",
+                  os.getenv('LIBRARY_PATH'),  EESSI_LIB_PATH)
+        ec.log.info("NOTE:Pillow has zlib as a dependancy,the original CPATH value: (%s)  has been extended with (%s)",
+                    os.getenv('CPATH'), EESSI_CPATH)
+        ec.log.info("NOTE:Pillow has zlib as a dependancy,the original LIBRARY_VALUE value: (%s) has been extended with (%s)",
+                    os.getenv('LIBRARY_PATH'), EESSI_LIB_PATH)
+        os.environ['CPATH'] = os.pathsep.join(filter(None,[os.environ.get('CPATH',''), EESSI_CPATH]))
+        os.environ['LIBRARY_PATH'] = os.pathsep.join(filter(None,[os.environ.get('LIBRARY_PATH',''), EESSI_LIB_PATH]))
+
+
 def pre_prepare_hook(self, *args, **kwargs):
     """Main pre-prepare hook: trigger custom functions."""
 
@@ -273,6 +290,7 @@ PARSE_HOOKS = {
     'fontconfig': parse_hook_fontconfig_add_fonts,
     'OpenBLAS': parse_hook_openblas_relax_lapack_tests_num_errors,
     'UCX': parse_hook_ucx_eprefix,
+    'Pillow': parse_hook_pillow_set_cpath_library_path,
 }
 
 POST_PREPARE_HOOKS = {
