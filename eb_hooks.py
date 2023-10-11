@@ -66,23 +66,6 @@ def parse_hook(ec, *args, **kwargs):
         PARSE_HOOKS[ec.name](ec, eprefix)
 
 
-def parse_hook_pillow_set_cpath_library_path(ec, eprefix):
-    """Get EESSI_CPATH environment variable from the environment"""
-    if ec.name == 'Pillow':
-        EESSI_CPATH = os.getenv('EESSI_EPREFIX') + '/usr/include'
-        EESSI_LIB_PATH = os.getenv('EESSI_EPREFIX') + '/usr/lib64'
-        print_msg("NOTE:Pillow has zlib as a dependancy,the original CPATH value: (%s) has been extended with (%s)",
-                  os.getenv('CPATH'),  EESSI_CPATH)
-        print_msg("NOTE:Pillow has zlib as a dependancy,the original LIBRARY_PATH value: (%s) has been extended with (%s)",
-                  os.getenv('LIBRARY_PATH'),  EESSI_LIB_PATH)
-        ec.log.info("NOTE:Pillow has zlib as a dependancy,the original CPATH value: (%s)  has been extended with (%s)",
-                    os.getenv('CPATH'), EESSI_CPATH)
-        ec.log.info("NOTE:Pillow has zlib as a dependancy,the original LIBRARY_VALUE value: (%s) has been extended with (%s)",
-                    os.getenv('LIBRARY_PATH'), EESSI_LIB_PATH)
-        os.environ['CPATH'] = os.pathsep.join(filter(None,[os.environ.get('CPATH',''), EESSI_CPATH]))
-        os.environ['LIBRARY_PATH'] = os.pathsep.join(filter(None,[os.environ.get('LIBRARY_PATH',''), EESSI_LIB_PATH]))
-
-
 def pre_prepare_hook(self, *args, **kwargs):
     """Main pre-prepare hook: trigger custom functions."""
 
@@ -194,6 +177,23 @@ def parse_hook_openblas_relax_lapack_tests_num_errors(ec, eprefix):
         raise EasyBuildError("OpenBLAS-specific hook triggered for non-OpenBLAS easyconfig?!")
 
 
+def parse_hook_pillow_set_cpath_library_path(ec, eprefix):
+    """Get CPATH and LIBRARY_PATH environment variables from the environment"""
+    if ec.name == 'Pillow':
+        EESSI_CPATH = os.getenv('EESSI_EPREFIX') + '/usr/include'
+        EESSI_LIB_PATH = os.getenv('EESSI_EPREFIX') + '/usr/lib64'
+        print_msg("NOTE: Pillow has zlib as a dependancy, The original CPATH value: (%s) has been extended with (%s)",
+                  os.getenv('CPATH'),  EESSI_CPATH)
+        print_msg("NOTE: Pillow has zlib as a dependancy, The original LIBRARY_PATH value: (%s) has been extended with (%s)",
+                  os.getenv('LIBRARY_PATH'),  EESSI_LIB_PATH)
+        ec.log.info("NOTE: Pillow has zlib as a dependancy, The original CPATH value: (%s)  has been extended with (%s)",
+                    os.getenv('CPATH'), EESSI_CPATH)
+        ec.log.info("NOTE: Pillow has zlib as a dependancy, The original LIBRARY_VALUE value: (%s) has been extended with (%s)",
+                    os.getenv('LIBRARY_PATH'), EESSI_LIB_PATH)
+        os.environ['CPATH'] = os.pathsep.join(filter(None,[os.environ.get('CPATH',''), EESSI_CPATH]))
+        os.environ['LIBRARY_PATH'] = os.pathsep.join(filter(None,[os.environ.get('LIBRARY_PATH',''), EESSI_LIB_PATH]))
+
+
 def parse_hook_ucx_eprefix(ec, eprefix):
     """Make UCX aware of compatibility layer via additional configuration options."""
     if ec.name == 'UCX':
@@ -289,8 +289,8 @@ PARSE_HOOKS = {
     'CGAL': parse_hook_cgal_toolchainopts_precise,
     'fontconfig': parse_hook_fontconfig_add_fonts,
     'OpenBLAS': parse_hook_openblas_relax_lapack_tests_num_errors,
-    'UCX': parse_hook_ucx_eprefix,
     'Pillow': parse_hook_pillow_set_cpath_library_path,
+    'UCX': parse_hook_ucx_eprefix,
 }
 
 POST_PREPARE_HOOKS = {
