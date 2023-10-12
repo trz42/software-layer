@@ -72,23 +72,27 @@ jobs:
               echo "eb start"
               eb --missing --easystack ${{matrix.EASYSTACK_FILE}} > ${EB_MISSING_OUT} || true
               echo "eb done"
+              PR_UPDATE_FILE=$(mktemp ${{matrix.EASYSTACK_FILE}}.XXX)
+              echo "PR_UPDATE_FILE=${PR_UPDATE_FILE}" >> "${GITHUB_ENV}"
               echo "grep start"
-              
               if [[ $(grep '.* out of .* required modules missing:' ${EB_MISSING_OUT}) ]]; then
                 # there may be multiple sections with the above search string
                 # we grab all lines listing missing modules and print a list of
                 # unique modules only
                 MISSING_MODULES=$(grep '^* ' ${EB_MISSING_OUT} | sort -u)
                 echo "found $(echo ${MISSING_MODULES} | wc -l) modules missing:"
+                echo "found $(echo ${MISSING_MODULES} | wc -l) modules missing:" > ${PR_UPDATE_FILE}
                 echo "${MISSING_MODULES}"
+                echo "<code>${MISSING_MODULES}</code>" >> ${PR_UPDATE_FILE}
               else
                 echo "no modules missing"
+                echo "no modules missing" > ${PR_UPDATE_FILE}
               fi
 
         - name: Update PR description
           uses: nefrob/pr-description@eb00e54af678cf0d50a5b8fdd54b557c9cd8ddc5
           with:
-            content: "Hello there!"
+            content: ${PR_UPDATE_FILE}
             regex: "matchuntilthenend.*"
             regexFlags: i
             token: ${{ secrets.GITHUB_TOKEN }}
