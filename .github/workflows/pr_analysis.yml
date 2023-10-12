@@ -68,4 +68,17 @@ jobs:
               export EESSI_OS_TYPE=linux
               env | grep ^EESSI | sort
               source configure_easybuild
-              eb --missing --easystack ${{matrix.EASYSTACK_FILE}} | grep '^* '
+              eb --missing --easystack ${{matrix.EASYSTACK_FILE}} > ${EB_MISSING_OUT}
+              grep '.* out of .* required modules missing:' ${EB_MISSING_OUT}
+              exit_code=$?
+              if [[ ${exit_code} -eq 0 ]]; then
+                # there may be multiple sections with the above search string
+                # we grab all lines listing missing modules and print a list of
+                # unique modules only
+                MISSING_MODULES=$(grep '^* ' ${EB_MISSING_OUT} | sort -u)
+                echo "found $(echo ${MISSING_MODULES} | wc -l) modules missing:"
+                echo "${MISSING_MODULES}"
+              else
+                echo "no modules missing"
+              fi
+
