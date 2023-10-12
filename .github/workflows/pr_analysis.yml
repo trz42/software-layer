@@ -69,9 +69,13 @@ jobs:
               env | grep ^EESSI | sort
               source configure_easybuild
               EB_MISSING_OUT=eb_missing.out
-              eb --missing --easystack ${{matrix.EASYSTACK_FILE}} > ${EB_MISSING_OUT}
+              echo "eb start"
+              eb --missing --easystack ${{matrix.EASYSTACK_FILE}} > ${EB_MISSING_OUT} || true
+              echo "eb done"
+              echo "grep start"
               grep '.* out of .* required modules missing:' ${EB_MISSING_OUT}
               exit_code=$?
+              echo "grep done"
               if [[ ${exit_code} -eq 0 ]]; then
                 # there may be multiple sections with the above search string
                 # we grab all lines listing missing modules and print a list of
