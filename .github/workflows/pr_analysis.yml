@@ -6,6 +6,9 @@ permissions:
 jobs:
   pilot:
     runs-on: ubuntu-20.04
+    permissions:
+      contents: read
+      pull-requests: write
     strategy:
       fail-fast: false
       matrix:
@@ -74,6 +77,7 @@ jobs:
               echo "eb done"
               PR_UPDATE_FILE=$(mktemp ${{matrix.EASYSTACK_FILE}}.XXX)
               echo "PR_UPDATE_FILE=${PR_UPDATE_FILE}" >> "${GITHUB_ENV}"
+              echo "# PR analysis for arch ${{matrix.EESSI_SOFTWARE_SUBDIR}}" > ${PR_UPDATE_FILE}
               echo "grep start"
               if [[ $(grep '.* out of .* required modules missing:' ${EB_MISSING_OUT}) ]]; then
                 # there may be multiple sections with the above search string
@@ -81,7 +85,7 @@ jobs:
                 # unique modules only
                 MISSING_MODULES=$(grep '^* ' ${EB_MISSING_OUT} | sort -u)
                 echo "found $(echo ${MISSING_MODULES} | wc -l) modules missing:"
-                echo "found $(echo ${MISSING_MODULES} | wc -l) modules missing:" > ${PR_UPDATE_FILE}
+                echo "found $(echo ${MISSING_MODULES} | wc -l) modules missing:" >> ${PR_UPDATE_FILE}
                 echo "${MISSING_MODULES}"
                 echo "<code>${MISSING_MODULES}</code>" >> ${PR_UPDATE_FILE}
               else
@@ -93,6 +97,6 @@ jobs:
           uses: nefrob/pr-description@eb00e54af678cf0d50a5b8fdd54b557c9cd8ddc5
           with:
             content: ${PR_UPDATE_FILE}
-            regex: "matchuntilthenend.*"
+            regex: "# PR analysis for arch ${{matrix.EESSI_SOFTWARE_SUBDIR}}.*"
             regexFlags: i
             token: ${{ secrets.GITHUB_TOKEN }}
