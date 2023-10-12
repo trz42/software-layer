@@ -68,6 +68,7 @@ jobs:
               export EESSI_OS_TYPE=linux
               env | grep ^EESSI | sort
               source configure_easybuild
+              EB_MISSING_OUT=eb_missing.out
               eb --missing --easystack ${{matrix.EASYSTACK_FILE}} > ${EB_MISSING_OUT}
               grep '.* out of .* required modules missing:' ${EB_MISSING_OUT}
               exit_code=$?
@@ -82,3 +83,10 @@ jobs:
                 echo "no modules missing"
               fi
 
+        - name: Update PR description
+          uses: nefrob/pr-description@eb00e54af678cf0d50a5b8fdd54b557c9cd8ddc5
+          with:
+            content: "Hello there!"
+            regex: "matchuntilthenend.*"
+            regexFlags: i
+            token: ${{ secrets.GITHUB_TOKEN }}
