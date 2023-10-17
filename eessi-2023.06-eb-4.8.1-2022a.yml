@@ -56,3 +56,5 @@ easyconfigs:
       options:
         from-pr: 18881
   - ParaView-5.10.1-foss-2022a-mpi.eb
+        options:
+          download-timeout: 1000
