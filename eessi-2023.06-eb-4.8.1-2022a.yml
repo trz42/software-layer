@@ -59,4 +59,7 @@ easyconfigs:
       # Uses a custom hook since has zlib as dependency which has hard coded header and library path within Pillow code.
       options:
         from-pr: 18881
+  - ParaView-5.10.1-foss-2022a-mpi.eb:
+        options:
+          download-timeout: 1000
   - ASE-3.22.1-foss-2022a.eb
