@@ -63,8 +63,7 @@ easyconfigs:
         options:
           download-timeout: 1000
   - ASE-3.22.1-foss-2022a.eb
-  - googletest-1.11.0-GCCcore-11.3.0.eb
-  - nlohmann_json-3.10.5-GCCcore-11.3.0.eb
   - CDO-2.0.6-gompi-2022a.eb:
       options:
         include-easyblocks-from-pr: 3012
+        parallel: 1 
