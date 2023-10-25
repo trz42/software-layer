@@ -208,6 +208,9 @@ for easystack_file in $(cat ${pr_diff} | grep '^+++' | cut -f2 -d' ' | sed 's@^[
         ${EB} --easystack ${TOPDIR}/${easystack_file} --robot
         ec=$?
 
+        ${EB} --easystack ${TOPDIR}/${easystack_file} --robot
+        ec=$?
+
         # copy EasyBuild log file if EasyBuild exited with an error
         if [ ${ec} -ne 0 ]; then
             eb_last_log=$(unset EB_VERBOSE; eb --last-log)

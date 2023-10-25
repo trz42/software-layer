@@ -63,3 +63,5 @@ easyconfigs:
         options:
           download-timeout: 1000
   - ASE-3.22.1-foss-2022a.eb
+  - PROJ-9.0.0-GCCcore-11.3.0.eb
+  - PROJ-9.0.0-GCCcore-11.3.0.eb
