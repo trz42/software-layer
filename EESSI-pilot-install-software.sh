@@ -200,6 +200,11 @@ for easystack_file in $(cat ${pr_diff} | grep '^+++' | cut -f2 -d' ' | sed 's@^[
 
     ${EB} --show-config
 
+    echo "################################################################################"
+    echo "#### SHOW ENV"
+    env | sort
+    echo "################################################################################"
+
     echo_green "All set, let's start installing some software with EasyBuild v${eb_version} in ${EASYBUILD_INSTALLPATH}..."
 
     if [ -f ${easystack_file} ]; then
