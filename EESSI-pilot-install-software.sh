@@ -202,13 +202,28 @@ for easystack_file in $(cat ${pr_diff} | grep '^+++' | cut -f2 -d' ' | sed 's@^[
 
     echo "Removing some lua files to trigger rebuilding packages"
     rm /cvmfs/pilot.nessi.no/versions/2023.06/software/linux/x86_64/intel/broadwell/modules/all/jbigkit/2.1-GCCcore-11.3.0.lua
+    rm -rf /cvmfs/pilot.nessi.no/versions/2023.06/software/linux/x86_64/intel/broadwell/software/jbigkit/2.1-GCCcore-11.3.0
+
     rm /cvmfs/pilot.nessi.no/versions/2023.06/software/linux/x86_64/intel/broadwell/modules/all/NASM/2.15.05-GCCcore-11.3.0.lua
+    rm -rf /cvmfs/pilot.nessi.no/versions/2023.06/software/linux/x86_64/intel/broadwell/software/NASM/2.15.05-GCCcore-11.3.0
+
     rm /cvmfs/pilot.nessi.no/versions/2023.06/software/linux/x86_64/intel/broadwell/modules/all/libjpeg-turbo/2.1.3-GCCcore-11.3.0.lua
+    rm -rf /cvmfs/pilot.nessi.no/versions/2023.06/software/linux/x86_64/intel/broadwell/software/libjpeg-turbo/2.1.3-GCCcore-11.3.0
+
     rm /cvmfs/pilot.nessi.no/versions/2023.06/software/linux/x86_64/intel/broadwell/modules/all/libdeflate/1.10-GCCcore-11.3.0.lua
+    rm -rf /cvmfs/pilot.nessi.no/versions/2023.06/software/linux/x86_64/intel/broadwell/software/libdeflate/1.10-GCCcore-11.3.0
+
     rm /cvmfs/pilot.nessi.no/versions/2023.06/software/linux/x86_64/intel/broadwell/modules/all/gzip/1.12-GCCcore-11.3.0.lua
+    rm -rf /cvmfs/pilot.nessi.no/versions/2023.06/software/linux/x86_64/intel/broadwell/software/gzip/1.12-GCCcore-11.3.0
+
     rm /cvmfs/pilot.nessi.no/versions/2023.06/software/linux/x86_64/intel/broadwell/modules/all/lz4/1.9.3-GCCcore-11.3.0.lua
+    rm -rf /cvmfs/pilot.nessi.no/versions/2023.06/software/linux/x86_64/intel/broadwell/software/lz4/1.9.3-GCCcore-11.3.0
+
     rm /cvmfs/pilot.nessi.no/versions/2023.06/software/linux/x86_64/intel/broadwell/modules/all/zstd/1.5.2-GCCcore-11.3.0.lua
+    rm -rf /cvmfs/pilot.nessi.no/versions/2023.06/software/linux/x86_64/intel/broadwell/software/zstd/1.5.2-GCCcore-11.3.0
+
     rm /cvmfs/pilot.nessi.no/versions/2023.06/software/linux/x86_64/intel/broadwell/modules/all/LibTIFF/4.3.0-GCCcore-11.3.0.lua
+    rm -rf /cvmfs/pilot.nessi.no/versions/2023.06/software/linux/x86_64/intel/broadwell/software/LibTIFF/4.3.0-GCCcore-11.3.0
 
     echo_green "All set, let's start installing some software with EasyBuild v${eb_version} in ${EASYBUILD_INSTALLPATH}..."
 
