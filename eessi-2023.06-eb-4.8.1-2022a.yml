@@ -65,4 +65,3 @@ easyconfigs:
         options:
           download-timeout: 1000
   - ASE-3.22.1-foss-2022a.eb
-  - R-4.2.1-foss-2022a.eb
