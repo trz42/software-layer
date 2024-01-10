@@ -226,6 +226,7 @@ for easystack_file in $(cat ${pr_diff} | grep '^+++' | cut -f2 -d' ' | sed 's@^[
 done
 
 ### add packages here
+${EB} --easystack ${TOPDIR}/file-5.43-GCCcore-11.3.0.eb --robot
 
 echo ">> Creating/updating Lmod cache..."
 export LMOD_RC="${EASYBUILD_INSTALLPATH}/.lmod/lmodrc.lua"
