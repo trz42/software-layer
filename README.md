@@ -16,7 +16,7 @@ Using x86_64/intel/broadwell subdirectory for software layer
 Initializing Lmod...
 Prepending /cvmfs/pilot.nessi.no/versions/2023.06/software/x86_64/intel/broadwell/modules/all to $MODULEPATH...
 Environment set up to use EESSI (2023.06), have fun!
-[EESSI pilot 2023.06] $
+[EESSI 2023.06] $
 ```
 
 ### Accessing EESSI via a container
