@@ -8,7 +8,8 @@
 # license: GPLv2
 #
 
-export EESSI_CVMFS_REPO="${EESSI_CVMFS_REPO_OVERRIDE:=/cvmfs/pilot.nessi.no}"
+export EESSI_CVMFS_REPO="${EESSI_CVMFS_REPO_OVERRIDE:=/cvmfs/software.eessi.io}"
+# export EESSI_CVMFS_REPO="${EESSI_CVMFS_REPO_OVERRIDE:=/cvmfs/pilot.nessi.no}"
 export EESSI_VERSION="${EESSI_VERSION_OVERRIDE:=2023.06}"
 # use archdetect by default, unless otherwise specified
 export EESSI_USE_ARCHDETECT="${EESSI_USE_ARCHDETECT:=1}"
