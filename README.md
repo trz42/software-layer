@@ -9,12 +9,12 @@ See also https://www.eessi.io/docs/software_layer .
 You can set up your environment by sourcing the init script:
 
 ```
-$ source /cvmfs/pilot.nessi.no/versions/2023.06/init/bash
-Found EESSI pilot repo @ /cvmfs/pilot.nessi.no/versions/2023.06!
+$ source /cvmfs/software.eessi.io/versions/2023.06/init/bash
+Found EESSI repo @ /cvmfs/software.eessi.io/versions/2023.06!
 Derived subdirectory for software layer: x86_64/intel/broadwell
-Using x86_64/intel/broadwell subdirectory for software layer
+Using x86_64/intel/haswell subdirectory for software layer
 Initializing Lmod...
-Prepending /cvmfs/pilot.nessi.no/versions/2023.06/software/x86_64/intel/broadwell/modules/all to $MODULEPATH...
+Prepending /cvmfs/software.eessi.io/versions/2023.06/software/x86_64/intel/haswell/modules/all to $MODULEPATH...
 Environment set up to use EESSI (2023.06), have fun!
 [EESSI 2023.06] $
 ```
