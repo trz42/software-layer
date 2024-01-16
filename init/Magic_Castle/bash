@@ -36,4 +36,4 @@ else
    module reload
 fi
 
-echo "Environment set up to use EESSI (${EESSI_VERSION}), have fun!"
+echo "Environment set up to use NESSI (${EESSI_VERSION}), have fun!"

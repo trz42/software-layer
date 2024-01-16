@@ -71,7 +71,7 @@ cpupath(){
     [ $EESI_SOFTWARE_SUBDIR_OVERRIDE ] && echo ${EESI_SOFTWARE_SUBDIR_OVERRIDE} && exit
 
     # Identify the best matching CPU architecture from a list of supported specifications for the host CPU
-    # Return the path to the installation files in EESSI of the best matching architecture
+    # Return the path to the installation files in NESSI of the best matching architecture
     local cpu_arch_spec=()
   
     # Identify the host CPU architecture
