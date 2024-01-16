@@ -28,7 +28,7 @@ if [ $? -eq 0 ]; then
     module use $EESSI_MODULEPATH
 
     #echo >> $output
-    #echo "*** Known problems in the ${EESSI_VERSION} pilot software stack ***" >> $output
+    #echo "*** Known problems in the ${EESSI_VERSION} software stack ***" >> $output
     #echo >> $output
     #echo "1) ..." >> $output
     #echo >> $output
