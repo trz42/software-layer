@@ -1,8 +1,8 @@
 # Software layer
 
-The software layer of the EESSI project uses [EasyBuild](https://easybuild.readthedocs.io), [Lmod](https://lmod.readthedocs.io) and [archspec](https://archspec.readthedocs.io).
+The software layer of the EESSI project uses [EasyBuild](https://docs.easybuild.io), [Lmod](https://lmod.readthedocs.io) and [archspec](https://archspec.readthedocs.io).
 
-See also https://eessi.github.io/docs/software_layer.
+See also https://www.eessi.io/docs/software_layer .
 
 ## Pilot software stack
 
@@ -12,7 +12,7 @@ You can set up your environment by sourcing the init script:
 $ source /cvmfs/pilot.nessi.no/versions/2023.06/init/bash
 Found EESSI pilot repo @ /cvmfs/pilot.nessi.no/versions/2023.06!
 Derived subdirectory for software layer: x86_64/intel/broadwell
-Using x86_64/intel/broadwell subdirectory for software layer (HARDCODED)
+Using x86_64/intel/haswell subdirectory for software layer
 Initializing Lmod...
 Prepending /cvmfs/pilot.nessi.no/versions/2023.06/software/x86_64/intel/broadwell/modules/all to $MODULEPATH...
 Environment set up to use EESSI pilot software stack, have fun!
