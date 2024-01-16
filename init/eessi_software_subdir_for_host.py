@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# Determine EESSI software subdirectory to use for current build host, using archspec
+# Determine NESSI software subdirectory to use for current build host, using archspec
 #
 import glob
 import os

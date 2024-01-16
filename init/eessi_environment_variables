@@ -19,7 +19,7 @@ function error() {
 source $EESSI_INIT_DIR_PATH/minimal_eessi_env
 
 if [ -d $EESSI_PREFIX ]; then
-  echo "Found EESSI repo @ $EESSI_PREFIX!" >> $output
+  echo "Found NESSI repo @ $EESSI_PREFIX!" >> $output
 
   export EESSI_EPREFIX=$EPREFIX
   if [ -d $EESSI_EPREFIX ]; then
@@ -63,7 +63,7 @@ if [ -d $EESSI_PREFIX ]; then
             export EESSI_MODULEPATH=$EESSI_MODULEPATH
             echo "Using ${EESSI_MODULEPATH} as the directory to be added to MODULEPATH." >> $output
           else
-            error "EESSI module path at $EESSI_MODULEPATH not found!"
+            error "NESSI module path at $EESSI_MODULEPATH not found!"
             false
           fi
 
@@ -75,7 +75,7 @@ if [ -d $EESSI_PREFIX ]; then
           fi
 
         else
-          error "EESSI software layer at $EESSI_SOFTWARE_PATH not found!"
+          error "NESSI software layer at $EESSI_SOFTWARE_PATH not found!"
         fi
     else
         error "no value set for \$EESSI_SOFTWARE_SUBDIR"
@@ -84,5 +84,5 @@ if [ -d $EESSI_PREFIX ]; then
     error "Compatibility layer directory $EESSI_EPREFIX not found!"
   fi
 else
-  error "EESSI repository at $EESSI_PREFIX not found!"
+  error "NESSI repository at $EESSI_PREFIX not found!"
 fi
