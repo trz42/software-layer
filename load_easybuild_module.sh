@@ -71,21 +71,28 @@ else
     check_exit_code $? "${ok_msg}" "${fail_msg}"
 
     # maybe the module obtained with --install-latest-eb-release is exactly the EasyBuild version we wanted?
+    IGNORE_CACHE=''
     module avail 2>&1 | grep -i easybuild/${EB_VERSION} &> ${ml_av_easybuild_out}
     if [[ $? -eq 0 ]]; then
         echo_green ">> Module for EasyBuild v${EB_VERSION} found!"
     else
-        eb_ec=EasyBuild-${EB_VERSION}.eb
-        echo_yellow ">> Still no module for EasyBuild v${EB_VERSION}, trying with easyconfig ${eb_ec}..."
-        ${EB} --search ${eb_ec} | grep ${eb_ec} > /dev/null
+        module --ignore_cache avail 2>&1 | grep -i easybuild/${EB_VERSION} &> ${ml_av_easybuild_out}
         if [[ $? -eq 0 ]]; then
-            echo "Easyconfig ${eb_ec} found for EasyBuild v${EB_VERSION}, so installing it..."
-            ok_msg="EasyBuild v${EB_VERSION} installed, alright!"
-            fail_msg="Installing EasyBuild v${EB_VERSION}, yikes! (output: ${eb_install_out})"
-            ${EB} EasyBuild-${EB_VERSION}.eb 2>&1 | tee -a ${eb_install_out}
-            check_exit_code $? "${ok_msg}" "${fail_msg}"
+            echo_green ">> Module for EasyBuild v${EB_VERSION} found!"
+            IGNORE_CACHE='--ignore_cache'
         else
-            fatal_error "No easyconfig found for EasyBuild v${EB_VERSION}"
+            eb_ec=EasyBuild-${EB_VERSION}.eb
+            echo_yellow ">> Still no module for EasyBuild v${EB_VERSION}, trying with easyconfig ${eb_ec}..."
+            ${EB} --search ${eb_ec} | grep ${eb_ec} > /dev/null
+            if [[ $? -eq 0 ]]; then
+                echo "Easyconfig ${eb_ec} found for EasyBuild v${EB_VERSION}, so installing it..."
+                ok_msg="EasyBuild v${EB_VERSION} installed, alright!"
+                fail_msg="Installing EasyBuild v${EB_VERSION}, yikes! (output: ${eb_install_out})"
+                ${EB} EasyBuild-${EB_VERSION}.eb 2>&1 | tee -a ${eb_install_out}
+                check_exit_code $? "${ok_msg}" "${fail_msg}"
+            else
+                fatal_error "No easyconfig found for EasyBuild v${EB_VERSION}"
+            fi
         fi
     fi
 
@@ -103,7 +110,7 @@ else
 fi
 
 echo ">> Loading EasyBuild v${EB_VERSION} module..."
-module load EasyBuild/${EB_VERSION}
+module ${IGNORE_CACHE} load EasyBuild/${EB_VERSION}
 eb_show_system_info_out=${TMPDIR}/eb_show_system_info.out
 ${EB} --show-system-info > ${eb_show_system_info_out}
 if [[ $? -eq 0 ]]; then
