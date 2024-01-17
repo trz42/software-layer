@@ -16,6 +16,6 @@ eessi_python=$(ls ${EESSI_SOFTWARE_PATH}/software/Python/3*GCCcore*/bin/python |
 if [ -f "$eessi_python" ]; then
   $eessi_python "$@"
 else
-  echo "ERROR: No EESSI Python 3 available."
+  echo "ERROR: No NESSI Python 3 available."
   false
 fi
