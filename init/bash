@@ -5,7 +5,6 @@ function show_msg {
     echo "$msg"
   fi
 }
-           
 # The following method should be safe, but might break if file is a symlink
 # (could switch to $(dirname "$(readlink -f "$BASH_SOURCE")") in that case)
 source $(dirname "$BASH_SOURCE")/eessi_environment_variables
