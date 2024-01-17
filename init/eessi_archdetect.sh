@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 VERSION="1.0.0"
 
-# default log level: only emit warnings or errors
-LOG_LEVEL="WARN"
+# Logging
+LOG_LEVEL="INFO"
 
 timestamp () {
     date "+%Y-%m-%d %H:%M:%S"
@@ -67,8 +67,8 @@ check_allinfirst(){
 
 cpupath(){
     # If EESSI_SOFTWARE_SUBDIR_OVERRIDE is set, use it
-    log "DEBUG" "cpupath: Override variable set as '$EESSI_SOFTWARE_SUBDIR_OVERRIDE' "
-    [ $EESSI_SOFTWARE_SUBDIR_OVERRIDE ] && echo ${EESSI_SOFTWARE_SUBDIR_OVERRIDE} && exit
+    log "DEBUG" "cpupath: Override variable set as '$EESI_SOFTWARE_SUBDIR_OVERRIDE' "
+    [ $EESI_SOFTWARE_SUBDIR_OVERRIDE ] && echo ${EESI_SOFTWARE_SUBDIR_OVERRIDE} && exit
 
     # Identify the best matching CPU architecture from a list of supported specifications for the host CPU
     # Return the path to the installation files in NESSI of the best matching architecture
