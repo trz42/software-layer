@@ -53,6 +53,33 @@ LOCAL_TMP=$(cfg_get_value "site_config" "local_tmp")
 echo "bot/build.sh: LOCAL_TMP='${LOCAL_TMP}'"
 # TODO should local_tmp be mandatory? --> then we check here and exit if it is not provided
 
+# check if path to copy build logs to is specified, so we can copy build logs for failing builds there
+BUILD_LOGS_DIR=$(cfg_get_value "site_config" "build_logs_dir")
+echo "bot/build.sh: BUILD_LOGS_DIR='${BUILD_LOGS_DIR}'"
+# if $BUILD_LOGS_DIR is set, add it to $SINGULARITY_BIND so the path is available in the build container
+if [[ ! -z ${BUILD_LOGS_DIR} ]]; then
+    mkdir -p ${BUILD_LOGS_DIR}
+    if [[ -z ${SINGULARITY_BIND} ]]; then
+        export SINGULARITY_BIND="${BUILD_LOGS_DIR}"
+    else
+        export SINGULARITY_BIND="${SINGULARITY_BIND},${BUILD_LOGS_DIR}"
+    fi
+fi
+
+# check if path to directory on shared filesystem is specified,
+# and use it as location for source tarballs used by EasyBuild if so
+SHARED_FS_PATH=$(cfg_get_value "site_config" "shared_fs_path")
+echo "bot/build.sh: SHARED_FS_PATH='${SHARED_FS_PATH}'"
+# if $SHARED_FS_PATH is set, add it to $SINGULARITY_BIND so the path is available in the build container
+if [[ ! -z ${SHARED_FS_PATH} ]]; then
+    mkdir -p ${SHARED_FS_PATH}
+    if [[ -z ${SINGULARITY_BIND} ]]; then
+        export SINGULARITY_BIND="${SHARED_FS_PATH}"
+    else
+        export SINGULARITY_BIND="${SINGULARITY_BIND},${SHARED_FS_PATH}"
+    fi
+fi
+
 SINGULARITY_CACHEDIR=$(cfg_get_value "site_config" "container_cachedir")
 echo "bot/build.sh: SINGULARITY_CACHEDIR='${SINGULARITY_CACHEDIR}'"
 if [[ ! -z ${SINGULARITY_CACHEDIR} ]]; then
@@ -151,19 +178,21 @@ BUILD_STEP_ARGS+=("--save" "${TARBALL_TMP_BUILD_STEP_DIR}")
 BUILD_STEP_ARGS+=("--storage" "${STORAGE}")
 
 # prepare arguments to install_software_layer.sh (specific to build step)
-GENERIC_OPT=
+declare -a INSTALL_SCRIPT_ARGS=()
 if [[ ${EESSI_SOFTWARE_SUBDIR_OVERRIDE} =~ .*/generic$ ]]; then
-    GENERIC_OPT="--generic"
+    INSTALL_SCRIPT_ARGS+=("--generic")
 fi
+[[ ! -z ${BUILD_LOGS_DIR} ]] && INSTALL_SCRIPT_ARGS+=("--build-logs-dir" "${BUILD_LOGS_DIR}")
+[[ ! -z ${SHARED_FS_PATH} ]] && INSTALL_SCRIPT_ARGS+=("--shared-fs-path" "${SHARED_FS_PATH}")
 
 # create tmp file for output of build step
 build_outerr=$(mktemp build.outerr.XXXX)
 
 echo "Executing command to build software:"
 echo "./eessi_container.sh ${COMMON_ARGS[@]} ${BUILD_STEP_ARGS[@]}"
-echo "                     -- ./install_software_layer.sh ${GENERIC_OPT} \"$@\" 2>&1 | tee -a ${build_outerr}"
+echo "                     -- ./install_software_layer.sh \"${INSTALL_SCRIPT_ARGS[@]}\" \"$@\" 2>&1 | tee -a ${build_outerr}"
 ./eessi_container.sh "${COMMON_ARGS[@]}" "${BUILD_STEP_ARGS[@]}" \
-                     -- ./install_software_layer.sh ${GENERIC_OPT} "$@" 2>&1 | tee -a ${build_outerr}
+                     -- ./install_software_layer.sh "${INSTALL_SCRIPT_ARGS[@]}" "$@" 2>&1 | tee -a ${build_outerr}
 
 # prepare directory to store tarball of tmp for tarball step
 TARBALL_TMP_TARBALL_STEP_DIR=${PREVIOUS_TMP_DIR}/tarball_step
