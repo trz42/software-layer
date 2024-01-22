@@ -185,20 +185,26 @@ def parse_hook_fontconfig_add_fonts(ec, eprefix):
 
 
 def parse_hook_openblas_relax_lapack_tests_num_errors(ec, eprefix):
-    """Relax number of failing numerical LAPACK tests for aarch64/neoverse_v1 CPU target."""
+    """Relax number of failing numerical LAPACK tests for aarch64/* CPU targets for OpenBLAS < 0.3.23"""
     cpu_target = get_eessi_envvar('EESSI_SOFTWARE_SUBDIR')
     if ec.name == 'OpenBLAS':
-        # relax maximum number of failed numerical LAPACK tests for aarch64/neoverse_v1 CPU target
-        # since the default setting of 150 that works well on other aarch64 targets and x86_64 is a bit too strict
-        # See https://github.com/EESSI/software-layer/issues/314
-        cfg_option = 'max_failing_lapack_tests_num_errors'
-        if cpu_target == CPU_TARGET_NEOVERSE_V1:
-            orig_value = ec[cfg_option]
-            ec[cfg_option] = 400
-            print_msg("Maximum number of failing LAPACK tests with numerical errors for %s relaxed to %s (was %s)",
-                      ec.name, ec[cfg_option], orig_value)
-        else:
-            print_msg("Not changing option %s for %s on non-AARCH64", cfg_option, ec.name)
+        if LooseVersion(ec.version) < LooseVersion('0.3.23'):
+            # relax maximum number of failed numerical LAPACK tests for aarch64/neoverse_v1 CPU target
+            # since the default setting of 150 that works well on other aarch64 targets and x86_64 is a bit too strict
+            # See https://github.com/EESSI/software-layer/issues/314
+            cfg_option = 'max_failing_lapack_tests_num_errors'
+            if cpu_target == CPU_TARGET_NEOVERSE_V1:
+                orig_value = ec[cfg_option]
+                ec[cfg_option] = 400
+                print_msg("Maximum number of failing LAPACK tests with numerical errors for %s relaxed to %s (was %s)",
+                          ec.name, ec[cfg_option], orig_value)
+            elif cpu_target == CPU_TARGET_AARCH64_GENERIC:
+                orig_value = ec[cfg_option]
+                ec[cfg_option] = 302
+                print_msg("Maximum number of failing LAPACK tests with numerical errors for %s relaxed to %s (was %s)",
+                      ec.name, ec[cfg_option], orig_value)             ec.name, ec[cfg_option], orig_value)
+            else:
+                print_msg("Not changing option %s for %s on non-AARCH64", cfg_option, ec.name)
     else:
         raise EasyBuildError("OpenBLAS-specific hook triggered for non-OpenBLAS easyconfig?!")
 
@@ -393,6 +399,18 @@ def pre_test_hook_ignore_failing_tests_SciPybundle(self, *args, **kwargs):
     if self.name == 'SciPy-bundle' and self.version in scipy_bundle_versions and cpu_target == CPU_TARGET_NEOVERSE_V1:
         self.cfg['testopts'] = "|| echo ignoring failing tests"
 
+def pre_test_hook_ignore_failing_tests_netCDF(self, *args, **kwargs):
+    """
+    Pre-test hook for netCDF: skip failing tests for selected netCDF versions on neoverse_v1
+    cfr. https://github.com/EESSI/software-layer/issues/425
+    The following tests are problematic:
+        163 - nc_test4_run_par_test (Timeout)
+        190 - h5_test_run_par_tests (Timeout)
+    A few other tests are skipped in the easyconfig and patches for similar issues, see above issue for details.
+    """
+    cpu_target = get_eessi_envvar('EESSI_SOFTWARE_SUBDIR')
+    if self.name == 'netCDF' and self.version == '4.9.2' and cpu_target == CPU_TARGET_NEOVERSE_V1:
+        self.cfg['testopts'] = "|| echo ignoring failing tests" 
 
 def pre_single_extension_hook(ext, *args, **kwargs):
     """Main pre-extension: trigger custom functions based on software name."""
@@ -573,6 +591,7 @@ PRE_TEST_HOOKS = {
     'ESPResSo': pre_test_hook_ignore_failing_tests_ESPResSo,
     'FFTW.MPI': pre_test_hook_ignore_failing_tests_FFTWMPI,
     'SciPy-bundle': pre_test_hook_ignore_failing_tests_SciPybundle,
+    'netCDF': pre_test_hook_ignore_failing_tests_netCDF,
 }
 
 PRE_SINGLE_EXTENSION_HOOKS = {

@@ -118,7 +118,7 @@ cpupath(){
             # each flag in this CPU specification must be found in the list of flags of the host
             check_allinfirst "${cpu_flags[*]}" ${arch_spec[2]} && best_arch_match=${arch_spec[0]} && \
                 all_arch_matches="$best_arch_match:$all_arch_matches" && \
-                log "DEBUG" "cpupath: host CPU best match updated to $best_arch_match"
+                log "DEBUG" "cpupath: host CPU best match updated to $best_arch_match" 
         fi
     done
   
