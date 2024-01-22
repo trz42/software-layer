@@ -164,7 +164,7 @@ while [[ $# -gt 0 ]]; do
       SETUP_NVIDIA=1
       NVIDIA_MODE="$2"
       shift 2
-      ;;    
+      ;;
     -r|--repository)
       REPOSITORY="$2"
       shift 2
