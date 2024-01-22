@@ -202,7 +202,7 @@ def parse_hook_openblas_relax_lapack_tests_num_errors(ec, eprefix):
                 orig_value = ec[cfg_option]
                 ec[cfg_option] = 302
                 print_msg("Maximum number of failing LAPACK tests with numerical errors for %s relaxed to %s (was %s)",
-                      ec.name, ec[cfg_option], orig_value)             ec.name, ec[cfg_option], orig_value)
+                          ec.name, ec[cfg_option], orig_value)
             else:
                 print_msg("Not changing option %s for %s on non-AARCH64", cfg_option, ec.name)
     else:
