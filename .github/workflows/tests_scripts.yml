@@ -35,20 +35,13 @@ jobs:
       run: |
         ./install_apptainer_ubuntu.sh
 
-#    - name: download NESSI config package
-#      run: |
-#        wget https://github.com/NorESSI/filesystem-layer/releases/download/latest/cvmfs-config-nessi_latest_all.deb
-#
-#    - name: install NESSI config package
-#      run: |
-#        sudo apt install cvmfs-config-nessi_latest_all.deb
-#
     - name: prepare repos info for NESSI
       run: |
         curl -Ls https://github.com/NorESSI/filesystem-layer/tarball/v0.4.1 | tar xzf - --strip-components=1 --no-wildcards-match-slash --wildcards '*/repos/'
 
     - name: list available repos
       run: |
+        export EESSI_REPOS_CFG_DIR_OVERRIDE=${PWD}/repos
         ./eessi_container.sh --list-repos
 
     - name: test load_easybuild_module.sh script
@@ -88,6 +81,7 @@ jobs:
 
           # run wrapper script + capture & check output
           out="${PWD}/eb-${EB_VERSION}.out"
+          export EESSI_REPOS_CFG_DIR_OVERRIDE=${PWD}/repos
           ./eessi_container.sh --access rw --mode run --verbose --repository nessi.no-2023.06-software /software-layer/run_in_compat_layer_env.sh /software-layer/eb-${EB_VERSION}.sh 2>&1 | tee ${out}
           pattern="^This is EasyBuild ${EB_VERSION} "
           grep "${pattern}" ${out} || (echo "Pattern '${pattern}' not found in output!" && exit 1)
@@ -99,6 +93,7 @@ jobs:
           export SINGULARITY_BIND="${PWD}:/software-layer"
           # force using x86_64/generic, to avoid triggering an installation from scratch
           sed -i "s@./EESSI-install-software.sh@\"export EESSI_SOFTWARE_SUBDIR_OVERRIDE='x86_64/generic'; ./EESSI-install-software.sh\"@g" install_software_layer.sh
+          export EESSI_REPOS_CFG_DIR_OVERRIDE=${PWD}/repos
           ./eessi_container.sh --mode run --verbose --repository nessi.no-2023.06-software /software-layer/install_software_layer.sh
 
     - name: test create_directory_tarballs.sh script
@@ -107,6 +102,7 @@ jobs:
           export SINGULARITY_BIND="${PWD}:/software-layer"
           # scripts need to be copied to /tmp,
           # since create_directory_tarballs.sh must be accessible from within build container
+          export EESSI_REPOS_CFG_DIR_OVERRIDE=${PWD}/repos
           ./eessi_container.sh --mode run --verbose --repository nessi.no-2023.06-software /software-layer/create_directory_tarballs.sh 2023.06
           # check if tarballs have been produced
           ls -l *.tar.gz
