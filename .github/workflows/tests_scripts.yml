@@ -35,14 +35,6 @@ jobs:
       run: |
         ./install_apptainer_ubuntu.sh
 
-#    - name: download NESSI config package
-#      run: |
-#        wget https://github.com/NorESSI/filesystem-layer/releases/download/latest/cvmfs-config-nessi_latest_all.deb
-#
-#    - name: install NESSI config package
-#      run: |
-#        sudo apt install cvmfs-config-nessi_latest_all.deb
-#
     - name: prepare repos info for NESSI
       run: |
         curl -Ls https://github.com/NorESSI/filesystem-layer/tarball/v0.4.1 | tar xzf - --strip-components=1 --no-wildcards-match-slash --wildcards '*/repos/'
