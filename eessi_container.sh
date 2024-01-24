@@ -576,6 +576,7 @@ declare -a EESSI_FUSE_MOUNTS=()
 
 # always mount cvmfs-config repo (to get access to software.eessi.io)
 # Commented out intentionally EESSI_FUSE_MOUNTS+=("--fusemount" "container:cvmfs2 cvmfs-config.cern.ch /cvmfs/cvmfs-config.cern.ch")
+EESSI_FUSE_MOUNTS+=("--fusemount" "container:cvmfs2 cvmfs-config.cern.ch /cvmfs/cvmfs-config.cern.ch")
 
 if [[ "${ACCESS}" == "ro" ]]; then
   export EESSI_READONLY="container:cvmfs2 ${repo_name} /cvmfs/${repo_name}"
