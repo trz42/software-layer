@@ -60,6 +60,9 @@ else
     if [[ $? -ne 0 ]]; then
       echo "pip3 installing easybuild failed; see command output below"
       cat ${pip_install_out}
+    else
+      echo "pip3 installing easybuild succeeded; see command output below"
+      cat ${pip_install_out}
     fi
 
     # keep track of original $PATH and $PYTHONPATH values, so we can restore them
@@ -73,12 +76,20 @@ else
     ok_msg="Latest EasyBuild release installed, let's go!"
     fail_msg="Installing latest EasyBuild release failed, that's not good... (output: ${eb_install_out})"
     which ${EB}
-    ${EB} --install-latest-eb-release 2>&1 | tee ${eb_install_out}
+    ${EB} --debug --install-latest-eb-release 2>&1 | tee ${eb_install_out}
     exit_code=$?
     if [[ $exit_code -ne 0 ]]; then
       # show last log
       echo "show last log: cat $(${EB} --last-log)"
       cat $(${EB} --last-log)
+
+      # retry: wait a minute, then rerun command
+      date
+      SLEEP=60
+      echo "first attempt failed, retrying it after waiting $SLEEP seconds"
+      sleep $SLEEP
+      date
+      ${EB} --debug --install-latest-eb-release 2>&1 | tee -a ${eb_install_out}
     fi
     check_exit_code ${exit_code} "${ok_msg}" "${fail_msg}"
 
