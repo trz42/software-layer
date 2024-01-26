@@ -57,6 +57,10 @@ else
     pip_install_out=${TMPDIR}/pip_install.out
     which pip3
     pip3 install --prefix ${EB_TMPDIR} easybuild &> ${pip_install_out}
+    if [[ $? -ne 0 ]]; then
+      echo "pip3 installing easybuild failed; see command output below"
+      cat ${pip_install_out}
+    fi
 
     # keep track of original $PATH and $PYTHONPATH values, so we can restore them
     ORIG_PATH=${PATH}
@@ -68,6 +72,7 @@ else
     eb_install_out=${TMPDIR}/eb_install.out
     ok_msg="Latest EasyBuild release installed, let's go!"
     fail_msg="Installing latest EasyBuild release failed, that's not good... (output: ${eb_install_out})"
+    which ${EB}
     ${EB} --install-latest-eb-release 2>&1 | tee ${eb_install_out}
     exit_code=$?
     if [[ $exit_code -ne 0 ]]; then
