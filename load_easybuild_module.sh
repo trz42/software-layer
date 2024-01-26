@@ -71,6 +71,7 @@ else
     exit_code=$?
     if [[ $exit_code -ne 0 ]]; then
       # show last log
+      echo "show last log: cat $(${EB} --last-log)"
       cat $(${EB} --last-log)
     fi
     check_exit_code ${exit_code} "${ok_msg}" "${fail_msg}"
