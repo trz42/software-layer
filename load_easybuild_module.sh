@@ -55,6 +55,7 @@ else
     EB_TMPDIR=${TMPDIR}/ebtmp
     echo ">> Temporary installation (in ${EB_TMPDIR})..."
     pip_install_out=${TMPDIR}/pip_install.out
+    which pip3
     pip3 install --prefix ${EB_TMPDIR} easybuild &> ${pip_install_out}
 
     # keep track of original $PATH and $PYTHONPATH values, so we can restore them
