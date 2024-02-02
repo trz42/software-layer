@@ -21,7 +21,8 @@ easyconfigs:
         options:
           from-pr: 18446
   - WRF-4.3-foss-2021a-dmpar.eb
-  - Yambo-5.1.1-foss-2021a.eb:
-        options:
-          from-pr: 18905
+  # The eaysconfig was used before the PR was merged.The new PR changes fail to deploy
+  # - Yambo-5.1.1-foss-2021a.eb:
+  #     options:
+  #       from-pr: 18905
       
