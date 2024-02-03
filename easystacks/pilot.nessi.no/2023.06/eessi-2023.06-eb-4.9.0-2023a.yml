@@ -8,3 +8,4 @@ easyconfigs:
       options:
         from-pr: 19592
   - TensorFlow-2.13.0-foss-2023a.eb
+  - Qt5-5.15.10-GCCcore-12.3.0.eb
