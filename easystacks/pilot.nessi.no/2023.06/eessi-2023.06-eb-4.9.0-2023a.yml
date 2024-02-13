@@ -36,3 +36,4 @@ easyconfigs:
         from-pr: 19679
   - ALL-0.9.2-foss-2023a.eb:
   - OSU-Micro-Benchmarks-7.1-1-gompi-2023a.eb
+  - GDAL-3.7.1-foss-2023a.eb
