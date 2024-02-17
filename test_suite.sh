@@ -131,7 +131,7 @@ echo ">> Setting up environment..."
 ####
 module --force purge
 source $TOPDIR/init/minimal_eessi_env
-source /cvmfs/${EESSI_CVMFS_REPO}/versions/${EESSI_VERSION}/init/bash
+source ${EESSI_CVMFS_REPO}/versions/${EESSI_VERSION}/init/bash
 
 # Load the ReFrame module
 # Currently, we load the default version. Maybe we should somehow make this configurable in the future?
