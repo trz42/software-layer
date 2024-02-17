@@ -21,4 +21,6 @@ source ${base_dir}/init/eessi_defaults
 ./run_in_compat_layer_env.sh "git clone https://github.com/EESSI/test-suite EESSI-test-suite"
 
 # Run the test suite
-./run_in_compat_layer_env.sh ./test_suite.sh
+#./run_in_compat_layer_env.sh ./test_suite.sh
+# source init script instead of running in compat layer
+./test_suite.sh
