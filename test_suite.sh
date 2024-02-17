@@ -138,9 +138,11 @@ else
     fatal_error "Failed to load the ReFrame module"
 fi
 
+module list
 which python3
 python3 -V
 python3 -c "import sys; print(sys.version_info)"
+module avail Python/
 
 # Check ReFrame came with the hpctestlib and we can import it
 reframe_import="hpctestlib.sciapps.gromacs"
