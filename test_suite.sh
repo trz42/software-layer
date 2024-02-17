@@ -130,13 +130,17 @@ else
 fi
 
 # Load the ReFrame module
- Currently, we load the default version. Maybe we should somehow make this configurable in the future?
+# Currently, we load the default version. Maybe we should somehow make this configurable in the future?
 module load ReFrame
 if [[ $? -eq 0 ]]; then
     echo_green ">> Loaded ReFrame module"
 else
     fatal_error "Failed to load the ReFrame module"
 fi
+
+which python3
+python3 -V
+python3 -c "import sys; print(sys.version_info)"
 
 # Check ReFrame came with the hpctestlib and we can import it
 reframe_import="hpctestlib.sciapps.gromacs"
