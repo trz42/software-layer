@@ -45,4 +45,3 @@ easyconfigs:
   - SAMtools-1.18-GCC-12.3.0.eb
   - VCFtools-0.1.16-GCC-12.3.0.eb
   - BEDTools-2.31.0-GCC-12.3.0.eb
-  - ASE-3.22.1-gfbf-2023a.eb
