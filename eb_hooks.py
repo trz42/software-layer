@@ -252,7 +252,7 @@ def parse_hook_pybind11_replace_catch2(ec, eprefix):
             build_deps[idx] = (catch2_name, catch2_version)
 
 
-def parse_hook_PyTorch_replace_z3(ec, eprefix):
+def parse_hook_pytorch_replace_z3(ec, eprefix):
     """
     Replace Z3 dependency in PyTorch/2.1.2 easyconfig to work around a change
     of the Z3 eb/module name
@@ -272,7 +272,7 @@ def parse_hook_PyTorch_replace_z3(ec, eprefix):
                 break
         if z3_dep and len(z3_dep) == 2:
             deps[idx] = (z3_name, z3_version, z3_suffix)
-            print_msg("replaced dependency %s/%s with %s/%s/%s for %s%s",
+            print_msg("replaced dependency %s/%s with %s/%s/%s for %s/%s",
                       z3_name, z3_version, z3_name, z3_version, z3_suffix, ec.name, ec.version)
 
 
@@ -629,7 +629,7 @@ PARSE_HOOKS = {
     'OpenBLAS': parse_hook_openblas_relax_lapack_tests_num_errors,
     'Pillow-SIMD' : parse_hook_Pillow_SIMD_harcoded_paths,
     'pybind11': parse_hook_pybind11_replace_catch2,
-    'PyTorch': parse_hook_PyTorch_replace_z3,
+    'PyTorch': parse_hook_pytorch_replace_z3,
     'Qt5': parse_hook_qt5_check_qtwebengine_disable,
     'UCX': parse_hook_ucx_eprefix,
 }
