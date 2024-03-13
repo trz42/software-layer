@@ -252,6 +252,30 @@ def parse_hook_pybind11_replace_catch2(ec, eprefix):
             build_deps[idx] = (catch2_name, catch2_version)
 
 
+def parse_hook_PyTorch_replace_z3(ec, eprefix):
+    """
+    Replace Z3 dependency in PyTorch/2.1.2 easyconfig to work around a change
+    of the Z3 eb/module name
+    cfr. https://github.com/easybuilders/easybuild-easyconfigs/pull/20050
+    """
+    # this is mainly necessary to avoid that --missing keeps reporting Z3/4.12.2
+    # is missing, because previously it was Z3/4.12.2-GCCcore-12.3.0-Python-3.11.3
+    if ec.name == 'PyTorch' and ec.version in ['2.1.2']:
+        deps = ec['dependencies']
+        z3_dep = None
+        z3_name, z3_version, z3_suffix = ('Z3', '4.12.2', 'Python-3.11.3')
+        print_msg("scanning dependencies of %s/%s for %s/%s",
+                  ec.name, ec.version, z3_name, z3_version)
+        for idx, dep in enumerate(deps):
+            if dep[0] == z3_name and dep[1] == z3_version:
+                z3_dep = dep
+                break
+        if z3_dep and len(z3_dep) == 2:
+            deps[idx] = (z3_name, z3_version, z3_suffix)
+            print_msg("replaced dependency %s/%s with %s/%s/%s for %s%s",
+                      z3_name, z3_version, z3_name, z3_version, z3_suffix, ec.name, ec.version)
+
+
 def parse_hook_qt5_check_qtwebengine_disable(ec, eprefix):
     """
     Disable check for QtWebEngine in Qt5 as workaround for problem with determining glibc version.
@@ -605,6 +629,7 @@ PARSE_HOOKS = {
     'OpenBLAS': parse_hook_openblas_relax_lapack_tests_num_errors,
     'Pillow-SIMD' : parse_hook_Pillow_SIMD_harcoded_paths,
     'pybind11': parse_hook_pybind11_replace_catch2,
+    'PyTorch': parse_hook_PyTorch_replace_z3,
     'Qt5': parse_hook_qt5_check_qtwebengine_disable,
     'UCX': parse_hook_ucx_eprefix,
 }
