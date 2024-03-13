@@ -189,10 +189,9 @@ def parse_hook_imagemagick_add_dependency(ec, eprefix):
     if ec.name == 'ImageMagick':
         if LooseVersion(ec.version) == LooseVersion('7.1.0-37'):
             print_msg("Added dependency for PCRE/8.45 to %s/%s", ec.name, ec.version)
-            #ec.update('dependencies', ('PCRE', '8.45'))
             ec['dependencies'].append(('PCRE', '8.45'))
         else:
-            print_msg("Not adding dependency for %s/%s", ec.name, ec.version)
+            print_msg("Not adding dependency for PCRE/8.45 to %s/%s", ec.name, ec.version)
     else:
         raise EasyBuildError("ImageMagick-specific hook triggered for non-ImageMagick easyconfig?!")
 
