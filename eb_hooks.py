@@ -263,7 +263,7 @@ def parse_hook_PyTorch_replace_z3(ec, eprefix):
     if ec.name == 'PyTorch' and ec.version in ['2.1.2']:
         deps = ec['dependencies']
         z3_dep = None
-        z3_name, z3_version, z3_suffix = ('Z3', '4.12.2', 'Python-3.11.3')
+        z3_name, z3_version, z3_suffix, z3_toolchain = ('Z3', '4.12.2', '-Python-3.11.3', '-GCCcore-12.3.0')
         print_msg("scanning dependencies of %s/%s for %s/%s",
                   ec.name, ec.version, z3_name, z3_version)
         for idx, dep in enumerate(deps):
@@ -271,9 +271,9 @@ def parse_hook_PyTorch_replace_z3(ec, eprefix):
                 z3_dep = dep
                 break
         if z3_dep and len(z3_dep) == 2:
-            deps[idx] = (z3_name, z3_version, z3_suffix)
-            print_msg("replaced dependency %s/%s with %s/%s/%s for %s%s",
-                      z3_name, z3_version, z3_name, z3_version, z3_suffix, ec.name, ec.version)
+            deps[idx] = (z3_name, z3_version, z3_suffix, z3_toolchain)
+            print_msg("replaced dependency %s/%s with %s/%s/%s/%s for %s%s",
+                      z3_name, z3_version, z3_name, z3_version, z3_suffix, z3_toolchain, ec.name, ec.version)
 
 
 def parse_hook_qt5_check_qtwebengine_disable(ec, eprefix):
