@@ -184,6 +184,18 @@ def parse_hook_fontconfig_add_fonts(ec, eprefix):
         raise EasyBuildError("fontconfig-specific hook triggered for non-fontconfig easyconfig?!")
 
 
+def parse_hook_imagemagick_add_dependency(ec, eprefix):
+    """Add dependency for PCRE/8.45 for ImageMagick/7.1.0-37"""
+    if ec.name == 'ImageMagick':
+        if LooseVersion(ec.version) == LooseVersion('7.1.0-37'):
+            print_msg("Added dependency for PCRE/8.45 to %s/%s", ec.name, ec.version)
+            ec['dependencies'].append(('PCRE', '8.45'))
+        else:
+            print_msg("Not adding dependency for PRCE/8.45 to %s/%s", ec.name, ec.version)
+    else:
+        raise EasyBuildError("ImageMagick-specific hook triggered for non-ImageMagick easyconfig?!")
+
+
 def parse_hook_openblas_relax_lapack_tests_num_errors(ec, eprefix):
     """Relax number of failing numerical LAPACK tests for aarch64/* CPU targets for OpenBLAS < 0.3.23"""
     cpu_target = get_eessi_envvar('EESSI_SOFTWARE_SUBDIR')
@@ -589,6 +601,7 @@ def inject_gpu_property(ec):
 PARSE_HOOKS = {
     'CGAL': parse_hook_cgal_toolchainopts_precise,
     'fontconfig': parse_hook_fontconfig_add_fonts,
+    'ImageMagick': parse_hook_imagemagick_add_dependency,
     'OpenBLAS': parse_hook_openblas_relax_lapack_tests_num_errors,
     'Pillow-SIMD' : parse_hook_Pillow_SIMD_harcoded_paths,
     'pybind11': parse_hook_pybind11_replace_catch2,
