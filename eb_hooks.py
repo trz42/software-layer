@@ -191,7 +191,7 @@ def parse_hook_imagemagick_add_dependency(ec, eprefix):
             print_msg("Added dependency for PCRE/8.45 to %s/%s", ec.name, ec.version)
             ec['dependencies'].append(('PCRE', '8.45'))
         else:
-            print_msg("Not adding dependency for PRCE/8.45 to %s/%s", ec.name, ec.version)
+            print_msg("Not adding dependency for PCRE/8.45 to %s/%s", ec.name, ec.version)
     else:
         raise EasyBuildError("ImageMagick-specific hook triggered for non-ImageMagick easyconfig?!")
 
