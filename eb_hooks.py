@@ -185,7 +185,7 @@ def parse_hook_fontconfig_add_fonts(ec, eprefix):
 
 
 def parse_hook_gpaw_harcoded_path(ec, eprefix):
-    # configure the siteconfig.py file + patch setup.py to prefix hardcoded /usr/* and /lib paths with value of %(sysroot) template
+    # configure the siteconfig.py file + patch setup.py to prefix hardcoded /usr/* path with value of %(sysroot) template
     # (which will be empty if EasyBuild is not configured to use an alternate sysroot);
     if ec.name == 'GPAW':
         ec.update('preinstallopts', """echo "fftw = True" > siteconfig.py && """) 
