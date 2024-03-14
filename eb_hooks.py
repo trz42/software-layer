@@ -226,7 +226,7 @@ def parse_hook_openblas_relax_lapack_tests_num_errors(ec, eprefix):
         raise EasyBuildError("OpenBLAS-specific hook triggered for non-OpenBLAS easyconfig?!")
 
 
-def parse_hook_pillow_simd_harcoded_paths(ec, eprefix):
+def parse_hook_Pillow_SIMD_harcoded_paths(ec, eprefix):
     # patch setup.py to prefix hardcoded /usr/* and /lib paths with value of %(sysroot) template
     # (which will be empty if EasyBuild is not configured to use an alternate sysroot);
     # see also https://gitlab.com/eessi/support/-/issues/9
@@ -606,9 +606,9 @@ def inject_gpu_property(ec):
 PARSE_HOOKS = {
     'CGAL': parse_hook_cgal_toolchainopts_precise,
     'fontconfig': parse_hook_fontconfig_add_fonts,
-    'GPAW': parse_hook_gpaw_hardcoded_path,
+    'GPAW': parse_hook_gpaw_harcoded_path,
     'OpenBLAS': parse_hook_openblas_relax_lapack_tests_num_errors,
-    'Pillow-SIMD' : parse_hook_pillow_simd_harcoded_paths,
+    'Pillow-SIMD' : parse_hook_Pillow_SIMD_harcoded_paths,
     'pybind11': parse_hook_pybind11_replace_catch2,
     'Qt5': parse_hook_qt5_check_qtwebengine_disable,
     'UCX': parse_hook_ucx_eprefix,
