@@ -189,7 +189,6 @@ def parse_hook_gpaw_harcoded_path(ec, eprefix):
     # (which will be empty if EasyBuild is not configured to use an alternate sysroot);
     if ec.name == 'GPAW':
         ec.update('preinstallopts', """echo "fftw = True" > siteconfig.py && """) 
-        ec.update('preinstallopts', """echo "elpa = True" >> siteconfig.py && """) 
         ec.update('preinstallopts', """echo "libvdwxc = True" >> siteconfig.py && """) 
         ec.update('preinstallopts', """echo "scalapack = True" >> siteconfig.py && """) 
         ec.update('preinstallopts', """echo "libraries = ['xc', 'fftw3', 'scalapack', 'vdwxc', 'elpa']" >>  siteconfig.py && """)
