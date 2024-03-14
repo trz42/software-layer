@@ -41,4 +41,9 @@ easyconfigs:
       # see https://github.com/easybuilders/easybuild-easyconfigs/pull/19646
       options:
         from-pr: 19646
-- GPAW-23.9.1-foss-2023a.eb
+  - dask-2023.9.2-foss-2023a.eb
+  - SAMtools-1.18-GCC-12.3.0.eb
+  - VCFtools-0.1.16-GCC-12.3.0.eb
+  - BEDTools-2.31.0-GCC-12.3.0.eb
+  - PLUMED-2.9.0-foss-2023a.eb
+  - GPAW-23.9.1-foss-2023a.eb

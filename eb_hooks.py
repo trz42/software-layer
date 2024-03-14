@@ -184,6 +184,23 @@ def parse_hook_fontconfig_add_fonts(ec, eprefix):
         raise EasyBuildError("fontconfig-specific hook triggered for non-fontconfig easyconfig?!")
 
 
+def parse_hook_gpaw_harcoded_path(ec, eprefix):
+    # configure the siteconfig.py file + patch setup.py to prefix hardcoded /usr/* and /lib paths with value of %(sysroot) template
+    # (which will be empty if EasyBuild is not configured to use an alternate sysroot);
+    if ec.name == 'GPAW':
+        ec.update('preinstallopts', """echo "fftw = True" > siteconfig.py && """) 
+        ec.update('preinstallopts', """echo "elpa = True" >> siteconfig.py && """) 
+        ec.update('preinstallopts', """echo "libvdwxc = True" >> siteconfig.py && """) 
+        ec.update('preinstallopts', """echo "scalapack = True" >> siteconfig.py && """) 
+        ec.update('preinstallopts', """echo "libraries = ['xc', 'fftw3', 'scalapack', 'vdwxc', 'elpa']" >>  siteconfig.py && """)
+        ec.update('preinstallopts', """echo "extra_compile_args += ['-fopenmp']" >> siteconfig.py && """)
+        ec.update('preinstallopts', """echo "extra_link_args += ['-fopenmp']" >> siteconfig.py && """)
+        ec.update('preinstallopts', """sed -i 's@"/usr/@"%(sysroot)s/usr/@g' setup.py && """)
+        print_msg("Using custom configure options for %s: %s", ec.name, ec['preinstallopts'])
+    else:
+        raise EasyBuildError("GPAW-specific hook triggered for non-GPAW easyconfig?!")
+
+
 def parse_hook_openblas_relax_lapack_tests_num_errors(ec, eprefix):
     """Relax number of failing numerical LAPACK tests for aarch64/* CPU targets for OpenBLAS < 0.3.23"""
     cpu_target = get_eessi_envvar('EESSI_SOFTWARE_SUBDIR')
@@ -207,6 +224,18 @@ def parse_hook_openblas_relax_lapack_tests_num_errors(ec, eprefix):
                 print_msg("Not changing option %s for %s on non-AARCH64", cfg_option, ec.name)
     else:
         raise EasyBuildError("OpenBLAS-specific hook triggered for non-OpenBLAS easyconfig?!")
+
+
+def parse_hook_pillow_simd_harcoded_paths(ec, eprefix):
+    # patch setup.py to prefix hardcoded /usr/* and /lib paths with value of %(sysroot) template
+    # (which will be empty if EasyBuild is not configured to use an alternate sysroot);
+    # see also https://gitlab.com/eessi/support/-/issues/9
+    if ec.name == 'Pillow-SIMD':
+        ec.update('preinstallopts', """sed -i 's@"/usr/@"%(sysroot)s/usr/@g' setup.py && """)
+        ec.update('preinstallopts', """sed -i 's@"/lib@"%(sysroot)s/lib@g' setup.py && """)
+        print_msg("Using custom configure options for %s: %s", ec.name, ec['preinstallopts'])
+    else:
+        raise EasyBuildError("Pillow-SIMD-specific hook triggered for non-Pillow-SIMD easyconfig?!")
 
 
 def parse_hook_pybind11_replace_catch2(ec, eprefix):
@@ -577,7 +606,9 @@ def inject_gpu_property(ec):
 PARSE_HOOKS = {
     'CGAL': parse_hook_cgal_toolchainopts_precise,
     'fontconfig': parse_hook_fontconfig_add_fonts,
+    'GPAW': parse_hook_gpaw_hardcoded_path,
     'OpenBLAS': parse_hook_openblas_relax_lapack_tests_num_errors,
+    'Pillow-SIMD' : parse_hook_pillow_simd_harcoded_paths,
     'pybind11': parse_hook_pybind11_replace_catch2,
     'Qt5': parse_hook_qt5_check_qtwebengine_disable,
     'UCX': parse_hook_ucx_eprefix,
