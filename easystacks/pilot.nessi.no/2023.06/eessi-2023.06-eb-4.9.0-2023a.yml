@@ -46,3 +46,10 @@ easyconfigs:
   - VCFtools-0.1.16-GCC-12.3.0.eb
   - BEDTools-2.31.0-GCC-12.3.0.eb
   - PLUMED-2.9.0-foss-2023a.eb
+  - Z3-4.12.2-GCCcore-12.3.0.eb:
+      options:
+        # The Z3 dependency of PyTorch had it's versionsuffix removed
+        # and we need to workaround the problem this creates,
+        # see https://github.com/EESSI/software-layer/pull/501 for details
+        from-pr: 20050
+  - GPAW-23.9.1-foss-2023a.eb
