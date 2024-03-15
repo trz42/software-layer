@@ -184,6 +184,22 @@ def parse_hook_fontconfig_add_fonts(ec, eprefix):
         raise EasyBuildError("fontconfig-specific hook triggered for non-fontconfig easyconfig?!")
 
 
+def parse_hook_gpaw_harcoded_path(ec, eprefix):
+    # configure the siteconfig.py file + patch setup.py to prefix hardcoded /usr/* path with value of %(sysroot) template
+    # (which will be empty if EasyBuild is not configured to use an alternate sysroot);
+    if ec.name == 'GPAW':
+        ec.update('preinstallopts', """echo "fftw = True" > siteconfig.py && """) 
+        ec.update('preinstallopts', """echo "libvdwxc = True" >> siteconfig.py && """) 
+        ec.update('preinstallopts', """echo "scalapack = True" >> siteconfig.py && """) 
+        ec.update('preinstallopts', """echo "libraries = ['xc', 'fftw3', 'scalapack', 'vdwxc', 'elpa']" >>  siteconfig.py && """)
+        ec.update('preinstallopts', """echo "extra_compile_args += ['-fopenmp']" >> siteconfig.py && """)
+        ec.update('preinstallopts', """echo "extra_link_args += ['-fopenmp']" >> siteconfig.py && """)
+        ec.update('preinstallopts', """sed -i 's@"/usr/@"%(sysroot)s/usr/@g' setup.py && """)
+        print_msg("Using custom configure options for %s: %s", ec.name, ec['preinstallopts'])
+    else:
+        raise EasyBuildError("GPAW-specific hook triggered for non-GPAW easyconfig?!")
+
+
 def parse_hook_imagemagick_add_dependency(ec, eprefix):
     """Add dependency for PCRE/8.45 for ImageMagick/7.1.0-37"""
     if ec.name == 'ImageMagick':
@@ -601,6 +617,7 @@ def inject_gpu_property(ec):
 PARSE_HOOKS = {
     'CGAL': parse_hook_cgal_toolchainopts_precise,
     'fontconfig': parse_hook_fontconfig_add_fonts,
+    'GPAW': parse_hook_gpaw_harcoded_path,
     'ImageMagick': parse_hook_imagemagick_add_dependency,
     'OpenBLAS': parse_hook_openblas_relax_lapack_tests_num_errors,
     'Pillow-SIMD' : parse_hook_Pillow_SIMD_harcoded_paths,

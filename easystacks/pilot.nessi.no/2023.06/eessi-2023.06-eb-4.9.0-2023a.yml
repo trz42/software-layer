@@ -52,4 +52,5 @@ easyconfigs:
         # and we need to workaround the problem this creates,
         # see https://github.com/EESSI/software-layer/pull/501 for details
         from-pr: 20050
+  - GPAW-23.9.1-foss-2023a.eb
   - Perl-bundle-CPAN-5.36.1-GCCcore-12.3.0.eb
