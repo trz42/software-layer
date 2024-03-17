@@ -53,3 +53,4 @@ easyconfigs:
         # see https://github.com/EESSI/software-layer/pull/501 for details
         from-pr: 20050
   - GPAW-23.9.1-foss-2023a.eb
+  - R-bundle-CRAN-2023.12-foss-2023a.eb
