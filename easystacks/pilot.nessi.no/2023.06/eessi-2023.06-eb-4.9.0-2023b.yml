@@ -7,3 +7,6 @@ easyconfigs:
   - matplotlib-3.8.2-gfbf-2023b.eb:
       options:
         from-pr: 19552
+  - GROMACS-2024.1-foss-2023b.eb:
+      options:
+        from-pr: 20102
