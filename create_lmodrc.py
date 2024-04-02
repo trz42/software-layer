@@ -115,6 +115,7 @@ local function openmpi_load_hook(t)
 end
 
 hook.register("load", cuda_enabled_load_hook)
+hook.register("load", openmpi_load_hook)
 """
 
 def error(msg):
