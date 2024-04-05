@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Script to check for missing installations in EESSI software stack
+# Script to check for missing installations in NESSI software stack (version 2023.06)
 #
 # author: Kenneth Hoste (@boegel)
 # author: Thomas Roeblitz (@trz42)
