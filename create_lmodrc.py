@@ -35,7 +35,7 @@ local function cuda_enabled_load_hook(t)
     local simpleName = string.match(t.modFullName, "(.-)/")
     -- If we try to load CUDA itself, check if the full CUDA SDK was installed on the host in host_injections. 
     -- This is required for end users to build additional CUDA software. If the full SDK isn't present, refuse
-    -- to load the CUDA module and print an informative message on how to set up GPU support for EESSI
+    -- to load the CUDA module and print an informative message on how to set up GPU support for NESSI
     local refer_to_docs = "For more information on how to do this, see https://www.eessi.io/docs/gpu/.\\n"
     if simpleName == 'CUDA' then
         -- get the full host_injections path
@@ -44,26 +44,26 @@ local function cuda_enabled_load_hook(t)
         local cudaEasyBuildDir = hostInjections .. "/software/" .. t.modFullName .. "/easybuild"
         local cudaDirExists = isDir(cudaEasyBuildDir)
         if not cudaDirExists then
-            local advice = "but while the module file exists, the actual software is not entirely shipped with EESSI "
-            advice = advice .. "due to licencing. You will need to install a full copy of the CUDA SDK where EESSI "
+            local advice = "but while the module file exists, the actual software is not entirely shipped with NESSI "
+            advice = advice .. "due to licencing. You will need to install a full copy of the CUDA SDK where NESSI "
             advice = advice .. "can find it.\\n"
             advice = advice .. refer_to_docs
             LmodError("\\nYou requested to load ", simpleName, " ", advice)
         end
     end
-    -- when loading CUDA enabled modules check if the necessary driver libraries are accessible to the EESSI linker,
+    -- when loading CUDA enabled modules check if the necessary driver libraries are accessible to the NESSI linker,
     -- otherwise, refuse to load the requested module and print error message
     local haveGpu = mt:haveProperty(simpleName,"arch","gpu")
     if haveGpu then
         local arch = os.getenv("EESSI_CPU_FAMILY") or ""
-        local cudaVersionFile = "/cvmfs/software.eessi.io/host_injections/nvidia/" .. arch .. "/latest/cuda_version.txt"
-        local cudaDriverFile = "/cvmfs/software.eessi.io/host_injections/nvidia/" .. arch .. "/latest/libcuda.so"
+        local cudaVersionFile = "/cvmfs/pilot.nessi.no/host_injections/nvidia/" .. arch .. "/latest/cuda_version.txt"
+        local cudaDriverFile = "/cvmfs/pilot.nessi.no/host_injections/nvidia/" .. arch .. "/latest/libcuda.so"
         local cudaDriverExists = isFile(cudaDriverFile)
         local singularityCudaExists = isFile("/.singularity.d/libs/libcuda.so")
         if not (cudaDriverExists or singularityCudaExists)  then
             local advice = "which relies on the CUDA runtime environment and driver libraries. "
             advice = advice .. "In order to be able to use the module, you will need "
-            advice = advice .. "to make sure EESSI can find the GPU driver libraries on your host system.\\n"
+            advice = advice .. "to make sure NESSI can find the GPU driver libraries on your host system.\\n"
             advice = advice .. refer_to_docs
             LmodError("\\nYou requested to load ", simpleName, " ", advice)
         else
@@ -85,7 +85,7 @@ local function cuda_enabled_load_hook(t)
                 if driver_libs_need_update == true then
                     local advice = "but the module you want to load requires CUDA  " .. cudaVersion_req .. ". "
                     advice = advice .. "Please update your CUDA driver libraries and then "
-                    advice = advice .. "let EESSI know about the update.\\n"
+                    advice = advice .. "let NESSI know about the update.\\n"
                     advice = advice .. refer_to_docs
                     LmodError("\\nYour driver CUDA version is ", cudaVersion, " ", advice)
                 end
@@ -94,7 +94,28 @@ local function cuda_enabled_load_hook(t)
     end
 end
 
+local function openmpi_load_hook(t)
+    -- disable smcuda BTL when loading OpenMPI module for aarch64/neoverse_v1,
+    -- to work around hang/crash due to bug in OpenMPI;
+    -- see https://gitlab.com/eessi/support/-/issues/41
+    local frameStk = require("FrameStk"):singleton()
+    local mt = frameStk:mt()
+    local moduleName = string.match(t.modFullName, "(.-)/")
+    local cpuTarget = os.getenv("EESSI_SOFTWARE_SUBDIR") or ""
+    if (moduleName == "OpenMPI") and (cpuTarget == "aarch64/neoverse_v1") then
+        local msg = "Adding '^smcuda' to $OMPI_MCA_btl to work around bug in OpenMPI"
+        LmodMessage(msg .. " (see https://gitlab.com/eessi/support/-/issues/41)")
+	local ompiMcaBtl = os.getenv("OMPI_MCA_btl")
+	if ompiMcaBtl == nil then
+            setenv("OMPI_MCA_btl", "^smcuda")
+        else
+            setenv("OMPI_MCA_btl", ompiMcaBtl .. ",^smcuda")
+	end
+    end
+end
+
 hook.register("load", cuda_enabled_load_hook)
+hook.register("load", openmpi_load_hook)
 """
 
 def error(msg):
