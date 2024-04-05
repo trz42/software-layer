@@ -3,3 +3,7 @@ easyconfigs:
       options:
         from-pr: 19464
   - ReFrame-4.3.3.eb
+  - GPAW-setups-24.1.0.eb:
+      # This easyconfig is added to overcome the failing of check_missing_installations against the development branch     
+      options:
+        from-pr: 20117
