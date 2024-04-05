@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Script to install NESSI software stack (version set through init/eessi_defaults)
+# Script to install EESSI software stack (version set through init/eessi_defaults)
 
 # see example parsing of command line arguments at
 #   https://wiki.bash-hackers.org/scripting/posparams#using_a_while_loop
@@ -237,7 +237,7 @@ else
                 copy_build_log "${eb_last_log}" "${build_logs_dir}"
             fi
     
-            $TOPDIR/check_missing_installations.sh ${TOPDIR}/${easystack_file}
+            $TOPDIR/check_missing_installations.sh ${TOPDIR}/${easystack_file} ${TOPDIR}/${pr_diff}
         else
             fatal_error "Easystack file ${easystack_file} not found!"
         fi
