@@ -7,3 +7,9 @@ easyconfigs:
   - matplotlib-3.8.2-gfbf-2023b.eb:
       options:
         from-pr: 19552
+  - libwebp-1.3.2-GCCcore-13.2.0.eb
+      # This easyconfig is added to overcome the failing of check_missing_installations against the development branch    
+  - OpenJPEG-2.5.0-GCCcore-13.2.0.eb
+      # This easyconfig is added to overcome the failing of check_missing_installations against the development branch
+  - LittleCMS-2.15-GCCcore-13.2.0.eb
+      # This easyconfig is added to overcome the failing of check_missing_installations against the development branch
