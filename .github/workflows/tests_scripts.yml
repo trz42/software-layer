@@ -82,7 +82,7 @@ jobs:
           # run wrapper script + capture & check output
           out="${PWD}/eb-${EB_VERSION}.out"
           export EESSI_REPOS_CFG_DIR_OVERRIDE=${PWD}/repos
-          ./eessi_container.sh --access rw --mode run --verbose --repository nessi.no-2023.06-software /software-layer/run_in_compat_layer_env.sh /software-layer/eb-${EB_VERSION}.sh 2>&1 | tee ${out}
+          ./eessi_container.sh --access rw --mode run --verbose --repository EESSI /software-layer/run_in_compat_layer_env.sh /software-layer/eb-${EB_VERSION}.sh 2>&1 | tee ${out}
           pattern="^This is EasyBuild ${EB_VERSION} "
           grep "${pattern}" ${out} || (echo "Pattern '${pattern}' not found in output!" && exit 1)
         done
