@@ -16,7 +16,7 @@ elif [ "$#" -eq 2 ]; then
     echo "Using $2 to give create exceptions for PR filtering of easystack"
     # Find lines that are added and use from-pr, make them unique, grab the
     # PR numbers and use them to construct something we can use within awk
-    pr_exceptions=$(grep ^+ $2 | grep from-pr | uniq | awk '{print $3}' | xargs -i echo " || /'{}'/")
+    pr_exceptions=$(grep ^+ $2 | grep from-pr: | uniq | awk '{print $3}' | xargs -i echo " || /'{}'/")
 else
     echo "ERROR: Usage: $0 <path to easystack file> (<optional path to PR diff>)" >&2
     exit 1
