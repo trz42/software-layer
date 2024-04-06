@@ -55,3 +55,9 @@ easyconfigs:
   - GPAW-23.9.1-foss-2023a.eb
   - LittleCMS-2.15-GCCcore-12.3.0.eb
       # This easyconfig is added to overcome the failing of check_missing_installations against the development branch
+  # purpose of the following is to test one case in PR #299
+  #   case is "(B) build software with a merged EasyBuild easyconfig PR
+  #   -> should lead to SUCCESSful build"
+  - tqdm-4.66.1-GCCcore-12.3.0.eb:
+      options:
+        from-pr: 20200
