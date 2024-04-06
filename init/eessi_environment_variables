@@ -19,7 +19,7 @@ function show_msg {
 source $EESSI_INIT_DIR_PATH/minimal_eessi_env
 
 if [ -d $EESSI_PREFIX ]; then
-  show_msg "Found NESSI repo @ $EESSI_PREFIX!"
+  show_msg "Found EESSI repo @ $EESSI_PREFIX!"
 
   export EESSI_EPREFIX=$EPREFIX
   if [ -d $EESSI_EPREFIX ]; then
@@ -50,6 +50,15 @@ if [ -d $EESSI_PREFIX ]; then
 
         show_msg "Using ${EESSI_SOFTWARE_SUBDIR} as software subdirectory."
         export EESSI_SOFTWARE_PATH=$EESSI_PREFIX/software/$EESSI_OS_TYPE/$EESSI_SOFTWARE_SUBDIR
+
+        # Configure our LMOD_RC file
+        export LMOD_RC="$EESSI_SOFTWARE_PATH/.lmod/lmodrc.lua"
+        if [ -f $LMOD_RC ]; then
+          show_msg "Found Lmod configuration file at $LMOD_RC"
+        else
+          error "Lmod configuration file not found at $LMOD_RC"
+        fi
+
         if [ ! -z $EESSI_BASIC_ENV ]; then
           show_msg "Only setting up basic environment, so we're done"
         elif [ -d $EESSI_SOFTWARE_PATH ]; then
@@ -72,19 +81,28 @@ if [ -d $EESSI_PREFIX ]; then
             export EESSI_MODULEPATH=$EESSI_MODULEPATH
             show_msg "Using ${EESSI_MODULEPATH} as the directory to be added to MODULEPATH."
           else
-            error "NESSI module path at $EESSI_MODULEPATH not found!"
+            error "EESSI module path at $EESSI_MODULEPATH not found!"
             false
           fi
 
-          export LMOD_RC="$EESSI_SOFTWARE_PATH/.lmod/lmodrc.lua"
-          if [ -f $LMOD_RC ]; then
-            show_msg "Found Lmod configuration file at $LMOD_RC"
+          export LMOD_CONFIG_DIR="$EESSI_SOFTWARE_PATH/.lmod"
+          lmod_rc_file="$LMOD_CONFIG_DIR/lmodrc.lua"
+          if [ -f $lmod_rc_file ]; then
+            show_msg "Found Lmod configuration file at $lmod_rc_file"
           else
-            error "Lmod configuration file not found at $LMOD_RC"
+            error "Lmod configuration file not found at $lmod_rc_file"
+          fi
+
+          export LMOD_PACKAGE_PATH="$EESSI_SOFTWARE_PATH/.lmod"
+          lmod_sitepackage_file="$LMOD_PACKAGE_PATH/SitePackage.lua"
+          if [ -f $lmod_sitepackage_file ]; then
+            show_msg "Found Lmod SitePackage.lua file at $lmod_sitepackage_file"
+          else
+            error "Lmod SitePackage.lua file not found at $lmod_sitepackage_file"
           fi
 
         else
-          error "NESSI software layer at $EESSI_SOFTWARE_PATH not found!"
+          error "EESSI software layer at $EESSI_SOFTWARE_PATH not found!"
         fi
     else
         error "no value set for \$EESSI_SOFTWARE_SUBDIR"
@@ -93,5 +111,5 @@ if [ -d $EESSI_PREFIX ]; then
     error "Compatibility layer directory $EESSI_EPREFIX not found!"
   fi
 else
-  error "NESSI repository at $EESSI_PREFIX not found!"
+  error "EESSI repository at $EESSI_PREFIX not found!"
 fi
