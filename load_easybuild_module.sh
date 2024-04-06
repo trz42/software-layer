@@ -68,6 +68,8 @@ else
     ok_msg="Latest EasyBuild release installed, let's go!"
     fail_msg="Installing latest EasyBuild release failed, that's not good... (output: ${eb_install_out})"
     ${EB} --install-latest-eb-release 2>&1 | tee ${eb_install_out}
+    ec=$?
+    cat $(${EB} --last-log)
     check_exit_code $? "${ok_msg}" "${fail_msg}"
 
     # maybe the module obtained with --install-latest-eb-release is exactly the EasyBuild version we wanted?
