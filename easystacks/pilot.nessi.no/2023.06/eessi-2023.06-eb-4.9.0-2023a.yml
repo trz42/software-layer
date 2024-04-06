@@ -58,6 +58,6 @@ easyconfigs:
   # purpose of the following is to test one case in PR #299
   #   case is "build software with an un-merged EasyBuild easyconfig PR without
   #   the modifications of PR 299 which should lead to a FAILURE with unclear message"
-  - pyGAM-0.9.1-gfbf-2023a.eb
+  - pyGAM-0.9.1-gfbf-2023a.eb:
       options:
         from-pr: 20308
