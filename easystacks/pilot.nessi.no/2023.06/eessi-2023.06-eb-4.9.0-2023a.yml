@@ -58,6 +58,6 @@ easyconfigs:
   # purpose of the following is to test one case in PR #299
   #   case is "(B) build software with a merged EasyBuild easyconfig PR
   #   -> should lead to SUCCESSful build"
-  - tqdm-4.66.1-GCCcore-12.3.0.eb:
+  - Greenlet-2.0.2-GCCcore-12.3.0.eb:
       options:
-        from-pr: 20200
+        from-pr: 20241
