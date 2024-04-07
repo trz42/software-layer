@@ -67,7 +67,7 @@ if [ -d $EESSI_PREFIX ]; then
         else
           error "Lmod SitePackage.lua file not found at $lmod_sitepackage_file"
         fi
-       
+
         if [ ! -z $EESSI_BASIC_ENV ]; then
           show_msg "Only setting up basic environment, so we're done"
         elif [ -d $EESSI_SOFTWARE_PATH ]; then
