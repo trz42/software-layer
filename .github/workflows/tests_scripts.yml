@@ -82,6 +82,8 @@ jobs:
           # run wrapper script + capture & check output
           out="${PWD}/eb-${EB_VERSION}.out"
           export EESSI_REPOS_CFG_DIR_OVERRIDE=${PWD}/repos
+          # skip installation of CUDA SDKs, since this is too heavy for CI
+          sed -i "s@./EESSI-install-software.sh@./EESSI-install-software.sh --skip-cuda-install@g" install_software_layer.sh
           ./eessi_container.sh --access rw --mode run --verbose --repository nessi.no-2023.06-software /software-layer/run_in_compat_layer_env.sh /software-layer/eb-${EB_VERSION}.sh 2>&1 | tee ${out}
           pattern="^This is EasyBuild ${EB_VERSION} "
           grep "${pattern}" ${out} || (echo "Pattern '${pattern}' not found in output!" && exit 1)
