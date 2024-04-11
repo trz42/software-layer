@@ -139,21 +139,29 @@ env | grep "RFM_"
 cpuinfo=$(lscpu)
 if [[ "${cpuinfo}" =~ CPU\(s\):[^0-9]*([0-9]+) ]]; then
     cpu_count=${BASH_REMATCH[1]}
+    # only use cpu cores allocated to job
+    cpu_count=${SLURM_CPUS_ON_NODE}
 else
     fatal_error "Failed to get the number of CPUs for the current test hardware with lscpu."
 fi
 if [[ "${cpuinfo}" =~ Socket\(s\):[^0-9]*([0-9]+) ]]; then
     socket_count=${BASH_REMATCH[1]}
+    # just assume a single socket
+    socket_count=1
 else
     fatal_error "Failed to get the number of sockets for the current test hardware with lscpu."
 fi
 if [[ "${cpuinfo}" =~ (Thread\(s\) per core:[^0-9]*([0-9]+)) ]]; then
     threads_per_core=${BASH_REMATCH[2]}
+    # don't use HT
+    threads_per_core=1
 else
     fatal_error "Failed to get the number of threads per core for the current test hardware with lscpu."
 fi
 if [[ "${cpuinfo}" =~ (Core\(s\) per socket:[^0-9]*([0-9]+)) ]]; then
     cores_per_socket=${BASH_REMATCH[2]}
+    # just set it to the number of cores being available in the job
+    cores_per_socket=${cpu_count}
 else
     fatal_error "Failed to get the number of cores per socket for the current test hardware with lscpu."
 fi
