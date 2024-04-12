@@ -74,6 +74,7 @@ display_help() {
   echo "  -c | --container IMG   - image file or URL defining the container to use"
   echo "                           [default: docker://ghcr.io/eessi/build-node:debian11]"
   echo "  -f | --fakeroot        - run the container with --fakeroot [default: false]"
+  echo "                           Note, currently this option is ignored."
   echo "  -g | --storage DIR     - directory space on host machine (used for"
   echo "                           temporary data) [default: 1. TMPDIR, 2. /tmp]"
   echo "  -h | --help            - display this usage information [default: false]"
@@ -143,7 +144,9 @@ while [[ $# -gt 0 ]]; do
 #      shift 1
 #      ;;
     -f|--fakeroot)
-      FAKEROOT=1
+      # Currently this argument is being ignored
+      echo "NOTE, '-f' and '--fakeroot' are currently being ignored."
+      # FAKEROOT=1
       shift 1
       ;;
     -g|--storage)

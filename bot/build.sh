@@ -198,7 +198,9 @@ else
     REMOVAL_STEP_ARGS+=("--storage" "${STORAGE}")
     # add fakeroot option in order to be able to remove software, see:
     # https://github.com/EESSI/software-layer/issues/312
-    REMOVAL_STEP_ARGS+=("--fakeroot")
+    # CURRENTLY NOT SUPPORTED; software packages need to be removed from
+    # CernVM-FS repository first
+    # REMOVAL_STEP_ARGS+=("--fakeroot")
 
     # create tmp file for output of removal step
     removal_outerr=$(mktemp remove.outerr.XXXX)
