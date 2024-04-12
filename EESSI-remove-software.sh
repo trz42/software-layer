@@ -90,7 +90,10 @@ fi
 pr_diff=$(ls [0-9]*.diff | head -1)
 
 # if this script is run as root, use PR patch file to determine if software needs to be removed first
-if [ $EUID -eq 0 ]; then
+# if [ $EUID -eq 0 ]; then
+# working around lacking support for `--fakeroot` and/or user namespaces
+# we only run as non-root
+if [ $EUID -ne 0 ]; then
     changed_easystacks_rebuilds=$(cat ${pr_diff} | grep '^+++' | cut -f2 -d' ' | sed 's@^[a-z]/@@g' | grep '^easystacks/.*yml$' | egrep -v 'known-issues|missing' | grep "/rebuilds/")
     if [ -z ${changed_easystacks_rebuilds} ]; then
         echo "No software needs to be removed."
@@ -107,13 +110,16 @@ if [ $EUID -eq 0 ]; then
                 # we need to remove existing installation directories first,
                 # so let's figure out which modules have to be rebuilt by doing a dry-run and grepping "someapp/someversion" for the relevant lines (with [R])
                 #  * [R] $CFGS/s/someapp/someapp-someversion.eb (module: someapp/someversion)
-                rebuild_apps=$(eb --allow-use-as-root-and-accept-consequences --dry-run-short --rebuild --easystack ${easystack_file} | grep "^ \* \[R\]" | grep -o "module: .*[^)]" | awk '{print $2}')
+                # rebuild_apps=$(eb --allow-use-as-root-and-accept-consequences --dry-run-short --rebuild --easystack ${easystack_file} | grep "^ \* \[R\]" | grep -o "module: .*[^)]" | awk '{print $2}')
+                # we cannot run as root so we removed `--allow-use-as-root...`
+                rebuild_apps=$(eb --dry-run-short --rebuild --easystack ${easystack_file} | grep "^ \* \[R\]" | grep -o "module: .*[^)]" | awk '{print $2}')
                 for app in ${rebuild_apps}; do
                     app_dir=${EASYBUILD_INSTALLPATH}/software/${app}
                     app_module=${EASYBUILD_INSTALLPATH}/modules/all/${app}.lua
-                    echo_yellow "Removing ${app_dir} and ${app_module}..."
-                    rm -rf ${app_dir}
-                    rm -rf ${app_module}
+                    echo_yellow "Removing ${app_dir} and ${app_module}... (just reporting what would have been done)"
+                    # echo_yellow "Removing ${app_dir} and ${app_module}..."
+                    # rm -rf ${app_dir}
+                    # rm -rf ${app_module}
                 done
             else
                 fatal_error "Easystack file ${easystack_file} not found!"
@@ -121,5 +127,8 @@ if [ $EUID -eq 0 ]; then
         done
     fi
 else
-    fatal_error "This script can only be run by root!"
+    fatal_error "This script can NOT be run by root! (lacking support for `--fakeroot` and/or user namespaces)"
 fi
+# else
+#     fatal_error "This script can only be run by root!"
+# fi
