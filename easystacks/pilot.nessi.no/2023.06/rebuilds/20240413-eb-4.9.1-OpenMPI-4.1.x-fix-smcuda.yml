@@ -1,0 +1,10 @@
+# 2024-04-13
+# Rebuild all OpenMPI 4.1.x versions due to an issue with smcuda:
+# https://github.com/open-mpi/ompi/issues/12270
+# https://github.com/open-mpi/ompi/pull/12344
+# https://github.com/easybuilders/easybuild-easyconfigs/pull/19940
+#   Note, we don't need the easyconfig PR because it is included in EasyBuild 4.9.1
+easyconfigs:
+  - OpenMPI-4.1.4-GCC-12.2.0.eb:
+  - OpenMPI-4.1.5-GCC-12.3.0:
+  - OpenMPI-4.1.6-GCC-13.2.0:
