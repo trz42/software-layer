@@ -316,7 +316,7 @@ def parse_hook_lammps_remove_deps_for_CI_aarch64(ec, *args, **kwargs):
             if build_option('optarch') == OPTARCH_GENERIC:
                 ec['kokkos_arch'] = 'ARMV80'
                 print_msg("Set kokkos_arch = 'ARMV80' (cpu family: %s, optarch: %s",
-                    os.geten('EESSI_CPU_FAMILY'), build_option('optarch'))
+                    os.getenv('EESSI_CPU_FAMILY'), build_option('optarch'))
     else:
         raise EasyBuildError("LAMMPS-specific hook triggered for non-LAMMPS easyconfig?!")
 
