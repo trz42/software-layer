@@ -308,6 +308,15 @@ def parse_hook_lammps_remove_deps_for_CI_aarch64(ec, *args, **kwargs):
             # we need this hook because we check for missing installations for all CPU targets
             # on an x86_64 VM in GitHub Actions (so condition based on ARCH in LAMMPS easyconfig is always true)
             ec['dependencies'] = [dep for dep in ec['dependencies'] if dep[0] not in ('ScaFaCoS', 'tbb')]
+            # if the optarch is GENERIC we also set 'kokkos_arch' to 'ARMV80' (if not set the easyblock will
+            # run "python -c 'from archspec.cpu import host; print(host())'"
+            # which returns the host architecture which is then mapped to some
+            # identifier corresponding to the architecture; however, this may not
+            # be correct if we want to build for `aarch64/generic`
+            if build_option('optarch') == OPTARCH_GENERIC:
+                ec['kokkos_arch'] = 'ARMV80'
+                print_msg("Set kokkos_arch = 'ARMV80' (cpu family: %s, optarch: %s",
+                    os.geten('EESSI_CPU_FAMILY'), build_option('optarch'))
     else:
         raise EasyBuildError("LAMMPS-specific hook triggered for non-LAMMPS easyconfig?!")
 
