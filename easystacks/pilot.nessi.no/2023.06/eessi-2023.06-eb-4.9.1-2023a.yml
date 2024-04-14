@@ -1,5 +1,6 @@
 easyconfigs:
   - BWA-0.7.17-20220923-GCCcore-12.3.0.eb
+  - PyQt5-5.15.10-GCCcore-12.3.0.eb
   - LAMMPS-2Aug2023_update2-foss-2023a-kokkos.eb:
       # see https://github.com/easybuilders/easybuild-easyconfigs/pull/19471
       # see https://github.com/easybuilders/easybuild-easyblocks/pull/3036
