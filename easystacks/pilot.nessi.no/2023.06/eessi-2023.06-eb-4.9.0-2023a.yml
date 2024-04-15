@@ -57,4 +57,3 @@ easyconfigs:
       # This easyconfig is added to overcome the failing of check_missing_installations against the development branch
   - parallel-20230722-GCCcore-12.3.0.eb
   - Highway-1.0.4-GCCcore-12.3.0.eb
-  - R-bundle-CRAN-2023.12-foss-2023a.eb
