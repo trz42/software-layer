@@ -11,3 +11,4 @@ easyconfigs:
   - R-bundle-CRAN-2023.12-foss-2023a.eb
   - OpenFOAM-10-foss-2023a.eb
   - PyOpenGL-3.1.7-GCCcore-12.3.0.eb
+  - ipympl-0.9.3-foss-2023a.eb
