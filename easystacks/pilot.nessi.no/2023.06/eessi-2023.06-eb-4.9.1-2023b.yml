@@ -1,2 +1,3 @@
 easyconfigs:
   - CDO-2.2.2-gompi-2023b.eb
+  - Qt5-5.15.13-GCCcore-13.2.0.eb
