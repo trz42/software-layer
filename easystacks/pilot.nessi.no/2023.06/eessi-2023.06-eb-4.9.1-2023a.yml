@@ -8,3 +8,5 @@ easyconfigs:
         from-pr: 19471
         include-easyblocks-from-pr: 3036
   - JupyterNotebook-7.0.2-GCCcore-12.3.0.eb
+  - R-bundle-CRAN-2023.12-foss-2023a.eb
+  - OpenFOAM-10-foss-2023a.eb
