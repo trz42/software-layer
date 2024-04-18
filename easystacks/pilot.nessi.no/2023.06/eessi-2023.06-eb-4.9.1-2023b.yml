@@ -1,3 +1,4 @@
 easyconfigs:
   - CDO-2.2.2-gompi-2023b.eb
   - Wayland-1.22.0-GCCcore-13.2.0.eb
+  - HarfBuzz-8.2.2-GCCcore-13.2.0.eb
