@@ -12,3 +12,6 @@ easyconfigs:
   - OpenFOAM-10-foss-2023a.eb
   - PyOpenGL-3.1.7-GCCcore-12.3.0.eb
   - ipympl-0.9.3-foss-2023a.eb
+  - SuperLU_DIST-8.1.2-foss-2023a.eb:
+      options:
+        from-pr: 20162
