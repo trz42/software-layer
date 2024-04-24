@@ -212,6 +212,15 @@ fi
 #       if not, an error is produced, and the bot flags the whole build as failed (even when not installing GPU software)
 # ${EESSI_PREFIX}/scripts/gpu_support/nvidia/link_nvidia_host_libraries.sh
 
+# determine num cores allocated to job
+# - get job id
+# - run some squeue ... command that just spits out the number of cores allocated
+slurm_jobid=$(ls slurm-*.out | sed -e 's/slurm-//' | sed -e 's/\.out//')
+command -V squeue
+numcpus=$(squeue -j $slurm_jobid -O numcpus || true)
+if [[ numcpus -lt 1 ]];
+    numcpus=1
+fi
 # use PR patch file to determine in which easystack files stuff was added
 changed_easystacks=$(cat ${pr_diff} | grep '^+++' | cut -f2 -d' ' | sed 's@^[a-z]/@@g' | grep '^easystacks/.*yml$' | egrep -v 'known-issues|missing') 
 if [ -z "${changed_easystacks}" ]; then
@@ -239,7 +248,7 @@ else
         if [ -f ${easystack_file} ]; then
             echo_green "Feeding easystack file ${easystack_file} to EasyBuild..."
 
-            ${EB} --easystack ${TOPDIR}/${easystack_file} --robot
+            ${EB} --parallel ${numcpus} --easystack ${TOPDIR}/${easystack_file} --robot
             ec=$?
 
             # copy EasyBuild log file if EasyBuild exited with an error
