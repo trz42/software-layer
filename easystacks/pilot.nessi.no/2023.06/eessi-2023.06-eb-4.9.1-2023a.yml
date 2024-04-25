@@ -15,3 +15,6 @@ easyconfigs:
   - SuperLU_DIST-8.1.2-foss-2023a.eb:
       options:
         from-pr: 20162
+  - SuiteSparse-7.1.0-foss-2023a.eb
+  - Hypre-2.29.0-foss-2023a.eb
+  - netCDF-Fortran-4.6.1-gompi-2023a.eb
