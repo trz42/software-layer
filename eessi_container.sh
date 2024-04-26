@@ -193,6 +193,7 @@ while [[ $# -gt 0 ]]; do
     -x|--http-proxy)
       HTTP_PROXY="$2"
       export http_proxy=${HTTP_PROXY}
+      export ftp_proxy=${HTTP_PROXY}
       shift 2
       ;;
     -y|--https-proxy)

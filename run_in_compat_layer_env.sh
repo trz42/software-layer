@@ -32,6 +32,9 @@ fi
 if [ ! -z ${https_proxy} ]; then
     INPUT="export https_proxy=${https_proxy}; ${INPUT}"
 fi
+if [ ! -z ${ftp_proxy} ]; then
+    INPUT="export ftp_proxy=${ftp_proxy}; ${INPUT}"
+fi
 
 echo "Running '${INPUT}' in EESSI (${EESSI_CVMFS_REPO}) ${EESSI_VERSION} compatibility layer environment..."
 ${EESSI_COMPAT_LAYER_DIR}/startprefix <<< "${INPUT}"

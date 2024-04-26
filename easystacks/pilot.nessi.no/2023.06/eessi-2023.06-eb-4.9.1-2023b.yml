@@ -11,3 +11,11 @@ easyconfigs:
   - NSS-3.94-GCCcore-13.2.0.eb
   - nodejs-20.9.0-GCCcore-13.2.0.eb
   - libGLU-9.0.3-GCCcore-13.2.0.eb
+  - AOFlagger-3.4.0-foss-2023b.eb
+  - arpack-ng-3.9.0-foss-2023b.eb
+  - Armadillo-12.8.0-foss-2023b.eb
+  - casacore-3.5.0-foss-2023b.eb
+  - IDG-1.2.0-foss-2023b.eb
+  - EveryBeam-0.5.2-foss-2023b.eb
+  - DP3-6.0-foss-2023b.eb
+  - WSClean-3.4-foss-2023b.eb
