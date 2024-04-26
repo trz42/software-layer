@@ -10,3 +10,11 @@ easyconfigs:
   - JupyterNotebook-7.0.2-GCCcore-12.3.0.eb
   - R-bundle-CRAN-2023.12-foss-2023a.eb
   - OpenFOAM-10-foss-2023a.eb
+  - PyOpenGL-3.1.7-GCCcore-12.3.0.eb
+  - ipympl-0.9.3-foss-2023a.eb
+  - SuperLU_DIST-8.1.2-foss-2023a.eb:
+      options:
+        from-pr: 20162
+  - SuiteSparse-7.1.0-foss-2023a.eb
+  - Hypre-2.29.0-foss-2023a.eb
+  - netCDF-Fortran-4.6.1-gompi-2023a.eb
