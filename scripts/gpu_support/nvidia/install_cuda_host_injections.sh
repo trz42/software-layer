@@ -218,6 +218,9 @@ EOF
   eb --prefix="$tmpdir" ${extra_args} --accept-eula-for=CUDA --hooks="$tmpdir"/none.py --installpath="${cuda_install_parent}"/ "${cuda_easyconfig}"
   ret=$?
 
+  # remove temporary SitePackage.lua
+  rm ${cuda_install_parent}/.lmod/SitePackage.lua
+
   # restore original arch-specific SitePackage.lua if any was present
   if [ -f bkup-xyz-SitePackage.lua ]; then
     mv bkup-xyz-SitePackage.lua ${cuda_install_parent}/.lmod/SitePackage.lua
