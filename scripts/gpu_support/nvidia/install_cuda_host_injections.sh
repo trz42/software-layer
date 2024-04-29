@@ -186,24 +186,6 @@ else
     fatal_error "${error}"
   fi
 
-  # need to temporarily overwrite arch-specific SitePackage.lua or installation
-  # might fail in sanity check
-  mkdir -p ${cuda_install_parent}/.lmod
-  if [ -f ${cuda_install_parent}/.lmod/SitePackage.lua ]; then
-    mv ${cuda_install_parent}/.lmod/SitePackage.lua bkup-xyz-SitePackage.lua
-  fi
-  cat <<EOF > ${cuda_install_parent}/.lmod/SitePackage.lua
-require("strict")
-local hook = require("Hook")
-local open = io.open
-
-function arch_specific_load_hook(t)
-    LmodMessage("Ignoring ${EESSI_SOFTWARE_PATH}/.lmod/SitePackage.lua to allow for installing CUDA/12.1.1 under host_injections")
-end
-
-hook.register("load", arch_specific_load_hook)
-EOF
-
   # We need the --rebuild option, as the CUDA module may or may not be on the
   # `MODULEPATH` yet. Even if it is, we still want to redo this installation
   # since it will provide the symlinked targets for the parts of the CUDA
@@ -217,15 +199,6 @@ EOF
   # shellcheck disable=SC2086  # Intended splitting of extra_args
   eb --prefix="$tmpdir" ${extra_args} --accept-eula-for=CUDA --hooks="$tmpdir"/none.py --installpath="${cuda_install_parent}"/ "${cuda_easyconfig}"
   ret=$?
-
-  # remove temporary SitePackage.lua
-  rm ${cuda_install_parent}/.lmod/SitePackage.lua
-
-  # restore original arch-specific SitePackage.lua if any was present
-  if [ -f bkup-xyz-SitePackage.lua ]; then
-    mv bkup-xyz-SitePackage.lua ${cuda_install_parent}/.lmod/SitePackage.lua
-  fi
-
   if [ $ret -ne 0 ]; then
     eb_last_log=$(unset EB_VERBOSE; eb --last-log)
     cp -a ${eb_last_log} .
