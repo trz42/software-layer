@@ -19,6 +19,34 @@ local function read_file(path)
     return content
 end
 
+local function from_eessi_prefix(t)
+    -- eessi_prefix is the prefix with official EESSI modules
+    -- e.g. /cvmfs/software.eessi.io/versions/2023.06
+    local eessi_prefix = os.getenv("EESSI_PREFIX")
+
+    -- If EESSI_PREFIX wasn't defined, we cannot check if this module was from the EESSI environment
+    -- In that case, we assume it isn't, otherwise EESSI_PREFIX would (probably) have been set
+    if eessi_prefix == nil then
+        return False
+    else
+        -- NOTE: exact paths for site and user extensions aren't final, so may need to be updated later.
+        -- See https://github.com/EESSI/software-layer/pull/371
+
+        -- eessi_prefix_host_injections is the prefix with site-extensions (i.e. additional modules)
+        -- to the official EESSI modules, e.g. /cvmfs/software.eessi.io/host_injections/2023.06
+        local eessi_prefix_host_injections = string.gsub(eessi_prefix, 'versions', 'host_injections')
+
+        -- eessi_prefix_user_home is the prefix with user-extensions (i.e. additional modules)
+        -- to the official EESSI modules, e.g. $HOME/eessi/versions/2023.06
+        local eessi_prefix_user_home = string.gsub(eessi_prefix, os.getenv("EESSI_CVMFS_REPO"), pathJoin(os.getenv("HOME"), "eessi"))
+
+        -- Check if the full modulepath starts with the eessi_prefix_*
+        return string.find(t.fn, "^" .. eessi_prefix) ~= nil or
+               string.find(t.fn, "^" .. eessi_prefix_host_injections) ~= nil or
+               string.find(t.fn, "^" .. eessi_prefix_user_home) ~= nil
+    end
+end
+
 local function eessi_cuda_enabled_load_hook(t)
     local frameStk  = require("FrameStk"):singleton()
     local mt        = frameStk:mt()
@@ -107,7 +135,11 @@ end
 -- Combine both functions into a single one, as we can only register one function as load hook in lmod
 -- Also: make it non-local, so it can be imported and extended by other lmodrc files if needed
 function eessi_load_hook(t)
-    eessi_cuda_enabled_load_hook(t)
+    -- Only apply CUDA hooks if the loaded module is in the EESSI prefix
+    -- This avoids getting an Lmod Error when trying to load a CUDA module from a local software stack
+    if from_eesi_prefix(t) then
+        eessi_cuda_enabled_load_hook(t)
+    end
     eessi_openmpi_load_hook(t)
 end
 

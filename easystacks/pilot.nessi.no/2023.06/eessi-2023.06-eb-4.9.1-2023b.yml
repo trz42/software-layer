@@ -1,0 +1,7 @@
+easyconfigs:
+ # wget got ingested already
+ # - wget-1.21.4-GCCcore-13.2.0.eb
+ - py-cpuinfo-9.0.0-GCCcore-13.2.0.eb:
+     options:
+       # see https://github.com/easybuilders/easybuild-easyconfigs/pull/20125
+       from-commit: 6515b44cd84a20fe7876cb4bdaf3c0080e688566
