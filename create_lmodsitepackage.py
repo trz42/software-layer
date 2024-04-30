@@ -4,6 +4,7 @@
 #
 import os
 import sys
+from stat import S_IREAD, S_IWRITE, S_IRGRP, S_IWGRP, S_IROTH
 
 DOT_LMOD = '.lmod'
 
@@ -62,21 +63,25 @@ local function load_site_specific_hooks()
     -- Again, the host site could also decide to overwrite by simply doing
     --
     -- hook.register("load", arch_specific_load_hook)
+
     -- get path to to architecture independent SitePackage.lua
     local prefixHostInjections = string.gsub(os.getenv('EESSI_PREFIX') or "", 'versions', 'host_injections')
     local hostSitePackage = prefixHostInjections .. "/.lmod/SitePackage.lua"
+
     -- If the file exists, run it
     if isFile(hostSitePackage) then
         dofile(hostSitePackage)
     end
+
     -- build the full architecture specific path in host_injections
     local archHostInjections = string.gsub(os.getenv('EESSI_SOFTWARE_PATH') or "", 'versions', 'host_injections')
     local archSitePackage = archHostInjections .. "/.lmod/SitePackage.lua"
+
     -- If the file exists, run it
     if isFile(archSitePackage) then
         dofile(archSitePackage)
     end
-
+    
 end
 
 
@@ -176,6 +181,8 @@ try:
     os.makedirs(os.path.dirname(sitepackage_path), exist_ok=True)
     with open(sitepackage_path, 'w') as fp:
         fp.write(hook_txt)
+    # Make sure that the created Lmod file has "read/write" for the user/group and "read" permissions for others
+    os.chmod(sitepackage_path, S_IREAD|S_IWRITE|S_IRGRP|S_IWGRP|S_IROTH)
 
 except (IOError, OSError) as err:
     error("Failed to create %s: %s" % (sitepackage_path, err))
