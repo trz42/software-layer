@@ -18,3 +18,7 @@ easyconfigs:
   - SuiteSparse-7.1.0-foss-2023a.eb
   - Hypre-2.29.0-foss-2023a.eb
   - netCDF-Fortran-4.6.1-gompi-2023a.eb
+  - R-bundle-Bioconductor-3.18-foss-2023a-R-4.3.2.eb:
+      options:
+        # see https://github.com/easybuilders/easybuild-easyconfigs/pull/20379
+        from-commit: 968654eef0a4984fc82e475ae4739eb42d8a2275
