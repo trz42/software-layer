@@ -19,3 +19,6 @@ easyconfigs:
   - EveryBeam-0.5.2-foss-2023b.eb
   - DP3-6.0-foss-2023b.eb
   - WSClean-3.4-foss-2023b.eb
+  - GROMACS-2024.1-foss-2023b.eb:
+      options:
+        from-pr: 20439
