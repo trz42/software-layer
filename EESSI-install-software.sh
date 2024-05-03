@@ -232,7 +232,7 @@ else
         # load EasyBuild module (will be installed if it's not available yet)
         source ${TOPDIR}/load_easybuild_module.sh ${eb_version}
 
-        export EASYBUILD_PARALLEL=4
+        # export EASYBUILD_PARALLEL=4
 
         ${EB} --show-config
 

@@ -22,4 +22,6 @@ easyconfigs:
       options:
         # see https://github.com/easybuilders/easybuild-easyconfigs/pull/20379
         # Note, it's not the merge commit but the one before.
-        from-commit: ae2fc38307b56ae7ac12dff95c9d07404e1a8530
+        # from-commit: ae2fc38307b56ae7ac12dff95c9d07404e1a8530
+        # trying from-pr as an alternative
+        from-pr: 20379
