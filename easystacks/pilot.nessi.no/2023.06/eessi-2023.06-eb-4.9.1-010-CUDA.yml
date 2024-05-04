@@ -1,0 +1,6 @@
+easyconfigs:
+  - CUDA-12.1.1.eb:
+      options:
+        # see https://github.com/easybuilders/easybuild-easyblocks/pull/3045
+        # include-easyblocks-from-pr: 3045
+        accept-eula-for: CUDA
