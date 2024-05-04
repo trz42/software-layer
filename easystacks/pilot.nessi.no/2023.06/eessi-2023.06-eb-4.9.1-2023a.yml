@@ -1,0 +1,28 @@
+easyconfigs:
+  - BWA-0.7.17-20220923-GCCcore-12.3.0.eb
+  - PyQt5-5.15.10-GCCcore-12.3.0.eb
+  - LAMMPS-2Aug2023_update2-foss-2023a-kokkos.eb:
+      # see https://github.com/easybuilders/easybuild-easyconfigs/pull/19471
+      # see https://github.com/easybuilders/easybuild-easyblocks/pull/3036
+      options:
+        from-pr: 19471
+        include-easyblocks-from-pr: 3036
+  - JupyterNotebook-7.0.2-GCCcore-12.3.0.eb
+  - R-bundle-CRAN-2023.12-foss-2023a.eb
+  - OpenFOAM-10-foss-2023a.eb
+  - PyOpenGL-3.1.7-GCCcore-12.3.0.eb
+  - ipympl-0.9.3-foss-2023a.eb
+  - SuperLU_DIST-8.1.2-foss-2023a.eb:
+      options:
+        from-pr: 20162
+  - SuiteSparse-7.1.0-foss-2023a.eb
+  - Hypre-2.29.0-foss-2023a.eb
+  - netCDF-Fortran-4.6.1-gompi-2023a.eb
+  - ncdu-1.18-GCC-12.3.0.eb
+  - R-bundle-Bioconductor-3.18-foss-2023a-R-4.3.2.eb:
+      options:
+        # see https://github.com/easybuilders/easybuild-easyconfigs/pull/20379
+        # Note, it's not the merge commit but the one before.
+        # from-commit: ae2fc38307b56ae7ac12dff95c9d07404e1a8530
+        # trying from-pr as an alternative
+        from-pr: 20379
