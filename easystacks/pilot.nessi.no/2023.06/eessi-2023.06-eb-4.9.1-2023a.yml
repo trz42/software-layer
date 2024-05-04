@@ -19,3 +19,10 @@ easyconfigs:
   - Hypre-2.29.0-foss-2023a.eb
   - netCDF-Fortran-4.6.1-gompi-2023a.eb
   - ncdu-1.18-GCC-12.3.0.eb
+  - R-bundle-Bioconductor-3.18-foss-2023a-R-4.3.2.eb:
+      options:
+        # see https://github.com/easybuilders/easybuild-easyconfigs/pull/20379
+        # Note, it's not the merge commit but the one before.
+        # from-commit: ae2fc38307b56ae7ac12dff95c9d07404e1a8530
+        # trying from-pr as an alternative
+        from-pr: 20379
