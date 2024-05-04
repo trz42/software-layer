@@ -19,3 +19,12 @@ easyconfigs:
   - Hypre-2.29.0-foss-2023a.eb
   - netCDF-Fortran-4.6.1-gompi-2023a.eb
   - ncdu-1.18-GCC-12.3.0.eb
+  - R-bundle-Bioconductor-3.18-foss-2023a-R-4.3.2.eb:
+      options:
+        # see https://github.com/easybuilders/easybuild-easyconfigs/pull/20379
+        # This is just for testing 'from-commit'. In #344, neither of the commits
+        # shown in the easyconfig PR 20379 worked.
+        # from-commit: 968654eef0a4984fc82e475ae4739eb42d8a2275
+        # from-commit: ae2fc38307b56ae7ac12dff95c9d07404e1a8530
+        # So, here we're trying the actual merge commit.
+        from-commit: f8fa6c791dc009696b6cd0280d549163c5b65e38
