@@ -703,7 +703,7 @@ def post_sanitycheck_cuDNN(self, *args, **kwargs):
         search_string = "2. Distribution. The following portions of the SDK are distributable under the Agreement:"
         with open(license_path) as infile:
             for line in infile:
-                if line.strip().startswidth(search_string):
+                if line.strip().startswith(search_string):
                     # remove search string, split into words, remove trailing
                     # dots '.' and only retain words starting with a dot '.'
                     distributable = line[len(search_string):]
