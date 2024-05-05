@@ -26,3 +26,4 @@ easyconfigs:
         # from-commit: ae2fc38307b56ae7ac12dff95c9d07404e1a8530
         # trying from-pr as an alternative
         from-pr: 20379
+  - cuDNN-8.9.2.26-CUDA-12.1.1.eb
