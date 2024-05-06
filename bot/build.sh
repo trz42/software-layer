@@ -216,10 +216,8 @@ else
     for remove_dir in $(grep REMOVE_SOFTWARE ${determine_outerr} | cut -f4- -d'/'); do
         mkdir -p ${STORAGE}/lower_dirs/${remove_dir}
         chmod u+rwx ${STORAGE}/lower_dirs/${remove_dir}
-        if [[ ! -z ${LOWER_DIRS} ]]; then
-            LOWER_DIRS="${LOWER_DIRS}:${STORAGE}/lower_dirs/${remove_dir}"
-        else
-            LOWER_DIRS="${STORAGE}/lower_dirs/${remove_dir}"
+        if [[ -z ${LOWER_DIRS} ]]; then
+            LOWER_DIRS="${STORAGE}/lower_dirs"
         fi
     done
 
