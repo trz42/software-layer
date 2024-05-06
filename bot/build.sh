@@ -213,7 +213,7 @@ else
     #     set permission of the directory to u+rwx
     #     add directory to LOWER_DIRS (':' separated list of directories)
     LOWER_DIRS=
-    for remove_dir in $(grep ^REMOVE_DIRECTORY ${determine_outerr} | cut -f4- -d'/'); do
+    for remove_dir in "$(grep ^REMOVE_DIRECTORY ${determine_outerr} | cut -f4- -d'/')"; do
         echo "PROCESS directory: --${remove_dir}--"
         mkdir -p ${STORAGE}/lower_dirs/${remove_dir}
         chmod u+rwx ${STORAGE}/lower_dirs/${remove_dir}
