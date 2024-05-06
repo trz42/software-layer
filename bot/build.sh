@@ -216,11 +216,11 @@ else
     mkdir -p "${LOWER_DIRS}"
     grep ^REMOVE_DIRECTORY ${determine_outerr} | cut -f4- -d'/' > ${determine_outerr}.rm_dirs
     cat ${determine_outerr}.rm_dirs | while read remove_dir; do
-        echo "PROCESS directory: --${remove_dir}--"
+        # echo "PROCESS directory: --${remove_dir}--"
         mkdir -p ${STORAGE}/lower_dirs/${remove_dir}
         chmod u+rwx ${STORAGE}/lower_dirs/${remove_dir}
     done
-    ls -lR "${STORAGE}/lower_dirs"
+    # ls -lR "${STORAGE}/lower_dirs"
 
     # prepare directory to store tarball of tmp for removal and build steps
     TARBALL_TMP_REMOVAL_STEP_DIR=${PREVIOUS_TMP_DIR}/removal_step
