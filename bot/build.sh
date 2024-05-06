@@ -215,7 +215,9 @@ else
     LOWER_DIRS=
     grep ^REMOVE_DIRECTORY ${determine_outerr} | cut -f4- -d'/' > ${determine_outerr}.rm_dirs
     #for remove_dir in $(cat ${determine_outerr} | grep ^REMOVE_DIRECTORY | sed -e 's/^REMOVE_DIRECTORY //'); do
-    for remove_dir in $(cat ${determine_outerr}.rm_dirs); do
+    wc -l ${determine_outerr}.rm_dirs
+    #for remove_dir in "$(cat ${determine_outerr}.rm_dirs)"; do
+    cat ${determine_outerr}.rm_dirs | while read remove_dir; do
         echo "PROCESS directory: --${remove_dir}--"
         mkdir -p ${STORAGE}/lower_dirs/${remove_dir}
         chmod u+rwx ${STORAGE}/lower_dirs/${remove_dir}
