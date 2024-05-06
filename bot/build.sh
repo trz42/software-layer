@@ -207,13 +207,13 @@ else
                          -- ./EESSI-determine-rebuilds.sh "${DETERMINE_SCRIPT_ARGS[@]}" "$@" 2>&1 | tee -a ${determine_outerr}
 
     # process output file
-    #   for each line containing 'REMOVE_SOFTWARE some_path'
+    #   for each line containing 'REMOVE_DIRECTORY some_path'
     #     create a new directory ${STORAGE}/lower_dirs/some_path_stripped
     #       where the prefix /cvmfs/repo_name is removed from some_path
     #     set permission of the directory to u+rwx
     #     add directory to LOWER_DIRS (':' separated list of directories)
     LOWER_DIRS=
-    for remove_dir in $(grep REMOVE_SOFTWARE ${determine_outerr} | cut -f4- -d'/'); do
+    for remove_dir in $(grep REMOVE_DIRECTORY ${determine_outerr} | cut -f4- -d'/'); do
         mkdir -p ${STORAGE}/lower_dirs/${remove_dir}
         chmod u+rwx ${STORAGE}/lower_dirs/${remove_dir}
         if [[ -z ${LOWER_DIRS} ]]; then

@@ -112,7 +112,8 @@ else
                 app_dir=${EASYBUILD_INSTALLPATH}/software/${app}
                 app_module=${EASYBUILD_INSTALLPATH}/modules/all/${app}.lua
                 echo_yellow "Removing ${app_dir} and ${app_module}..."
-                echo "REMOVE_SOFTWARE ${app_dir}"
+                # echo "REMOVE_SOFTWARE ${app_dir}"
+                find ${app_dir} -type d | sed -e 's/^/REMOVE_DIRECTORY /'
                 echo "REMOVE_MODULE ${app_module}"
             done
         else
