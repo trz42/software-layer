@@ -213,7 +213,9 @@ else
     #     set permission of the directory to u+rwx
     #     add directory to LOWER_DIRS (':' separated list of directories)
     LOWER_DIRS=
-    for remove_dir in $(cat ${determine_outerr} | grep ^REMOVE_DIRECTORY | sed -e 's/^REMOVE_DIRECTORY //'); do
+    grep ^REMOVE_DIRECTORY ${determine_outerr} | cut -f4- -d'/' > ${determine_outerr}.rm_dirs
+    #for remove_dir in $(cat ${determine_outerr} | grep ^REMOVE_DIRECTORY | sed -e 's/^REMOVE_DIRECTORY //'); do
+    for remove_dir in $(cat ${determine_outerr}.rm_dirs); do
         echo "PROCESS directory: --${remove_dir}--"
         mkdir -p ${STORAGE}/lower_dirs/${remove_dir}
         chmod u+rwx ${STORAGE}/lower_dirs/${remove_dir}
