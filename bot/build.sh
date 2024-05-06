@@ -212,19 +212,15 @@ else
     #       where the prefix /cvmfs/repo_name is removed from some_path
     #     set permission of the directory to u+rwx
     #     add directory to LOWER_DIRS (':' separated list of directories)
-    LOWER_DIRS=
+    LOWER_DIRS="${STORAGE}/lower_dirs"
+    mkdir -p "${LOWER_DIRS}"
     grep ^REMOVE_DIRECTORY ${determine_outerr} | cut -f4- -d'/' > ${determine_outerr}.rm_dirs
-    #for remove_dir in $(cat ${determine_outerr} | grep ^REMOVE_DIRECTORY | sed -e 's/^REMOVE_DIRECTORY //'); do
-    wc -l ${determine_outerr}.rm_dirs
-    #for remove_dir in "$(cat ${determine_outerr}.rm_dirs)"; do
     cat ${determine_outerr}.rm_dirs | while read remove_dir; do
         echo "PROCESS directory: --${remove_dir}--"
         mkdir -p ${STORAGE}/lower_dirs/${remove_dir}
         chmod u+rwx ${STORAGE}/lower_dirs/${remove_dir}
-        if [[ -z ${LOWER_DIRS} ]]; then
-            LOWER_DIRS="${STORAGE}/lower_dirs"
-        fi
     done
+    ls -lR "${STORAGE}/lower_dirs"
 
     # prepare directory to store tarball of tmp for removal and build steps
     TARBALL_TMP_REMOVAL_STEP_DIR=${PREVIOUS_TMP_DIR}/removal_step
