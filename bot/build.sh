@@ -220,6 +220,11 @@ else
         mkdir -p ${STORAGE}/lower_dirs/${remove_dir}
         chmod u+rwx ${STORAGE}/lower_dirs/${remove_dir}
     done
+    grep ^REMOVE_FILE ${determine_outerr} | cut -f4- -d'/' > ${determine_outerr}.rm_files
+    cat ${determine_outerr}.rm_files | while read remove_file; do
+        touch ${STORAGE}/lower_dirs/${remove_file}
+        chmod u+rw ${STORAGE}/lower_dirs/${remove_file}
+    done
     # ls -lR "${STORAGE}/lower_dirs"
 
     # prepare directory to store tarball of tmp for removal and build steps
