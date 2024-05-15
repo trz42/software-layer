@@ -768,6 +768,25 @@ def inject_gpu_property(ec):
                 ec[key] = '\n'.join([ec_dict[key], value])
         else:
             ec[key] = value
+    # Check if cuDNN is in the dependencies, if so add the 'gpu' Lmod property
+    if ('cuDNN' in [dep[0] for dep in iter(ec_dict['dependencies'])]):
+        ec.log.info("Injecting gpu as Lmod arch property and envvar with cuDNN version")
+        key = 'modluafooter'
+        value = 'add_property("arch","gpu")'
+        cudnn_version = 0
+        for dep in iter(ec_dict['dependencies']):
+            # Make cuDNN a build dependency only (rpathing saves us from link errors)
+            if 'cuDNN' in dep[0]:
+                cudnn_version = dep[1]
+                ec_dict['dependencies'].remove(dep)
+                if dep not in ec_dict['builddependencies']:
+                    ec_dict['builddependencies'].append(dep)
+        value = '\n'.join([value, 'setenv("EESSICUDNNVERSION","%s")' % cudnn_version])
+        if key in ec_dict:
+            if not value in ec_dict[key]:
+                ec[key] = '\n'.join([ec_dict[key], value])
+        else:
+            ec[key] = value
     return ec
 
 
