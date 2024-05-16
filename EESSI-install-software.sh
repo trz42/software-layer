@@ -205,7 +205,7 @@ ${TOPDIR}/install_scripts.sh --prefix ${EESSI_PREFIX}
 # Allow skipping CUDA SDK install in e.g. CI environments
 if [ -z "${skip_cuda_install}" ] || [ ! "${skip_cuda_install}" ]; then
     ${EESSI_PREFIX}/scripts/gpu_support/nvidia/install_cuda_host_injections.sh -c 12.1.1 --accept-cuda-eula
-    ${EESSI_PREFIX}/scripts/gpu_support/nvidia/install_cudnn_host_injections.sh -c 12.1.1 -d 8.9.2.26
+    ${EESSI_PREFIX}/scripts/gpu_support/nvidia/install_cuDNN_host_injections.sh -c 12.1.1 -d 8.9.2.26
 else
     echo "Skipping installation of CUDA SDK and cu* libraries in host_injections, since the --skip-cuda-install flag was passed"
 fi
