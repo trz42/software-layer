@@ -34,3 +34,4 @@ easyconfigs:
       # see https://github.com/easybuilders/easybuild-easyconfigs/pull/19451;
       options:
         from-pr: 19451
+  - cuDNN-8.9.2.26-CUDA-12.1.1.eb
