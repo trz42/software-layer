@@ -18,7 +18,7 @@ base_dir=$(dirname $(realpath $0))
 source ${base_dir}/init/eessi_defaults
 
 # Git clone has to be run in compat layer, to make the git command available
-./run_in_compat_layer_env.sh "git clone https://github.com/EESSI/test-suite EESSI-test-suite"
+./run_in_compat_layer_env.sh "git clone -b v0.2.0 https://github.com/EESSI/test-suite EESSI-test-suite"
 
 # Run the test suite
 ./test_suite.sh "$@"
