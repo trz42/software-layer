@@ -280,7 +280,7 @@ if [[ ! -z ${LOWER_DIRS} ]]; then
     mkdir -p ${LOWER_DIRS_ONLY}
     echo "contents of LOWER_DIRS_ONLY (after mkdir -p)"
     ls -lisaR ${LOWER_DIRS_ONLY}
-    cp -a ${LOWER_DIRS}/ ${LOWER_DIRS_ONLY}
+    cp -a ${LOWER_DIRS}/. ${LOWER_DIRS_ONLY}
     echo "contents of LOWER_DIRS_ONLY (after cp -a)"
     ls -lisaR ${LOWER_DIRS_ONLY}
     find ${LOWER_DIRS_ONLY} -type f -exec rm {} \;
