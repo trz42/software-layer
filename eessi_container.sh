@@ -625,7 +625,6 @@ if [[ "${ACCESS}" == "rw" ]]; then
   EESSI_FUSE_MOUNTS+=("--fusemount" "${EESSI_READONLY}")
 
   EESSI_WRITABLE_OVERLAY="container:fuse-overlayfs"
-  # EESSI_WRITABLE_OVERLAY+=" -o lowerdir=/cvmfs_ro/${repo_name}"
   if [[ ! -z ${LOWER_DIRS} ]]; then
     # need to convert ':' in LOWER_DIRS to ',' because bind mounts use ',' as
     # separator while the lowerdir overlayfs option uses ':'
