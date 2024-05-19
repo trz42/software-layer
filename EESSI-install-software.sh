@@ -218,46 +218,6 @@ fi
 # Don't run the Lmod GPU driver check when doing builds (may not have a GPU, and it's not relevant for vanilla builds anyway)
 export EESSI_OVERRIDE_GPU_CHECK=1
 
-# before we actually install software, we need to remove software that is requested
-# to be rebuilt (need to do this here because installations of software are read-only;
-# also, it should be done in the same container run or fuse-overlayfs might get confused)
-changed_easystacks_rebuilds=$(cat ${pr_diff} | grep '^+++' | cut -f2 -d' ' | sed 's@^[a-z]/@@g' | grep '^easystacks/.*yml$' | egrep -v 'known-issues|missing' | grep "/rebuilds/")
-if [ -z ${changed_easystacks_rebuilds} ]; then
-    echo "No software needs to be removed."
-else
-    for easystack_file in ${changed_easystacks_rebuilds}; do
-        # determine version of EasyBuild module to load based on EasyBuild version included in name of easystack file
-        eb_version=$(echo ${easystack_file} | sed 's/.*eb-\([0-9.]*\).*/\1/g')
-
-        # load EasyBuild module (will be installed if it's not available yet)
-        source ${TOPDIR}/load_easybuild_module.sh ${eb_version}
-
-        if [ -f ${easystack_file} ]; then
-            echo_green "Software rebuild(s) requested in ${easystack_file}, so"
-            echo_green "  determining which existing installation have to be removed (assuming contents"
-            echo_green "  have been made writable/deletable)..."
-            # we need to remove existing installation directories first,
-            # so let's figure out which modules have to be rebuilt by doing a dry-run and grepping "someapp/someversion" for the relevant lines (with [R])
-            #  * [R] $CFGS/s/someapp/someapp-someversion.eb (module: someapp/someversion)
-            # rebuild_apps=$(eb --allow-use-as-root-and-accept-consequences --dry-run-short --rebuild --easystack ${easystack_file} | grep "^ \* \[R\]" | grep -o "module: .*[^)]" | awk '{print $2}')
-            rebuild_apps=$(eb --dry-run-short --rebuild --easystack ${easystack_file} | grep "^ \* \[R\]" | grep -o "module: .*[^)]" | awk '{print $2}')
-            for app in ${rebuild_apps}; do
-                app_dir=${EASYBUILD_INSTALLPATH}/software/${app}
-                app_module=${EASYBUILD_INSTALLPATH}/modules/all/${app}.lua
-                ls -lisaR ${app_dir}
-                ls -lisaR ${app_module}
-                echo_yellow "Removing ${app_dir} and ${app_module}..."
-                rm -rdfv ${app_dir}
-                rm -rdfv ${app_module}
-                ls -lisaR ${app_dir}
-                ls -lisaR ${app_module}
-            done
-        else
-            fatal_error "Easystack file ${easystack_file} not found!"
-        fi
-    done
-fi
-
 # use PR patch file to determine in which easystack files stuff was added
 changed_easystacks=$(cat ${pr_diff} | grep '^+++' | cut -f2 -d' ' | sed 's@^[a-z]/@@g' | grep '^easystacks/.*yml$' | egrep -v 'known-issues|missing') 
 if [ -z "${changed_easystacks}" ]; then
