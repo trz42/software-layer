@@ -273,20 +273,7 @@ if [[ ! -z ${SHARED_FS_PATH} ]]; then
     BUILD_STEP_ARGS+=("--host-injections" "${SHARED_FS_PATH}/host-injections")
 fi
 if [[ ! -z ${LOWER_DIRS} ]]; then
-    # make copy of LOWER_DIRS but only retain directories
-    lower_parent_dir=$(dirname ${LOWER_DIRS})
-    the_lower_dir=$(basename ${LOWER_DIRS})
-    LOWER_DIRS_ONLY="${lower_parent_dir}/${the_lower_dir}_2"
-    mkdir -p ${LOWER_DIRS_ONLY}
-    echo "contents of LOWER_DIRS_ONLY (after mkdir -p)"
-    ls -lisaR ${LOWER_DIRS_ONLY}
-    cp -a ${LOWER_DIRS}/ ${LOWER_DIRS_ONLY}
-    echo "contents of LOWER_DIRS_ONLY (after cp -a)"
-    ls -lisaR ${LOWER_DIRS_ONLY}
-    find ${LOWER_DIRS_ONLY} -type f -exec rm {} \;
-    echo "contents of LOWER_DIRS_ONLY (find ... rm)"
-    ls -lisaR ${LOWER_DIRS_ONLY}
-    BUILD_STEP_ARGS+=("--lower-dirs" "${LOWER_DIRS_ONLY}")
+    BUILD_STEP_ARGS+=("--lower-dirs" "${LOWER_DIRS}")
 fi
 
 # create tmp file for output of build step
