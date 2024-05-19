@@ -272,6 +272,9 @@ BUILD_STEP_ARGS+=("--nvidia" "all")
 if [[ ! -z ${SHARED_FS_PATH} ]]; then
     BUILD_STEP_ARGS+=("--host-injections" "${SHARED_FS_PATH}/host-injections")
 fi
+if [[ ! -z ${LOWER_DIRS} ]]; then
+    BUILD_STEP_ARGS+=("--lower-dirs" "${LOWER_DIRS}")
+fi
 
 # create tmp file for output of build step
 build_outerr=$(mktemp build.outerr.XXXX)
