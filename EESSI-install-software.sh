@@ -245,6 +245,8 @@ else
         if [ -f ${easystack_file} ]; then
             echo_green "Feeding easystack file ${easystack_file} to EasyBuild..."
 
+            ls -lisaR /cvmfs/pilot.nessi.no/versions/2023.06/software/linux/x86_64/amd/zen2/software/NESSI-extend
+
             ${EB} --easystack ${TOPDIR}/${easystack_file} --robot
             ec=$?
 

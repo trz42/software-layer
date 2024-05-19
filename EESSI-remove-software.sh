@@ -112,9 +112,13 @@ else
             for app in ${rebuild_apps}; do
                 app_dir=${EASYBUILD_INSTALLPATH}/software/${app}
                 app_module=${EASYBUILD_INSTALLPATH}/modules/all/${app}.lua
+                ls -lisaR ${app_dir}
+                ls -lisaR ${app_module}
                 echo_yellow "Removing ${app_dir} and ${app_module}..."
                 rm -rdfv ${app_dir}
                 rm -rdfv ${app_module}
+                ls -lisaR ${app_dir}
+                ls -lisaR ${app_module}
             done
         else
             fatal_error "Easystack file ${easystack_file} not found!"
