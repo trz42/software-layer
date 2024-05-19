@@ -233,31 +233,33 @@ else
 
     ls -lR ${STORAGE}/lower_dirs
 
-    # prepare directory to store tarball of tmp for removal and build steps
-    TARBALL_TMP_REMOVAL_STEP_DIR=${PREVIOUS_TMP_DIR}/removal_step
-    mkdir -p ${TARBALL_TMP_REMOVAL_STEP_DIR}
-
-    # prepare arguments to eessi_container.sh specific to remove step
-    declare -a REMOVAL_STEP_ARGS=()
-    REMOVAL_STEP_ARGS+=("--save" "${TARBALL_TMP_REMOVAL_STEP_DIR}")
-    REMOVAL_STEP_ARGS+=("--storage" "${STORAGE}")
-    if [[ ! -z ${LOWER_DIRS} ]]; then
-        REMOVAL_STEP_ARGS+=("--lower-dirs" "${LOWER_DIRS}")
-    fi
-
-    # create tmp file for output of removal step
-    removal_outerr=$(mktemp remove.outerr.XXXX)
-
-    echo "Executing command to remove software:"
-    echo "./eessi_container.sh ${COMMON_ARGS[@]} ${REMOVAL_STEP_ARGS[@]}"
-    echo "                     -- ./EESSI-remove-software.sh \"${REMOVAL_SCRIPT_ARGS[@]}\" \"$@\" 2>&1 | tee -a ${removal_outerr}"
-    ./eessi_container.sh "${COMMON_ARGS[@]}" "${REMOVAL_STEP_ARGS[@]}" \
-                         -- ./EESSI-remove-software.sh "${REMOVAL_SCRIPT_ARGS[@]}" "$@" 2>&1 | tee -a ${removal_outerr}
-
-    # make sure that the build step resumes from the same temporary directory
-    # this is important, as otherwise the removed software will still be there
-    REMOVAL_TMPDIR=$(grep ' as tmp directory ' ${removal_outerr} | cut -d ' ' -f 2)
-    BUILD_STEP_ARGS+=("--resume" "${REMOVAL_TMPDIR}")
+#    # prepare directory to store tarball of tmp for removal and build steps
+#    TARBALL_TMP_REMOVAL_STEP_DIR=${PREVIOUS_TMP_DIR}/removal_step
+#    mkdir -p ${TARBALL_TMP_REMOVAL_STEP_DIR}
+#
+####
+#    # prepare arguments to eessi_container.sh specific to remove step
+#    declare -a REMOVAL_STEP_ARGS=()
+#    REMOVAL_STEP_ARGS+=("--save" "${TARBALL_TMP_REMOVAL_STEP_DIR}")
+#    REMOVAL_STEP_ARGS+=("--storage" "${STORAGE}")
+#    if [[ ! -z ${LOWER_DIRS} ]]; then
+#        REMOVAL_STEP_ARGS+=("--lower-dirs" "${LOWER_DIRS}")
+#    fi
+#
+#    # create tmp file for output of removal step
+#    removal_outerr=$(mktemp remove.outerr.XXXX)
+#
+#    echo "Executing command to remove software:"
+#    echo "./eessi_container.sh ${COMMON_ARGS[@]} ${REMOVAL_STEP_ARGS[@]}"
+#    echo "                     -- ./EESSI-remove-software.sh \"${REMOVAL_SCRIPT_ARGS[@]}\" \"$@\" 2>&1 | tee -a ${removal_outerr}"
+#    ./eessi_container.sh "${COMMON_ARGS[@]}" "${REMOVAL_STEP_ARGS[@]}" \
+#                         -- ./EESSI-remove-software.sh "${REMOVAL_SCRIPT_ARGS[@]}" "$@" 2>&1 | tee -a ${removal_outerr}
+#
+#    # make sure that the build step resumes from the same temporary directory
+#    # this is important, as otherwise the removed software will still be there
+#    REMOVAL_TMPDIR=$(grep ' as tmp directory ' ${removal_outerr} | cut -d ' ' -f 2)
+#    BUILD_STEP_ARGS+=("--resume" "${REMOVAL_TMPDIR}")
+####
 fi
 
 # prepare directory to store tarball of tmp for build step
@@ -273,20 +275,21 @@ if [[ ! -z ${SHARED_FS_PATH} ]]; then
     BUILD_STEP_ARGS+=("--host-injections" "${SHARED_FS_PATH}/host-injections")
 fi
 if [[ ! -z ${LOWER_DIRS} ]]; then
-    # make copy of LOWER_DIRS but only retain directories
-    lower_parent_dir=$(dirname ${LOWER_DIRS})
-    the_lower_dir=$(basename ${LOWER_DIRS})
-    LOWER_DIRS_ONLY="${lower_parent_dir}/${the_lower_dir}_2"
-    mkdir -p ${LOWER_DIRS_ONLY}
-    echo "contents of LOWER_DIRS_ONLY (after mkdir -p)"
-    ls -lisaR ${LOWER_DIRS_ONLY}
-    cp -a ${LOWER_DIRS}/. ${LOWER_DIRS_ONLY}
-    echo "contents of LOWER_DIRS_ONLY (after cp -a)"
-    ls -lisaR ${LOWER_DIRS_ONLY}
-    find ${LOWER_DIRS_ONLY} -type f -exec rm {} \;
-    echo "contents of LOWER_DIRS_ONLY (find ... rm)"
-    ls -lisaR ${LOWER_DIRS_ONLY}
-    BUILD_STEP_ARGS+=("--lower-dirs" "${LOWER_DIRS_ONLY}")
+#    # make copy of LOWER_DIRS but only retain directories
+#    lower_parent_dir=$(dirname ${LOWER_DIRS})
+#    the_lower_dir=$(basename ${LOWER_DIRS})
+#    LOWER_DIRS_ONLY="${lower_parent_dir}/${the_lower_dir}_2"
+#    mkdir -p ${LOWER_DIRS_ONLY}
+#    echo "contents of LOWER_DIRS_ONLY (after mkdir -p)"
+#    ls -lisaR ${LOWER_DIRS_ONLY}
+#    cp -a ${LOWER_DIRS}/. ${LOWER_DIRS_ONLY}
+#    echo "contents of LOWER_DIRS_ONLY (after cp -a)"
+#    ls -lisaR ${LOWER_DIRS_ONLY}
+#    find ${LOWER_DIRS_ONLY} -type f -exec rm {} \;
+#    echo "contents of LOWER_DIRS_ONLY (find ... rm)"
+#    ls -lisaR ${LOWER_DIRS_ONLY}
+#    BUILD_STEP_ARGS+=("--lower-dirs" "${LOWER_DIRS_ONLY}")
+    BUILD_STEP_ARGS+=("--lower-dirs" "${LOWER_DIRS}")
 fi
 
 # create tmp file for output of build step
