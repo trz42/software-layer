@@ -231,8 +231,6 @@ else
         chmod u+rw ${STORAGE}/lower_dirs/${remove_file}
     done
 
-    ls -lR ${STORAGE}/lower_dirs
-
     # prepare directory to store tarball of tmp for removal and build steps
     TARBALL_TMP_REMOVAL_STEP_DIR=${PREVIOUS_TMP_DIR}/removal_step
     mkdir -p ${TARBALL_TMP_REMOVAL_STEP_DIR}
