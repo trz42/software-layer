@@ -1,0 +1,5 @@
+# 2024-05-20
+# Rebuild NESSI-extend/2023.06-easybuild
+# Need to revert to the original version.
+easyconfigs:
+  - EESSI-extend-2023.06-easybuild.eb
