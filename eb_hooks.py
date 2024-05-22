@@ -720,7 +720,7 @@ def post_sanitycheck_cudnn(self, *args, **kwargs):
 
         allowlist = ['LICENSE']
 
-        # read cuDNN LICENSE, construct allowlist based on section 2.6 that specifies list of files that can be shipped
+        # read cuDNN LICENSE, construct allowlist based on section "2. Distribution" that specifies list of files that can be shipped
         license_path = os.path.join(self.installdir, 'LICENSE')
         search_string = "2. Distribution. The following portions of the SDK are distributable under the Agreement:"
         with open(license_path) as infile:
@@ -741,6 +741,39 @@ def post_sanitycheck_cudnn(self, *args, **kwargs):
         replace_non_distributable_files_with_symlinks(self.name, allowlist)
     else:
         raise EasyBuildError("cuDNN-specific hook triggered for non-cuDNN easyconfig?!")
+
+
+def post_sanitycheck_cutensor(self, *args, **kwargs):
+    """
+    Remove files from cuTENSOR installation that we are not allowed to ship,
+    and replace them with a symlink to a corresponding installation under host_injections.
+    """
+    if self.name == 'cuTENSOR':
+        print_msg("Replacing files in cuTENSOR installation that we can not ship with symlinks to host_injections...")
+
+        allowlist = ['LICENSE']
+
+        # read cuTENSOR LICENSE, construct allowlist based on section "2. Distribution" that specifies list of files that can be shipped
+        license_path = os.path.join(self.installdir, 'LICENSE')
+        search_string = "2. Distribution. The following portions of the SDK are distributable under the Agreement:"
+        with open(license_path) as infile:
+            for line in infile:
+                if line.strip().startswith(search_string):
+                    # remove search string, split into words, remove trailing
+                    # dots '.' and only retain words starting with a dot '.'
+                    distributable = line[len(search_string):]
+                    for word in distributable.split():
+                        if word[0] == '.':
+                            allowlist.append(word.rstrip('.'))
+
+        allowlist = sorted(set(allowlist))
+        self.log.info("Allowlist for files in cuTENSOR installation that can be redistributed: " + ', '.join(allowlist))
+
+        # replace files that are not distributable with symlinks into
+        # host_injections
+        replace_non_distributable_files_with_symlinks(self.name, allowlist)
+    else:
+        raise EasyBuildError("cuTENSOR-specific hook triggered for non-cuTENSOR easyconfig?!")
 
 
 def inject_gpu_property(ec):
@@ -844,4 +877,5 @@ POST_SINGLE_EXTENSION_HOOKS = {
 POST_SANITYCHECK_HOOKS = {
     'CUDA': post_sanitycheck_cuda,
     'cuDNN': post_sanitycheck_cudnn,
+    'cuTENSOR': post_sanitycheck_cutensor,
 }
