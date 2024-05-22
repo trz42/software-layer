@@ -37,3 +37,4 @@ easyconfigs:
   - cuDNN-8.9.2.26-CUDA-12.1.1.eb
   - OSU-Micro-Benchmarks-7.2-gompi-2023a-CUDA-12.1.1.eb
   - ABySS-2.3.7-foss-2023a.eb
+  - BLAST+-2.14.1-gompi-2023a.eb
