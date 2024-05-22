@@ -93,6 +93,7 @@ export NESSI_SITE_INSTALL=${EESSI_SOFTWARE_PATH/versions/host_injections}
 if [[ -z "${TEMP_DIR}" ]]; then
     tmpdir=$(mktemp -d)
 else
+    mkdir -p ${TEMP_DIR}
     tmpdir=$(mktemp -d --tmpdir=${TEMP_DIR} cuda_n_co.XXX)
     if [[ ! -d "$tmpdir" ]] ; then
         fatal_error "Could not create directory ${tmpdir}"
