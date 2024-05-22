@@ -42,7 +42,7 @@ description = """
 toolchain = SYSTEM
 
 # All the dependencies we filter in NESSI
-local_deps_to_filter = "Autoconf,Automake,Autotools,binutils,bzip2,DBus,flex,gettext,gperf,help2man,intltool,libreadline,libtool,M4,makeinfo,ncurses,util-linux,XZ,zlib"
+local_deps_to_filter = "Autoconf,Automake,Autotools,binutils,bzip2,DBus,flex,gettext,gperf,help2man,intltool,libreadline,libtool,M4,makeinfo,ncurses,util-linux,XZ,zlib,PSM2"
 local_arch_specific_deps_to_filter = {'aarch64': ',yasm', 'x86_64': ''}
 local_deps_to_filter += local_arch_specific_deps_to_filter[ARCH]
 
@@ -95,19 +95,7 @@ elseif (os.getenv("NESSI_SITE_INSTALL") ~= nil) then
   if ((os.getenv("NESSI_PROJECT_INSTALL") ~= nil) or (os.getenv("NESSI_USER_INSTALL") ~= nil)) then
     LmodError("You cannot use NESSI_SITE_INSTALL in combination with any other NESSI_*_INSTALL environment variables")
   end
-  site_install = os.getenv("NESSI_SITE_INSTALL")
-  site_modulepath = nil
-  if (site_install ~= nil) then
-    -- Check the folder exists
-    if not isDir(site_install) then
-      LmodError("The location of NESSI_SITE_INSTALL (" .. site_install .. ") does not exist or is not a folder")
-    end
-    if (mode() == "load") then
-      LmodMessage("Configuring for use of NESSI_SITE_INSTALL under " .. site_install)
-    end
-    easybuild_installpath = string.gsub(os.getenv("EESSI_SOFTWARE_PATH"), os.getenv("EESSI_CVMFS_REPO"), site_install)
-    site_modulepath = pathJoin(easybuild_installpath, 'modules', 'all')
-  end
+  easybuild_installpath = string.gsub(os.getenv("EESSI_SOFTWARE_PATH"), 'versions', 'host_injections')
 else
   -- Deal with user and project installs
   project_install = os.getenv("NESSI_PROJECT_INSTALL")
