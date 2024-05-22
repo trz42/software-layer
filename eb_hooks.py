@@ -628,7 +628,7 @@ def replace_non_distributable_files_with_symlinks(log, install_dir, package, all
     Replace files that cannot be distributed with symlinks into host_injections
     """
     extension_based = { "CUDA": False, "cuDNN": True, "cuTENSOR": True }
-    if package in extension_based:
+    if not package in extension_based:
         raise EasyBuildError("Don't know how to strip non-distributable files from package %s.", package)
 
     # iterate over all files in the package installation directory
