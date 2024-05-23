@@ -1,6 +1,7 @@
 #!/bin/bash
 #
-# Script to remove part of the EESSI software stack (version set through init/eessi_defaults)
+# Script to determine which parts of the EESSI software stack (version set through init/eessi_defaults)
+# have to be rebuilt
 
 # see example parsing of command line arguments at
 #   https://wiki.bash-hackers.org/scripting/posparams#using_a_while_loop
@@ -89,6 +90,7 @@ fi
 # assume there's only one diff file that corresponds to the PR patch file
 pr_diff=$(ls [0-9]*.diff | head -1)
 
+# if this script is run as root, use PR patch file to determine if software needs to be removed first
 changed_easystacks_rebuilds=$(cat ${pr_diff} | grep '^+++' | cut -f2 -d' ' | sed 's@^[a-z]/@@g' | grep '^easystacks/.*yml$' | egrep -v 'known-issues|missing' | grep "/rebuilds/")
 if [ -z ${changed_easystacks_rebuilds} ]; then
     echo "No software needs to be removed."
@@ -101,20 +103,18 @@ else
         source ${TOPDIR}/load_easybuild_module.sh ${eb_version}
 
         if [ -f ${easystack_file} ]; then
-            echo_green "Software rebuild(s) requested in ${easystack_file}, so"
-            echo_green "  determining which existing installation have to be removed (assuming contents"
-            echo_green "  have been made writable/deletable)..."
+            echo_green "Software rebuild(s) requested in ${easystack_file}, so determining which existing installation have to be removed..."
             # we need to remove existing installation directories first,
             # so let's figure out which modules have to be rebuilt by doing a dry-run and grepping "someapp/someversion" for the relevant lines (with [R])
             #  * [R] $CFGS/s/someapp/someapp-someversion.eb (module: someapp/someversion)
-            # rebuild_apps=$(eb --allow-use-as-root-and-accept-consequences --dry-run-short --rebuild --easystack ${easystack_file} | grep "^ \* \[R\]" | grep -o "module: .*[^)]" | awk '{print $2}')
             rebuild_apps=$(eb --dry-run-short --rebuild --easystack ${easystack_file} | grep "^ \* \[R\]" | grep -o "module: .*[^)]" | awk '{print $2}')
             for app in ${rebuild_apps}; do
                 app_dir=${EASYBUILD_INSTALLPATH}/software/${app}
                 app_module=${EASYBUILD_INSTALLPATH}/modules/all/${app}.lua
                 echo_yellow "Removing ${app_dir} and ${app_module}..."
-                rm -rdfv ${app_dir}
-                rm -rdfv ${app_module}
+                find ${app_dir} -type d | sed -e 's/^/REMOVE_DIRECTORY /'
+                find ${app_dir} -type f | sed -e 's/^/REMOVE_FILE /'
+                echo "REMOVE_MODULE ${app_module}"
             done
         else
             fatal_error "Easystack file ${easystack_file} not found!"

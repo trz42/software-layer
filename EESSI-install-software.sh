@@ -199,20 +199,26 @@ pr_diff=$(ls [0-9]*.diff | head -1)
 # for now, this just reinstalls all scripts. Note the most elegant, but works
 ${TOPDIR}/install_scripts.sh --prefix ${EESSI_PREFIX}
 
-# Install full CUDA SDK in host_injections
+# Install full CUDA SDK and cu* libraries in host_injections
 # Hardcode this for now, see if it works
 # TODO: We should make a nice yaml and loop over all CUDA versions in that yaml to figure out what to install
 # Allow skipping CUDA SDK install in e.g. CI environments
 if [ -z "${skip_cuda_install}" ] || [ ! "${skip_cuda_install}" ]; then
-    ${EESSI_PREFIX}/scripts/gpu_support/nvidia/install_cuda_host_injections.sh -c 12.1.1 --accept-cuda-eula
+    ${EESSI_PREFIX}/scripts/gpu_support/nvidia/install_cuda_and_libraries.sh \
+        -e ${EESSI_PREFIX}/scripts/gpu_support/nvidia/eessi-2023.06-cuda-and-libraries.yml \
+        -t /tmp/temp \
+        --accept-cuda-eula
 else
-    echo "Skipping installation of CUDA SDK in host_injections, since the --skip-cuda-install flag was passed"
+    echo "Skipping installation of CUDA SDK and cu* libraries in host_injections, since the --skip-cuda-install flag was passed"
 fi
 
 # Install drivers in host_injections
 # TODO: this is commented out for now, because the script assumes that nvidia-smi is available and works;
 #       if not, an error is produced, and the bot flags the whole build as failed (even when not installing GPU software)
 # ${EESSI_PREFIX}/scripts/gpu_support/nvidia/link_nvidia_host_libraries.sh
+
+# Don't run the Lmod GPU driver check when doing builds (may not have a GPU, and it's not relevant for vanilla builds anyway)
+export EESSI_OVERRIDE_GPU_CHECK=1
 
 # use PR patch file to determine in which easystack files stuff was added
 changed_easystacks=$(cat ${pr_diff} | grep '^+++' | cut -f2 -d' ' | sed 's@^[a-z]/@@g' | grep '^easystacks/.*yml$' | egrep -v 'known-issues|missing') 

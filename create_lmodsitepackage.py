@@ -21,19 +21,19 @@ local function read_file(path)
 end
 
 local function from_eessi_prefix(t)
-    -- eessi_prefix is the prefix with official EESSI modules
-    -- e.g. /cvmfs/software.eessi.io/versions/2023.06
+    -- eessi_prefix is the prefix with official NESSI modules
+    -- e.g. /cvmfs/pilot.nessi.no/versions/2023.06
     local eessi_prefix = os.getenv("EESSI_PREFIX")
 
-    -- If EESSI_PREFIX wasn't defined, we cannot check if this module was from the EESSI environment
+    -- If EESSI_PREFIX wasn't defined, we cannot check if this module was from the NESSI environment
     -- In that case, we assume it isn't, otherwise EESSI_PREFIX would (probably) have been set
     if eessi_prefix == nil then
         return False
     else
         -- NOTE: exact paths for site so may need to be updated later.
-        -- See https://github.com/EESSI/software-layer/pull/371
+        -- See https://github.com/NorESSI/software-layer/pull/358
         -- eessi_prefix_host_injections is the prefix with site-extensions (i.e. additional modules)
-        -- to the official EESSI modules, e.g. /cvmfs/software.eessi.io/host_injections/2023.06
+        -- to the official NESSI modules, e.g. /cvmfs/pilot.nessi.no/host_injections/2023.06
         local eessi_prefix_host_injections = string.gsub(eessi_prefix, 'versions', 'host_injections')
 
        -- Check if the full modulepath starts with the eessi_prefix_*
@@ -42,9 +42,9 @@ local function from_eessi_prefix(t)
 end
 
 local function load_site_specific_hooks()
-    -- This function will be run after the EESSI hooks are registered
+    -- This function will be run after the NESSI hooks are registered
     -- It will load a local SitePackage.lua that is architecture independent (if it exists) from e.g.
-    -- /cvmfs/software.eessi.io/host_injections/2023.06/.lmod/SitePackage.lua
+    -- /cvmfs/pilot.nessi.no/host_injections/2023.06/.lmod/SitePackage.lua
     -- That can define a new hook
     --
     -- function site_specific_load_hook(t)
@@ -58,7 +58,7 @@ local function load_site_specific_hooks()
     --    site_specific_load_hook(t)
     -- end
     --
-    -- Over overwrite the EESSI hook entirely:
+    -- Or overwrite the NESSI hook entirely:
     --
     -- hook.register("load", final_load_hook)
     --
@@ -66,7 +66,7 @@ local function load_site_specific_hooks()
     -- See https://github.com/TACC/Lmod/pull/696#issuecomment-1998765722
     --
     -- Subsequently, this function will look for an architecture-specific SitePackage.lua, e.g. from
-    -- /cvmfs/software.eessi.io/host_injections/2023.06/software/linux/x86_64/amd/zen2/.lmod/SitePackage.lua
+    -- /cvmfs/pilot.nessi.no/host_injections/2023.06/software/linux/x86_64/amd/zen2/.lmod/SitePackage.lua
     -- This can then register an additional hook, e.g.
     --
     -- function arch_specific_load_hook(t)
@@ -105,42 +105,49 @@ local function load_site_specific_hooks()
 
 end
 
-
-local function eessi_cuda_enabled_load_hook(t)
+local function eessi_cuda_and_libraries_enabled_load_hook(t)
     local frameStk  = require("FrameStk"):singleton()
     local mt        = frameStk:mt()
     local simpleName = string.match(t.modFullName, "(.-)/")
-    -- If we try to load CUDA itself, check if the full CUDA SDK was installed on the host in host_injections. 
-    -- This is required for end users to build additional CUDA software. If the full SDK isn't present, refuse
-    -- to load the CUDA module and print an informative message on how to set up GPU support for EESSI
+    local packagesList = { ["CUDA"] = true, ["cuDNN"] = true, ["cuTENSOR"] = true }
+    -- If we try to load any of the modules in packagesList, we check if the
+    -- full package was installed on the host in host_injections.
+    -- This is required for end users to build additional software that depends
+    -- on the package. If the full SDK isn't present, refuse
+    -- to load the module and print an informative message on how to set up GPU support for NESSI
     local refer_to_docs = "For more information on how to do this, see https://www.eessi.io/docs/gpu/.\\n"
-    if simpleName == 'CUDA' then
+    if packagesList[simpleName] then
+        -- simpleName is a module in packagesList
         -- get the full host_injections path
         local hostInjections = string.gsub(os.getenv('EESSI_SOFTWARE_PATH') or "", 'versions', 'host_injections')
-        -- build final path where the CUDA software should be installed
-        local cudaEasyBuildDir = hostInjections .. "/software/" .. t.modFullName .. "/easybuild"
-        local cudaDirExists = isDir(cudaEasyBuildDir)
-        if not cudaDirExists then
-            local advice = "but while the module file exists, the actual software is not entirely shipped with EESSI "
-            advice = advice .. "due to licencing. You will need to install a full copy of the CUDA SDK where EESSI "
+        -- build final path where the software should be installed
+        local packageEasyBuildDir = hostInjections .. "/software/" .. t.modFullName .. "/easybuild"
+        local packageDirExists = isDir(packageEasyBuildDir)
+        if not packageDirExists then
+            local advice = "but while the module file exists, the actual software is not entirely shipped with NESSI "
+            advice = advice .. "due to licencing. You will need to install a full copy of the " .. simpleName .. " package where NESSI "
             advice = advice .. "can find it.\\n"
             advice = advice .. refer_to_docs
             LmodError("\\nYou requested to load ", simpleName, " ", advice)
         end
     end
-    -- when loading CUDA enabled modules check if the necessary driver libraries are accessible to the EESSI linker,
+    -- when loading CUDA (and cu*) enabled modules check if the necessary driver libraries are accessible to the NESSI linker,
     -- otherwise, refuse to load the requested module and print error message
-    local haveGpu = mt:haveProperty(simpleName,"arch","gpu")
-    if haveGpu then
+    local checkGpu = mt:haveProperty(simpleName,"arch","gpu")
+    local overrideGpuCheck = os.getenv("EESSI_OVERRIDE_GPU_CHECK")
+    if checkGpu and (overrideGpuCheck == nil) then
         local arch = os.getenv("EESSI_CPU_FAMILY") or ""
-        local cudaVersionFile = "/cvmfs/software.eessi.io/host_injections/nvidia/" .. arch .. "/latest/cuda_version.txt"
-        local cudaDriverFile = "/cvmfs/software.eessi.io/host_injections/nvidia/" .. arch .. "/latest/libcuda.so"
+        local cvmfs_repo = os.getenv("EESSI_CVMFS_REPO") or ""
+        local cudaVersionFile = cvmfs_repo .. "/host_injections/nvidia/" .. arch .. "/latest/cuda_version.txt"
+        local cudaDriverFile = cvmfs_repo .. "/host_injections/nvidia/" .. arch .. "/latest/libcuda.so"
         local cudaDriverExists = isFile(cudaDriverFile)
         local singularityCudaExists = isFile("/.singularity.d/libs/libcuda.so")
         if not (cudaDriverExists or singularityCudaExists)  then
             local advice = "which relies on the CUDA runtime environment and driver libraries. "
             advice = advice .. "In order to be able to use the module, you will need "
-            advice = advice .. "to make sure EESSI can find the GPU driver libraries on your host system.\\n"
+            advice = advice .. "to make sure NESSI can find the GPU driver libraries on your host system. You can "
+            advice = advice .. "override this check by setting the environment variable EESSI_OVERRIDE_GPU_CHECK but "
+            advice = advice .. "the loaded application will not be able to execute on your system.\\n"
             advice = advice .. refer_to_docs
             LmodError("\\nYou requested to load ", simpleName, " ", advice)
         else
@@ -162,7 +169,7 @@ local function eessi_cuda_enabled_load_hook(t)
                 if driver_libs_need_update == true then
                     local advice = "but the module you want to load requires CUDA  " .. cudaVersion_req .. ". "
                     advice = advice .. "Please update your CUDA driver libraries and then "
-                    advice = advice .. "let EESSI know about the update.\\n"
+                    advice = advice .. "let NESSI know about the update.\\n"
                     advice = advice .. refer_to_docs
                     LmodError("\\nYour driver CUDA version is ", cudaVersion, " ", advice)
                 end
@@ -174,16 +181,16 @@ end
 -- Combine both functions into a single one, as we can only register one function as load hook in lmod
 -- Also: make it non-local, so it can be imported and extended by other lmodrc files if needed
 function eessi_load_hook(t)
-    -- Only apply CUDA hooks if the loaded module is in the EESSI prefix
-    -- This avoids getting an Lmod Error when trying to load a CUDA module from a local software stack
+    -- Only apply CUDA and libraries hook if the loaded module is in the NESSI prefix
+    -- This avoids getting an Lmod Error when trying to load a CUDA or library module from a local software stack
     if from_eessi_prefix(t) then
-        eessi_cuda_enabled_load_hook(t)
+        eessi_cuda_and_libraries_enabled_load_hook(t)
     end
 end
 
 hook.register("load", eessi_load_hook)
 
--- Note that this needs to happen at the end, so that any EESSI specific hooks can be overwritten by the site
+-- Note that this needs to happen at the end, so that any NESSI specific hooks can be overwritten by the site
 load_site_specific_hooks()
 """
 
