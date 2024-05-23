@@ -425,6 +425,28 @@ def pre_configure_hook_openblas_optarch_generic(self, *args, **kwargs):
         raise EasyBuildError("OpenBLAS-specific hook triggered for non-OpenBLAS easyconfig?!")
 
 
+def pre_configure_hook_pytorch_add_cupti_libdir(self, *args, **kwargs):
+    """
+    Pre-configure hook for PyTorch: add directory $EESSI_SOFTWARE_PATH/CUDA/12.1.1/extras/CUPTI/lib64 to LIBRARY_PATH
+    """
+    #if self.name == 'PyTorch' and 'CUDA' in self.versionsuffix:
+    if self.name == 'PyTorch':
+        library_path = os.getenv('LIBRARY_PATH')
+        print_msg("library_path: '%s'", library_path)
+        #lib_dirs = library_path.split(':')
+        eessi_software_path = os.getenv('EESSI_SOFTWARE_PATH')
+        print_msg("eessi_software_path: '%s'", eessi_software_path)
+        #for lib_dir in lib_dirs:
+        #    if lib_dir.startswith(eessi_software_path + '/CUDA'):
+        #
+        cupti_lib_dir = os.path.join(eessi_software_path, 'CUDA', '12.1.1', 'extras', 'CUPTI', 'lib64')
+        print_msg("cupti_lib_dir: '%s'", cupti_lib_dir)
+        env.setvar('LIBRARY_PATH', ':'.join([library_path, cupti_lib_dir]))
+        print_msg("LIBRARY_PATH: '%s'", os.getenv('LIBRARY_PATH'))
+    else:
+        raise EasyBuildError("PyTorch-specific hook triggered for non-PyTorch easyconfig?!")
+
+
 def pre_configure_hook_libfabric_disable_psm3_x86_64_generic(self, *args, **kwargs):
     """Add --disable-psm3 to libfabric configure options when building with --optarch=GENERIC on x86_64."""
     if self.name == 'libfabric':
@@ -851,6 +873,7 @@ PRE_CONFIGURE_HOOKS = {
     'libfabric': pre_configure_hook_libfabric_disable_psm3_x86_64_generic,
     'MetaBAT': pre_configure_hook_metabat_filtered_zlib_dep,
     'OpenBLAS': pre_configure_hook_openblas_optarch_generic,
+    'PyTorch': pre_configure_hook_pytorch_add_cupti_libdir,
     'WRF': pre_configure_hook_wrf_aarch64,
     'at-spi2-core': pre_configure_hook_atspi2core_filter_ld_library_path,
 }
