@@ -36,3 +36,6 @@ easyconfigs:
         from-pr: 19451
   - OSU-Micro-Benchmarks-7.2-gompi-2023a-CUDA-12.1.1.eb
   - ABySS-2.3.7-foss-2023a.eb
+  - Perl-bundle-CPAN-5.36.1-GCCcore-12.3.0.eb:
+      options:     
+        from-pr: 20540
