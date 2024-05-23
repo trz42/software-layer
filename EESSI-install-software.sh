@@ -208,6 +208,9 @@ if [ -z "${skip_cuda_install}" ] || [ ! "${skip_cuda_install}" ]; then
         -e ${EESSI_PREFIX}/scripts/gpu_support/nvidia/eessi-2023.06-cuda-and-libraries.yml \
         -t /tmp/temp \
         --accept-cuda-eula
+    ml CUDA/12.1.1
+    command -V nvcc
+    ml rm CUDA/12.1.1
 else
     echo "Skipping installation of CUDA SDK and cu* libraries in host_injections, since the --skip-cuda-install flag was passed"
 fi
