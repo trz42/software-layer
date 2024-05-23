@@ -427,7 +427,7 @@ def pre_configure_hook_openblas_optarch_generic(self, *args, **kwargs):
 
 def pre_configure_hook_pytorch_add_cupti_libdir(self, *args, **kwargs):
     """
-    Pre-configure hook for PyTorch: add directory $EESSI_SOFTWARE_PATH/CUDA/12.1.1/extras/CUPTI/lib64 to LIBRARY_PATH
+    Pre-configure hook for PyTorch: add directory $EESSI_SOFTWARE_PATH/software/CUDA/12.1.1/extras/CUPTI/lib64 to LIBRARY_PATH
     """
     #if self.name == 'PyTorch' and 'CUDA' in self.versionsuffix:
     if self.name == 'PyTorch':
@@ -439,7 +439,7 @@ def pre_configure_hook_pytorch_add_cupti_libdir(self, *args, **kwargs):
         #for lib_dir in lib_dirs:
         #    if lib_dir.startswith(eessi_software_path + '/CUDA'):
         #
-        cupti_lib_dir = os.path.join(eessi_software_path, 'CUDA', '12.1.1', 'extras', 'CUPTI', 'lib64')
+        cupti_lib_dir = os.path.join(eessi_software_path, 'software', 'CUDA', '12.1.1', 'extras', 'CUPTI', 'lib64')
         print_msg("cupti_lib_dir: '%s'", cupti_lib_dir)
         env.setvar('LIBRARY_PATH', ':'.join([library_path, cupti_lib_dir]))
         print_msg("LIBRARY_PATH: '%s'", os.getenv('LIBRARY_PATH'))
