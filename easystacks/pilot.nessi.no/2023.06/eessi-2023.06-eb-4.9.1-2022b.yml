@@ -3,3 +3,5 @@ easyconfigs:
   - waLBerla-6.1-foss-2022b.eb
   - R-4.2.2-foss-2022b.eb
   - WRF-4.4.1-foss-2022b-dmpar.eb
+  - bokeh-3.2.1-foss-2022b.eb
+  - MDAnalysis-2.4.2-foss-2022b.eb
