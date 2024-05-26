@@ -5,3 +5,4 @@ easyconfigs:
   - EESSI-extend-2023.06-easybuild.eb
   - cuDNN-8.9.2.26-CUDA-12.1.1.eb
   - cuTENSOR-2.0.1.2-CUDA-12.1.1.eb
+  - Nextflow-23.10.0.eb
