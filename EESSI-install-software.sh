@@ -17,6 +17,11 @@ display_help() {
   echo "  --skip-cuda-install    -  disable installing a full CUDA SDK in the host_injections prefix (e.g. in CI)"
 }
 
+# Function to check if a command exists
+function command_exists() {
+    command -v "$1" >/dev/null 2>&1
+}
+
 function copy_build_log() {
     # copy specified build log to specified directory, with some context added
     build_log=${1}
@@ -147,6 +152,39 @@ else
   mkdir -p ${EESSI_PREFIX}/software/${EESSI_OS_TYPE}/${EESSI_SOFTWARE_SUBDIR_OVERRIDE}
 fi
 
+# We need to ensure that certain files are present or updated before we source
+#   $TOPDIR/init/eessi_environment_variables
+# Particularly the files we need to have present/updated in
+#   ${EESSI_PREFIX}/software/${EESSI_OS_TYPE}/${EESSI_SOFTWARE_SUBDIR_OVERRIDE}
+#   are:
+#     - .lmod/lmodrc.lua
+#     - .lmod/SitePackage.lua
+# We run scripts to create them if they don't exist or if the scripts have been
+# changed in the PR.
+
+# Set base directory for software and for Lmod config files
+_eessi_software_path=${EESSI_PREFIX}/software/${EESSI_OS_TYPE}/${EESSI_SOFTWARE_SUBDIR_OVERRIDE}
+_lmod_cfg_dir=${_eessi_software_path}/.lmod
+
+# We assume there's only one diff file that corresponds to the PR patch file
+pr_diff=$(ls [0-9]*.diff | head -1)
+
+# Create or update ${_eessi_software_path}/.lmod/lmodrc.lua
+_lmodrc_file=${_lmod_cfg_dir}/lmodrc.lua
+_lmodrc_changed=$(cat ${pr_diff} | grep '^+++' | cut -f2 -d' ' | sed 's@^[a-z]/@@g' | grep '^create_lmodrc.py$' > /dev/null; echo $?)
+if [ ! -f "${_lmodrc_file}" ] || [ "${_lmodrc_changed}" == '0' ]; then
+    python3 ${TOPDIR}/create_lmodrc.py ${_eessi_software_path}
+    check_exit_code $? "${_lmodrc_file} created/updated" "Failed to create/update ${_lmodrc_file}"
+fi
+
+# Create or update ${_eessi_software_path}/.lmod/SitePackage.lua
+_lmod_sitepackage_file=${_lmod_cfg_dir}/SitePackage.lua
+_sitepackage_changed=$(cat ${pr_diff} | grep '^+++' | cut -f2 -d' ' | sed 's@^[a-z]/@@g' | grep '^create_lmodsitepackage.py$' > /dev/null; echo $?)
+if [ ! -f "${_lmod_sitepackage_file}" ] || [ "${_sitepackage_changed}" == '0' ]; then
+    python3 ${TOPDIR}/create_lmodsitepackage.py ${_eessi_software_path}
+    check_exit_code $? "${_lmod_sitepackage_file} created/updated" "Failed to create/update ${_lmod_sitepackage_file}"
+fi
+
 # Set all the EESSI environment variables (respecting $EESSI_SOFTWARE_SUBDIR_OVERRIDE)
 # $EESSI_SILENT - don't print any messages
 # $EESSI_BASIC_ENV - give a basic set of environment variables
@@ -212,13 +250,11 @@ else
     echo "Skipping installation of CUDA SDK and cu* libraries in host_injections, since the --skip-cuda-install flag was passed"
 fi
 
-# Install drivers in host_injections
-# TODO: this is commented out for now, because the script assumes that nvidia-smi is available and works;
-#       if not, an error is produced, and the bot flags the whole build as failed (even when not installing GPU software)
-# ${EESSI_PREFIX}/scripts/gpu_support/nvidia/link_nvidia_host_libraries.sh
-
-# Don't run the Lmod GPU driver check when doing builds (may not have a GPU, and it's not relevant for vanilla builds anyway)
-export EESSI_OVERRIDE_GPU_CHECK=1
+# Install NVIDIA drivers in host_injections (if they exist)
+if command_exists "nvidia-smi"; then
+    echo "Command 'nvidia-smi' found. Installing NVIDIA drivers for use in prefix shell..."
+    ${EESSI_PREFIX}/scripts/gpu_support/nvidia/link_nvidia_host_libraries.sh
+fi
 
 # use PR patch file to determine in which easystack files stuff was added
 changed_easystacks=$(cat ${pr_diff} | grep '^+++' | cut -f2 -d' ' | sed 's@^[a-z]/@@g' | grep '^easystacks/.*yml$' | egrep -v 'known-issues|missing') 
@@ -266,26 +302,6 @@ else
         fi
 
     done
-fi
-
-### add packages here
-
-echo ">> Creating/updating Lmod RC file..."
-export LMOD_CONFIG_DIR="${EASYBUILD_INSTALLPATH}/.lmod"
-lmod_rc_file="$LMOD_CONFIG_DIR/lmodrc.lua"
-lmodrc_changed=$(cat ${pr_diff} | grep '^+++' | cut -f2 -d' ' | sed 's@^[a-z]/@@g' | grep '^create_lmodrc.py$' > /dev/null; echo $?)
-if [ ! -f $lmod_rc_file ] || [ ${lmodrc_changed} == '0' ]; then
-    python3 $TOPDIR/create_lmodrc.py ${EASYBUILD_INSTALLPATH}
-    check_exit_code $? "$lmod_rc_file created" "Failed to create $lmod_rc_file"
-fi
-
-echo ">> Creating/updating Lmod SitePackage.lua ..."
-export LMOD_PACKAGE_PATH="${EASYBUILD_INSTALLPATH}/.lmod"
-lmod_sitepackage_file="$LMOD_PACKAGE_PATH/SitePackage.lua"
-sitepackage_changed=$(cat ${pr_diff} | grep '^+++' | cut -f2 -d' ' | sed 's@^[a-z]/@@g' | grep '^create_lmodsitepackage.py$' > /dev/null; echo $?)
-if [ ! -f "$lmod_sitepackage_file" ] || [ "${sitepackage_changed}" == '0' ]; then
-    python3 $TOPDIR/create_lmodsitepackage.py ${EASYBUILD_INSTALLPATH}
-    check_exit_code $? "$lmod_sitepackage_file created" "Failed to create $lmod_sitepackage_file"
 fi
 
 echo ">> Cleaning up ${TMPDIR}..."
