@@ -13,7 +13,10 @@ easyconfigs:
   - PyOpenGL-3.1.7-GCCcore-12.3.0.eb
   # replaced by ipympl-0.9.3-gfbf-2023a.eb
   # - ipympl-0.9.3-foss-2023a.eb
-  - ipympl-0.9.3-gfbf-2023a.eb
+  - ipympl-0.9.3-gfbf-2023a.eb:
+      options:
+        # see https://github.com/easybuilders/easybuild-easyconfigs/pull/20586
+        from-pr: 20586
   - SuperLU_DIST-8.1.2-foss-2023a.eb:
       options:
         from-pr: 20162
