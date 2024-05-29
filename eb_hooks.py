@@ -583,6 +583,12 @@ def pre_test_hook_increase_max_failed_tests_arm_PyTorch(self, *args, **kwargs):
     """
     if self.name == 'PyTorch' and self.version == '2.1.2' and get_cpu_architecture() == AARCH64:
         self.cfg['max_failed_tests'] = 10
+        if 'cudaver' in self.cfg.template_values and self.cfg.template_values['cudaver'] == '12.1.1':
+            _cudaver = self.cfg.template_values['cudaver']
+            _runtest = self.cfg['runtest']
+            self.cfg['runtest'] = _runtest.replace(
+                                      'PYTHONUNBUFFERED',
+                                      'PYTORCH_TEST_RUN_EVERYTHING_IN_SERIAL=1 PYTHONUNBUFFERED')
 
 
 def pre_single_extension_hook(ext, *args, **kwargs):
