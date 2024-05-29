@@ -11,7 +11,15 @@ easyconfigs:
   - R-bundle-CRAN-2023.12-foss-2023a.eb
   - OpenFOAM-10-foss-2023a.eb
   - PyOpenGL-3.1.7-GCCcore-12.3.0.eb
-  - ipympl-0.9.3-foss-2023a.eb
+  # replaced by ipympl-0.9.3-gfbf-2023a.eb
+  # - ipympl-0.9.3-foss-2023a.eb
+  - ipympl-0.9.3-gfbf-2023a.eb:
+      options:
+        # see https://github.com/easybuilders/easybuild-easyconfigs/pull/20586
+        #     which removed the foss/2023a ec file
+        # see https://github.com/easybuilders/easybuild-easyconfigs/pull/18852
+        #     which added/updated the gfbf/2023a ec file
+        from-pr: 18852
   - SuperLU_DIST-8.1.2-foss-2023a.eb:
       options:
         from-pr: 20162
@@ -40,6 +48,10 @@ easyconfigs:
       options:     
         from-pr: 20540
   - WhatsHap-2.2-foss-2023a.eb
+  - GATK-4.5.0.0-GCCcore-12.3.0-Java-17.eb
+  - ESPResSo-4.2.2-foss-2023a.eb:
+      options:
+        from-pr: 20595
   - PyTorch-2.1.2-foss-2023a-CUDA-12.1.1.eb:
       options:
         cuda-compute-capabilities: 6.0,6.1,7.0,7.5,8.0,8.6,8.9,9.0

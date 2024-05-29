@@ -5,3 +5,5 @@ easyconfigs:
   - WRF-4.4.1-foss-2022b-dmpar.eb
   - bokeh-3.2.1-foss-2022b.eb
   - MDAnalysis-2.4.2-foss-2022b.eb
+  - arrow-R-11.0.0.3-foss-2022b-R-4.2.2.eb
+  - biom-format-2.1.15-foss-2022b.eb
