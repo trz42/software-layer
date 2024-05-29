@@ -3,4 +3,6 @@ easyconfigs:
       options:
         from-pr: 20299
   - EESSI-extend-2023.06-easybuild.eb
-# comment to trigger rebuild
+  - cuDNN-8.9.2.26-CUDA-12.1.1.eb
+  - cuTENSOR-2.0.1.2-CUDA-12.1.1.eb
+  - Nextflow-23.10.0.eb
