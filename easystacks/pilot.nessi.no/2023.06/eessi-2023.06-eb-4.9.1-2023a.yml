@@ -49,3 +49,6 @@ easyconfigs:
         from-pr: 20540
   - WhatsHap-2.2-foss-2023a.eb
   - GATK-4.5.0.0-GCCcore-12.3.0-Java-17.eb
+  - ESPResSo-4.2.2-foss-2023a.eb:
+      options:
+        from-pr: 20595
