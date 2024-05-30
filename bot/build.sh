@@ -279,6 +279,52 @@ if [[ ! -z ${SHARED_FS_PATH} ]]; then
     BUILD_STEP_ARGS+=("--host-injections" "${SHARED_FS_PATH}/host-injections")
 fi
 
+# replace some files using lower_dirs mechanism
+# - read replacements from replace_files.txt
+#   each line has the format __EESSI_SOFTWARE_PATH__/some_path relative_path
+#   /cvmfs/repo_name/versions/repo_version/software/os_type/software_dir/some_path
+# - for each replacement do
+#   - check if the target exists in the repository
+#   - create directory for replacement
+#   - copy target into directory
+ADD_LOWER_DIRS=0
+if [[ -f "replace_files.txt" ]]; then
+    LOWER_DIRS="${STORAGE}/lower_dirs"
+    mkdir -p "${LOWER_DIRS}"
+
+    repo_name=${EESSI_CVMFS_REPO_OVERRIDE}
+    repo_version=${EESSI_VERSION_OVERRIDE}
+    os_type=${EESSI_OS_TYPE}
+    software_subdir_override=${EESSI_SOFTWARE_SUBDIR_OVERRIDE}
+    software_path="/cvmfs/${repo_name}/versions/${repo_version}/software/${os_type}/${software_subdir_override}/software"
+
+    cat replace_files.txt | while read replace_spec; do
+        echo "replace_spec: '${replace_spec}'"
+        target=$(echo "${replace_spec}" | cut -f1 -d' ')
+        target_full_path=$(echo "${target}" | sed -e "s+__EESSI_SOFTWARE_PATH__+${software_path}+")
+        replace=$(echo "${replace_spec}" | cut -f2 -d' ')
+        echo "target: '${target}'"
+        echo "target_full_path: '${target_full_path}'"
+        echo "replace: '${replace}'"
+        if [[ -f ${replace} ]]; then
+            echo "replacement file exists"
+            target_lower_path=$(echo "${target_full_path}" | cut -f4- -d/)
+            echo "target_lower_path: '${target_lower_path}'"
+            target_lower_dir=$(dirname ${target_lower_path})
+            echo "target_lower_dir: '${target_lower_dir}'"
+            mkdir -p ${LOWER_DIRS}/${target_lower_dir}
+            cp -a ${replace} ${LOWER_DIRS}/${target_lower_dir}/.
+            ls -lisa ${LOWER_DIRS}/${target_lower_dir}
+            ADD_LOWER_DIRS=1
+        else
+            echo "replacement file does NOT exist; ignoring replacement"
+        fi
+    done
+fi
+if [[ ${ADD_LOWER_DIRS} -eq 1 ]]; then
+    BUILD_STEP_ARGS+=("--lower-dirs" "${LOWER_DIRS}")
+fi
+
 # create tmp file for output of build step
 build_outerr=$(mktemp build.outerr.XXXX)
 
