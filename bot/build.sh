@@ -322,10 +322,12 @@ if [[ -f "replace_files.txt" ]]; then
         fi
     done
 fi
+echo "LOWER_DIRS: '${LOWER_DIRS}'"
+echo "ADD_LOWER_DIRS: '${ADD_LOWER_DIRS}'"
 if [[ ! -z ${ADD_LOWER_DIRS} ]]; then
     BUILD_STEP_ARGS+=("--lower-dirs" "${LOWER_DIRS}")
     echo "Added '--lower-dirs ${LOWER_DIRS}' to build step arguments"
-echo
+else
     echo "Nothing to be added for LOWER_DIRS (${ADD_LOWER_DIRS})"
 fi
 
