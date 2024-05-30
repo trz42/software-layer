@@ -287,7 +287,7 @@ fi
 #   - check if the target exists in the repository
 #   - create directory for replacement
 #   - copy target into directory
-ADD_LOWER_DIRS=
+rm -f ADD_LOWER_DIRS
 if [[ -f "replace_files.txt" ]]; then
     LOWER_DIRS="${STORAGE}/lower_dirs"
     mkdir -p "${LOWER_DIRS}"
@@ -316,19 +316,18 @@ if [[ -f "replace_files.txt" ]]; then
             mkdir -p ${LOWER_DIRS}/${target_lower_dir}
             cp -a ${replace} ${LOWER_DIRS}/${target_lower_dir}/.
             ls -lisa ${LOWER_DIRS}/${target_lower_dir}
-            ADD_LOWER_DIRS=${LOWER_DIRS}
+            touch ADD_LOWER_DIRS
         else
             echo "replacement file does NOT exist; ignoring replacement"
         fi
     done
 fi
 echo "LOWER_DIRS: '${LOWER_DIRS}'"
-echo "ADD_LOWER_DIRS: '${ADD_LOWER_DIRS}'"
-if [[ ! -z ${ADD_LOWER_DIRS} ]]; then
+if [[ -f ADD_LOWER_DIRS ]]; then
     BUILD_STEP_ARGS+=("--lower-dirs" "${LOWER_DIRS}")
     echo "Added '--lower-dirs ${LOWER_DIRS}' to build step arguments"
 else
-    echo "Nothing to be added for LOWER_DIRS (${ADD_LOWER_DIRS})"
+    echo "Nothing to be added for LOWER_DIRS"
 fi
 
 # create tmp file for output of build step
