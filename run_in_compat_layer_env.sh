@@ -29,6 +29,9 @@ fi
 if [ ! -z ${http_proxy} ]; then
     INPUT="export http_proxy=${http_proxy}; ${INPUT}"
 fi
+if [ ! -z ${EESSI_OVERRIDE_GPU_CHECK} ]; then
+    INPUT="export EESSI_OVERRIDE_GPU_CHECK=${EESSI_OVERRIDE_GPU_CHECK}; ${INPUT}"
+fi
 if [ ! -z ${https_proxy} ]; then
     INPUT="export https_proxy=${https_proxy}; ${INPUT}"
 fi
