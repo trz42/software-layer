@@ -86,6 +86,11 @@ display_help() {
   echo "  -n | --nvidia MODE     - configure the container to work with NVIDIA GPUs,"
   echo "                           MODE==install for a CUDA installation, MODE==run to"
   echo "                           attach a GPU, MODE==all for both [default: false]"
+  echo "  -o | --lower-dirs DIRS - list of ':' separated directories that are used"
+  echo "                           in front of the default lower dir (CVMFS repo);"
+  echo "                           fuse-overlayfs will merge all lower directories;"
+  echo "                           the option can be used to make certain directories"
+  echo "                           in the CVMFS repo writable [default: none]"
   echo "  -r | --repository CFG  - configuration file or identifier defining the"
   echo "                           repository to use [default: EESSI via"
   echo "                           default container, see --container]"
@@ -119,6 +124,7 @@ FAKEROOT=0
 VERBOSE=0
 STORAGE=
 LIST_REPOS=0
+LOWER_DIRS=
 MODE="shell"
 SETUP_NVIDIA=0
 REPOSITORY="EESSI"
@@ -174,6 +180,10 @@ while [[ $# -gt 0 ]]; do
       NVIDIA_MODE="$2"
       shift 2
       ;;
+    -o|--lower-dirs)
+      LOWER_DIRS="$2"
+      shift 2
+      ;;
     -r|--repository)
       REPOSITORY="$2"
       shift 2
@@ -193,6 +203,7 @@ while [[ $# -gt 0 ]]; do
     -x|--http-proxy)
       HTTP_PROXY="$2"
       export http_proxy=${HTTP_PROXY}
+      export ftp_proxy=${HTTP_PROXY}
       shift 2
       ;;
     -y|--https-proxy)
@@ -466,12 +477,6 @@ if [[ ${SETUP_NVIDIA} -eq 1 ]]; then
         mkdir -p ${EESSI_USR_LOCAL_CUDA}
         BIND_PATHS="${BIND_PATHS},${EESSI_VAR_LOG}:/var/log,${EESSI_USR_LOCAL_CUDA}:/usr/local/cuda"
         [[ ${VERBOSE} -eq 1 ]] && echo "BIND_PATHS=${BIND_PATHS}"
-        if [[ "${NVIDIA_MODE}" == "install" ]] ; then
-            # We need to "trick" our LMOD_RC file to allow us to load CUDA modules even without a CUDA driver
-            # (this works because we build within a container and the LMOD_RC recognises that)
-            touch ${EESSI_TMPDIR}/libcuda.so
-            export SINGULARITY_CONTAINLIBS="${EESSI_TMPDIR}/libcuda.so"
-        fi
     fi
 fi
 
@@ -614,7 +619,14 @@ if [[ "${ACCESS}" == "rw" ]]; then
   EESSI_FUSE_MOUNTS+=("--fusemount" "${EESSI_READONLY}")
 
   EESSI_WRITABLE_OVERLAY="container:fuse-overlayfs"
-  EESSI_WRITABLE_OVERLAY+=" -o lowerdir=/cvmfs_ro/${repo_name}"
+  if [[ ! -z ${LOWER_DIRS} ]]; then
+    # need to convert ':' in LOWER_DIRS to ',' because bind mounts use ',' as
+    # separator while the lowerdir overlayfs option uses ':'
+    export BIND_PATHS="${BIND_PATHS},${LOWER_DIRS/:/,}"
+    EESSI_WRITABLE_OVERLAY+=" -o lowerdir=${LOWER_DIRS}:/cvmfs_ro/${repo_name}"
+  else
+    EESSI_WRITABLE_OVERLAY+=" -o lowerdir=/cvmfs_ro/${repo_name}"
+  fi
   EESSI_WRITABLE_OVERLAY+=" -o upperdir=${TMP_IN_CONTAINER}/overlay-upper"
   EESSI_WRITABLE_OVERLAY+=" -o workdir=${TMP_IN_CONTAINER}/overlay-work"
   EESSI_WRITABLE_OVERLAY+=" ${EESSI_CVMFS_REPO}"

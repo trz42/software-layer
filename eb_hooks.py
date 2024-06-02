@@ -164,6 +164,32 @@ def post_prepare_hook(self, *args, **kwargs):
         POST_PREPARE_HOOKS[self.name](self, *args, **kwargs)
 
 
+def parse_hook_casacore_disable_vectorize(ec, eprefix):
+    """
+    Disable 'vectorize' toolchain option for casacore 3.5.0 on aarch64/neoverse_v1
+    Compiling casacore 3.5.0 with GCC 13.2.0 (foss-2023b) gives an error when building for aarch64/neoverse_v1.
+    See also, https://github.com/EESSI/software-layer/pull/479
+    """
+    if ec.name == 'casacore':
+        tcname, tcversion = ec['toolchain']['name'], ec['toolchain']['version']
+        if (
+            LooseVersion(ec.version) == LooseVersion('3.5.0') and
+            tcname == 'foss' and tcversion == '2023b'
+        ):
+            cpu_target = get_eessi_envvar('EESSI_SOFTWARE_SUBDIR')
+            if cpu_target == CPU_TARGET_NEOVERSE_V1:
+                if not hasattr(ec, 'toolchainopts'):
+                    ec['toolchainopts'] = {}
+                ec['toolchainopts']['vectorize'] = False
+                print_msg("Changed toochainopts for %s: %s", ec.name, ec['toolchainopts'])
+            else:
+                print_msg("Not changing option vectorize for %s on non-neoverse_v1", ec.name)
+        else:
+            print_msg("Not changing option vectorize for %s %s %s", ec.name, ec.version, ec.toolchain)
+    else:
+        raise EasyBuildError("casacore-specific hook triggered for non-casacore easyconfig?!")
+
+
 def parse_hook_cgal_toolchainopts_precise(ec, eprefix):
     """Enable 'precise' rather than 'strict' toolchain option for CGAL on POWER."""
     if ec.name == 'CGAL':
@@ -365,6 +391,21 @@ def pre_configure_hook(self, *args, **kwargs):
         PRE_CONFIGURE_HOOKS[self.name](self, *args, **kwargs)
 
 
+def pre_configure_hook_gromacs(self, *args, **kwargs):
+    """
+    Pre-configure hook for GROMACS:
+    - avoid building with SVE instructions on Neoverse V1 as workaround for failing tests,
+      see https://gitlab.com/gromacs/gromacs/-/issues/5057 + https://gitlab.com/eessi/support/-/issues/47
+    """
+    if self.name == 'GROMACS':
+        cpu_target = get_eessi_envvar('EESSI_SOFTWARE_SUBDIR')
+        if LooseVersion(self.version) <= LooseVersion('2024.1') and cpu_target == CPU_TARGET_NEOVERSE_V1:
+            self.cfg.update('configopts', '-DGMX_SIMD=ARM_NEON_ASIMD')
+            print_msg("Avoiding use of SVE instructions for GROMACS %s by using ARM_NEON_ASIMD as GMX_SIMD value", self.version)
+    else:
+        raise EasyBuildError("GROMACS-specific hook triggered for non-GROMACS easyconfig?!")
+
+
 def pre_configure_hook_openblas_optarch_generic(self, *args, **kwargs):
     """
     Pre-configure hook for OpenBLAS: add DYNAMIC_ARCH=1 to build/test/install options when using --optarch=GENERIC
@@ -382,6 +423,29 @@ def pre_configure_hook_openblas_optarch_generic(self, *args, **kwargs):
                 env.setvar('CFLAGS', cflags)
     else:
         raise EasyBuildError("OpenBLAS-specific hook triggered for non-OpenBLAS easyconfig?!")
+
+
+def pre_configure_hook_pytorch_add_cupti_libdir(self, *args, **kwargs):
+    """
+    Pre-configure hook for PyTorch: add directory $EESSI_SOFTWARE_PATH/software/CUDA/12.1.1/extras/CUPTI/lib64 to LIBRARY_PATH
+    """
+    if self.name == 'PyTorch':
+        if 'cudaver' in self.cfg.template_values and self.cfg.template_values['cudaver'] == '12.1.1':
+            _cudaver = self.cfg.template_values['cudaver']
+            print_msg("pre_configure_hook_pytorch_add_cupti_libdir: CUDA version: '%s'" % _cudaver)
+            _library_path = os.getenv('LIBRARY_PATH')
+            print_msg("pre_configure_hook_pytorch_add_cupti_libdir: library_path: '%s'", _library_path)
+            _eessi_software_path = os.getenv('EESSI_SOFTWARE_PATH')
+            print_msg("pre_configure_hook_pytorch_add_cupti_libdir: eessi_software_path: '%s'", _eessi_software_path)
+            _cupti_lib_dir = os.path.join(_eessi_software_path, 'software', 'CUDA', _cudaver, 'extras', 'CUPTI', 'lib64')
+            print_msg("pre_configure_hook_pytorch_add_cupti_libdir: cupti_lib_dir: '%s'", _cupti_lib_dir)
+            if _library_path:
+                env.setvar('LIBRARY_PATH', ':'.join([_library_path, _cupti_lib_dir]))
+            else:
+                env.setvar('LIBRARY_PATH', _cupti_lib_dir)
+            print_msg("pre_configure_hook_pytorch_add_cupti_libdir: LIBRARY_PATH: '%s'", os.getenv('LIBRARY_PATH'))
+    else:
+        raise EasyBuildError("PyTorch-specific hook triggered for non-PyTorch easyconfig?!")
 
 
 def pre_configure_hook_libfabric_disable_psm3_x86_64_generic(self, *args, **kwargs):
@@ -423,7 +487,7 @@ def pre_configure_hook_wrf_aarch64(self, *args, **kwargs):
             if LooseVersion(self.version) <= LooseVersion('3.9.0'):
                     self.cfg.update('preconfigopts', "sed -i 's/%s/%s/g' arch/configure_new.defaults && " % (pattern, repl))
                     print_msg("Using custom preconfigopts for %s: %s", self.name, self.cfg['preconfigopts'])
-                    
+
             if LooseVersion('4.0.0') <= LooseVersion(self.version) <= LooseVersion('4.2.1'):
                     self.cfg.update('preconfigopts', "sed -i 's/%s/%s/g' arch/configure.defaults && " % (pattern, repl))
                     print_msg("Using custom preconfigopts for %s: %s", self.name, self.cfg['preconfigopts'])
@@ -510,7 +574,7 @@ def pre_test_hook_ignore_failing_tests_netCDF(self, *args, **kwargs):
     """
     cpu_target = get_eessi_envvar('EESSI_SOFTWARE_SUBDIR')
     if self.name == 'netCDF' and self.version == '4.9.2' and cpu_target == CPU_TARGET_NEOVERSE_V1:
-        self.cfg['testopts'] = "|| echo ignoring failing tests" 
+        self.cfg['testopts'] = "|| echo ignoring failing tests"
 
 def pre_test_hook_increase_max_failed_tests_arm_PyTorch(self, *args, **kwargs):
     """
@@ -519,6 +583,12 @@ def pre_test_hook_increase_max_failed_tests_arm_PyTorch(self, *args, **kwargs):
     """
     if self.name == 'PyTorch' and self.version == '2.1.2' and get_cpu_architecture() == AARCH64:
         self.cfg['max_failed_tests'] = 10
+        if 'cudaver' in self.cfg.template_values and self.cfg.template_values['cudaver'] == '12.1.1':
+            _cudaver = self.cfg.template_values['cudaver']
+            _runtest = self.cfg['runtest']
+            self.cfg['runtest'] = _runtest.replace(
+                                      'PYTHONUNBUFFERED',
+                                      'PYTORCH_TEST_RUN_EVERYTHING_IN_SERIAL=1 PYTHONUNBUFFERED')
 
 
 def pre_single_extension_hook(ext, *args, **kwargs):
@@ -582,6 +652,47 @@ def post_sanitycheck_hook(self, *args, **kwargs):
         POST_SANITYCHECK_HOOKS[self.name](self, *args, **kwargs)
 
 
+def replace_non_distributable_files_with_symlinks(log, install_dir, package, allowlist):
+    """
+    Replace files that cannot be distributed with symlinks into host_injections
+    """
+    extension_based = { "CUDA": False, "cuDNN": True, "cuTENSOR": True }
+    if not package in extension_based:
+        raise EasyBuildError("Don't know how to strip non-distributable files from package %s.", package)
+
+    # iterate over all files in the package installation directory
+    for dir_path, _, files in os.walk(install_dir):
+        for filename in files:
+            full_path = os.path.join(dir_path, filename)
+            # we only really care about real files, i.e. not symlinks
+            if not os.path.islink(full_path):
+                # check if the current file name stub is part of the allowlist
+                basename =  filename.split('.')[0]
+                if extension_based[package]:
+                    if '.' in filename:
+                        extension = '.' + filename.split('.')[1]
+                if basename in allowlist:
+                    log.debug("%s is found in allowlist, so keeping it: %s", basename, full_path)
+                elif extension_based[package] and '.' in filename and extension in allowlist:
+                    log.debug("%s is found in allowlist, so keeping it: %s", extension, full_path)
+                else:
+                    if extension_based[package]:
+                        print_name = filename
+                    else:
+                        print_name = basename
+                    log.debug("%s is not found in allowlist, so replacing it with symlink: %s",
+                              print_name, full_path)
+                    # if it is not in the allowlist, delete the file and create a symlink to host_injections
+                    host_inj_path = full_path.replace('versions', 'host_injections')
+                    # make sure source and target of symlink are not the same
+                    if full_path == host_inj_path:
+                        raise EasyBuildError("Source (%s) and target (%s) are the same location, are you sure you "
+                                             "are using this hook for an EESSI installation?",
+                                             full_path, host_inj_path)
+                    remove_file(full_path)
+                    symlink(host_inj_path, full_path)
+
+
 def post_sanitycheck_cuda(self, *args, **kwargs):
     """
     Remove files from CUDA installation that we are not allowed to ship,
@@ -621,60 +732,128 @@ def post_sanitycheck_cuda(self, *args, **kwargs):
         if 'libcudart' not in allowlist:
             raise EasyBuildError("Did not find 'libcudart' in allowlist: %s" % allowlist)
 
-        # iterate over all files in the CUDA installation directory
-        for dir_path, _, files in os.walk(self.installdir):
-            for filename in files:
-                full_path = os.path.join(dir_path, filename)
-                # we only really care about real files, i.e. not symlinks
-                if not os.path.islink(full_path):
-                    # check if the current file is part of the allowlist
-                    basename = os.path.splitext(filename)[0]
-                    if basename in allowlist:
-                        self.log.debug("%s is found in allowlist, so keeping it: %s", basename, full_path)
-                    else:
-                        self.log.debug("%s is not found in allowlist, so replacing it with symlink: %s",
-                                       basename, full_path)
-                        # if it is not in the allowlist, delete the file and create a symlink to host_injections
-                        host_inj_path = full_path.replace('versions', 'host_injections')
-                        # make sure source and target of symlink are not the same
-                        if full_path == host_inj_path:
-                            raise EasyBuildError("Source (%s) and target (%s) are the same location, are you sure you "
-                                                 "are using this hook for an EESSI installation?",
-                                                 full_path, host_inj_path)
-                        remove_file(full_path)
-                        symlink(host_inj_path, full_path)
+        # replace files that are not distributable with symlinks into
+        # host_injections
+        replace_non_distributable_files_with_symlinks(self.log, self.installdir, self.name, allowlist)
     else:
         raise EasyBuildError("CUDA-specific hook triggered for non-CUDA easyconfig?!")
 
 
+def post_sanitycheck_cudnn(self, *args, **kwargs):
+    """
+    Remove files from cuDNN installation that we are not allowed to ship,
+    and replace them with a symlink to a corresponding installation under host_injections.
+    """
+    if self.name == 'cuDNN':
+        print_msg("Replacing files in cuDNN installation that we can not ship with symlinks to host_injections...")
+
+        allowlist = ['LICENSE']
+
+        # read cuDNN LICENSE, construct allowlist based on section "2. Distribution" that specifies list of files that can be shipped
+        license_path = os.path.join(self.installdir, 'LICENSE')
+        search_string = "2. Distribution. The following portions of the SDK are distributable under the Agreement:"
+        with open(license_path) as infile:
+            for line in infile:
+                if line.strip().startswith(search_string):
+                    # remove search string, split into words, remove trailing
+                    # dots '.' and only retain words starting with a dot '.'
+                    distributable = line[len(search_string):]
+                    for word in distributable.split():
+                        if word[0] == '.':
+                            allowlist.append(word.rstrip('.'))
+
+        allowlist = sorted(set(allowlist))
+        self.log.info("Allowlist for files in cuDNN installation that can be redistributed: " + ', '.join(allowlist))
+
+        # replace files that are not distributable with symlinks into
+        # host_injections
+        replace_non_distributable_files_with_symlinks(self.log, self.installdir, self.name, allowlist)
+    else:
+        raise EasyBuildError("cuDNN-specific hook triggered for non-cuDNN easyconfig?!")
+
+
+def post_sanitycheck_cutensor(self, *args, **kwargs):
+    """
+    Remove files from cuTENSOR installation that we are not allowed to ship,
+    and replace them with a symlink to a corresponding installation under host_injections.
+    """
+    if self.name == 'cuTENSOR':
+        print_msg("Replacing files in cuTENSOR installation that we can not ship with symlinks to host_injections...")
+
+        allowlist = ['LICENSE']
+
+        # read cuTENSOR LICENSE, construct allowlist based on section "2. Distribution" that specifies list of files that can be shipped
+        license_path = os.path.join(self.installdir, 'LICENSE')
+        search_string = "2. Distribution. The following portions of the SDK are distributable under the Agreement:"
+        with open(license_path) as infile:
+            for line in infile:
+                if line.strip().startswith(search_string):
+                    # remove search string, split into words, remove trailing
+                    # dots '.' and only retain words starting with a dot '.'
+                    distributable = line[len(search_string):]
+                    for word in distributable.split():
+                        if word[0] == '.':
+                            allowlist.append(word.rstrip('.'))
+
+        allowlist = sorted(set(allowlist))
+        self.log.info("Allowlist for files in cuTENSOR installation that can be redistributed: " + ', '.join(allowlist))
+
+        # replace files that are not distributable with symlinks into
+        # host_injections
+        replace_non_distributable_files_with_symlinks(self.log, self.installdir, self.name, allowlist)
+    else:
+        raise EasyBuildError("cuTENSOR-specific hook triggered for non-cuTENSOR easyconfig?!")
+
+
 def inject_gpu_property(ec):
     """
-    Add 'gpu' property, via modluafooter easyconfig parameter
+    Add 'gpu' property EESSI<PACKAGE>VERSION envvars and drop dependencies to
+    build dependencies, via modluafooter easyconfig parameter
     """
     ec_dict = ec.asdict()
-    # Check if CUDA is in the dependencies, if so add the 'gpu' Lmod property
-    if ('CUDA' in [dep[0] for dep in iter(ec_dict['dependencies'])]):
-        ec.log.info("Injecting gpu as Lmod arch property and envvar with CUDA version")
+    # check if CUDA, cuDNN, you-name-it is in the dependencies, if so
+    # - drop dependency to build dependency
+    # - add 'gpu' Lmod property
+    # - add envvar with package version
+    packages_list = ( "CUDA", "cuDNN", "cuTENSOR" )
+    packages_version = { }
+    add_gpu_property = ''
+
+    for package in packages_list:
+        # Check if package is in the dependencies, if so drop dependency to build
+        # dependency and set variable for later adding the 'gpu' Lmod property
+        if (package in [dep[0] for dep in iter(ec_dict['dependencies'])]):
+            add_gpu_property = 'add_property("arch","gpu")'
+            for dep in iter(ec_dict['dependencies']):
+                if package in dep[0]:
+                    # make package a build dependency only (rpathing saves us from link errors)
+                    ec.log.info("Dropping dependency on %s to build dependency" % package)
+                    ec_dict['dependencies'].remove(dep)
+                    if dep not in ec_dict['builddependencies']:
+                        ec_dict['builddependencies'].append(dep)
+                    # take note of version for creating the modluafooter
+                    packages_version[package] = dep[1]
+    if add_gpu_property:
+        ec.log.info("Injecting gpu as Lmod arch property and envvars for dependencies with their version")
         key = 'modluafooter'
-        value = 'add_property("arch","gpu")'
-        cuda_version = 0
-        for dep in iter(ec_dict['dependencies']):
-            # Make CUDA a build dependency only (rpathing saves us from link errors)
-            if 'CUDA' in dep[0]:
-                cuda_version = dep[1]
-                ec_dict['dependencies'].remove(dep)
-                if dep not in ec_dict['builddependencies']:
-                    ec_dict['builddependencies'].append(dep)
-        value = '\n'.join([value, 'setenv("EESSICUDAVERSION","%s")' % cuda_version])
-        if key in ec_dict:
-            if not value in ec_dict[key]:
-                ec[key] = '\n'.join([ec_dict[key], value])
+        values = [add_gpu_property]
+        for package, version in packages_version.items():
+            envvar = "EESSI%sVERSION" % package.upper()
+            values.append('setenv("%s","%s")' % (envvar, version))
+        if not key in ec_dict:
+            ec[key] = '\n'.join(values)
         else:
-            ec[key] = value
+            new_value = ec_dict[key]
+            for value in values:
+                if not value in new_value:
+                    new_value = '\n'.join([new_value, value])
+            ec[key] = new_value
+
     return ec
 
 
 PARSE_HOOKS = {
+    'casacore': parse_hook_casacore_disable_vectorize,
     'CGAL': parse_hook_cgal_toolchainopts_precise,
     'fontconfig': parse_hook_fontconfig_add_fonts,
     'GPAW': parse_hook_gpaw_harcoded_path,
@@ -697,9 +876,11 @@ POST_PREPARE_HOOKS = {
 }
 
 PRE_CONFIGURE_HOOKS = {
+    'GROMACS': pre_configure_hook_gromacs,
     'libfabric': pre_configure_hook_libfabric_disable_psm3_x86_64_generic,
     'MetaBAT': pre_configure_hook_metabat_filtered_zlib_dep,
     'OpenBLAS': pre_configure_hook_openblas_optarch_generic,
+    'PyTorch': pre_configure_hook_pytorch_add_cupti_libdir,
     'WRF': pre_configure_hook_wrf_aarch64,
     'at-spi2-core': pre_configure_hook_atspi2core_filter_ld_library_path,
 }
@@ -725,4 +906,6 @@ POST_SINGLE_EXTENSION_HOOKS = {
 
 POST_SANITYCHECK_HOOKS = {
     'CUDA': post_sanitycheck_cuda,
+    'cuDNN': post_sanitycheck_cudnn,
+    'cuTENSOR': post_sanitycheck_cutensor,
 }
