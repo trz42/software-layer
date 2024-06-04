@@ -256,6 +256,10 @@ if command_exists "nvidia-smi"; then
     ${EESSI_PREFIX}/scripts/gpu_support/nvidia/link_nvidia_host_libraries.sh
 fi
 
+# Install extra software that is needed (e.g., for providing a custom ctypes
+# library when needed)
+${EESSI_PREFIX}/scripts/extra/install_custom_ctypes.sh --temp-dir /tmp/temp
+
 # use PR patch file to determine in which easystack files stuff was added
 changed_easystacks=$(cat ${pr_diff} | grep '^+++' | cut -f2 -d' ' | sed 's@^[a-z]/@@g' | grep '^easystacks/.*yml$' | egrep -v 'known-issues|missing') 
 if [ -z "${changed_easystacks}" ]; then
