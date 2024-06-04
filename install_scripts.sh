@@ -116,6 +116,12 @@ nvidia_files=(
 )
 copy_files_by_list ${TOPDIR}/scripts/gpu_support/nvidia ${INSTALL_PREFIX}/scripts/gpu_support/nvidia "${nvidia_files[@]}"
 
+# Copy files for the scripts/extra directory
+extra_files=(
+    install_custom_ctypes.sh
+)
+copy_files_by_list ${TOPDIR}/scripts/extra ${INSTALL_PREFIX}/scripts/extra "${extra_files[@]}"
+
 # Copy over EasyBuild hooks file used for installations
 hook_files=(
     eb_hooks.py
