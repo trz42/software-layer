@@ -258,6 +258,7 @@ fi
 
 # Install extra software that is needed (e.g., for providing a custom ctypes
 # library when needed)
+ls -l ${EESSI_CVMFS_REPO}/host_injections
 ${EESSI_PREFIX}/scripts/extra/install_custom_ctypes.sh --temp-dir /tmp/temp
 
 # use PR patch file to determine in which easystack files stuff was added
