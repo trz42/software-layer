@@ -77,13 +77,10 @@ else
 fi
 echo "Created temporary directory '${tmpdir}'"
 
-# some logging
-echo ">>> Checking contents under '${NESSI_SITE_INSTALL}'"
-ls -lR ${NESSI_SITE_INSTALL}
-
 # check if custom_ctypes has already been installed
 if [[ -d ${NESSI_SITE_INSTALL}/lib ]]; then
-    fatal_error "Error: Installation of custom_ctypes already found at '${NESSI_SITE_INSTALL}'"
+    echo "INFO: Installation of custom_ctypes already found at '${NESSI_SITE_INSTALL}'"
+    exit 0
 fi
 
 # download custom_ctypes to temp directory
