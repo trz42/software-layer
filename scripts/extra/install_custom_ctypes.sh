@@ -13,6 +13,9 @@
 # installation to be successful, this directory needs to be writeable by the user
 # executing this script.
 
+# some logging
+echo ">>> Running ${BASH_SOURCE}"
+
 # Initialise our bash functions
 TOPDIR=$(dirname $(realpath ${BASH_SOURCE}))
 source "${TOPDIR}"/../utils.sh
@@ -73,6 +76,10 @@ else
     fi
 fi
 echo "Created temporary directory '${tmpdir}'"
+
+# some logging
+echo ">>> Checking contents under '${NESSI_SITE_INSTALL}'"
+tree -d ${NESSI_SITE_INSTALL}
 
 # check if custom_ctypes has already been installed
 if [[ -d ${NESSI_SITE_INSTALL}/lib ]]; then
