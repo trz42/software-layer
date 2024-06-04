@@ -5,6 +5,7 @@ import re
 
 import easybuild.tools.environment as env
 from easybuild.easyblocks.generic.configuremake import obtain_config_guess
+from easybuild.easyblocks.python import EXTS_FILTER_PYTHON_PACKAGES
 from easybuild.framework.easyconfig.constants import EASYCONFIG_CONSTANTS
 from easybuild.tools.build_log import EasyBuildError, print_msg
 from easybuild.tools.config import build_option, update_build_option
@@ -347,6 +348,32 @@ def parse_hook_lammps_remove_deps_for_CI_aarch64(ec, *args, **kwargs):
                     os.getenv('EESSI_CPU_FAMILY'), build_option('optarch'))
     else:
         raise EasyBuildError("LAMMPS-specific hook triggered for non-LAMMPS easyconfig?!")
+
+
+def parse_hook_librosa_custom_ctypes(ec, *args, **kwargs):
+    """
+    Add exts_filter to soundfile extension in exts_list
+    """
+    if ec.name == 'librosa' and ec.version in ('0.10.1',):
+        ec_dict = ec.asdict()
+        eessi_software_path = get_eessi_envvar('EESSI_SOFTWARE_PATH')
+        custom_ctypes_path = eessi_software_path.replace('versions', 'host_injections', 1)
+        custom_ctypes_path = custom_ctypes_path.replace('software', 'extra', 1)
+        custom_ctypes_path = os.path.join(custom_ctypes_path, "custom_ctypes")
+        ebpythonprefixes = "EBPYTHONPREFIXES=%s" % custom_ctypes_path
+        exts_list_new = []
+        for item in ec_dict['exts_list']:
+            if item[0] == 'soundfile':
+                ext_dict = item[2]
+                ext_dict['exts_filter'] = (ebpythonprefixes + ' ' + EXTS_FILTER_PYTHON_PACKAGES[0],
+                                           EXTS_FILTER_PYTHON_PACKAGES[1])
+                exts_list_new.append((item[0], item[1], ext_dict))
+            else:
+                exts_list_new.append(item)
+        ec['exts_list'] = exts_list_new
+        print_msg("New exts_list: '%s'", ec['exts_list'])
+    else:
+        raise EasyBuildError("librosa/0.10.1-specific hook triggered for non-librosa/0.10.1 easyconfig?!")
 
 
 def pre_prepare_hook_highway_handle_test_compilation_issues(self, *args, **kwargs):
@@ -852,6 +879,37 @@ def inject_gpu_property(ec):
     return ec
 
 
+def pre_module_hook(self, *args, **kwargs):
+    """Main pre-module-check hook: trigger custom functions based on software name."""
+    if self.name in PRE_MODULE_HOOKS:
+        PRE_MODULE_HOOKS[self.name](self, *args, **kwargs)
+
+
+def pre_module_hook_librosa_augment_modluafooter(self, *args, **kwargs):
+    """
+    Add EBPYTHONPREFIXES to modluafooter
+    """
+    if self.name == 'librosa' and self.version == '0.10.1':
+        eessi_software_path = get_eessi_envvar('EESSI_SOFTWARE_PATH')
+        custom_ctypes_path = eessi_software_path.replace('versions', 'host_injections', 1)
+        custom_ctypes_path = custom_ctypes_path.replace('software', 'extra', 1)
+        custom_ctypes_path = os.path.join(custom_ctypes_path, 'custom_ctypes')
+        key = 'modluafooter'
+        values = ['prepend_path("EBPYTHONPREFIXES","%s")' % (custom_ctypes_path)]
+        print_msg("Adding '%s' to modluafooter", values[0])
+        if not key in self.cfg:
+            self.cfg[key] = '\n'.join(values)
+        else:
+            new_value = self.cfg[key]
+            for value in values:
+                if not value in new_value:
+                    new_value = '\n'.join([new_value, value])
+            self.cfg[key] = new_value
+        print_msg("Full modluafooter is '%s'", self.cfg[key])
+    else:
+        raise EasyBuildError("librosa/0.10.1-specific hook triggered for non-librosa/0.10.1 easyconfig?!")
+
+
 PARSE_HOOKS = {
     'casacore': parse_hook_casacore_disable_vectorize,
     'CGAL': parse_hook_cgal_toolchainopts_precise,
@@ -859,6 +917,7 @@ PARSE_HOOKS = {
     'GPAW': parse_hook_gpaw_harcoded_path,
     'ImageMagick': parse_hook_imagemagick_add_dependency,
     'LAMMPS': parse_hook_lammps_remove_deps_for_CI_aarch64,
+    'librosa': parse_hook_librosa_custom_ctypes,
     'OpenBLAS': parse_hook_openblas_relax_lapack_tests_num_errors,
     'Pillow-SIMD' : parse_hook_Pillow_SIMD_harcoded_paths,
     'pybind11': parse_hook_pybind11_replace_catch2,
@@ -908,4 +967,8 @@ POST_SANITYCHECK_HOOKS = {
     'CUDA': post_sanitycheck_cuda,
     'cuDNN': post_sanitycheck_cudnn,
     'cuTENSOR': post_sanitycheck_cutensor,
+}
+
+PRE_MODULE_HOOKS = {
+    'librosa': pre_module_hook_librosa_augment_modluafooter,
 }
