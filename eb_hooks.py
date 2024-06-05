@@ -357,9 +357,7 @@ def parse_hook_librosa_custom_ctypes(ec, *args, **kwargs):
     if ec.name == 'librosa' and ec.version in ('0.10.1',):
         ec_dict = ec.asdict()
         eessi_software_path = get_eessi_envvar('EESSI_SOFTWARE_PATH')
-        custom_ctypes_path = eessi_software_path.replace('versions', 'host_injections', 1)
-        custom_ctypes_path = custom_ctypes_path.replace('software', 'extra', 1)
-        custom_ctypes_path = os.path.join(custom_ctypes_path, "custom_ctypes")
+        custom_ctypes_path = os.path.join(eessi_software_path, "software", "custom_ctypes", "1.2")
         ebpythonprefixes = "EBPYTHONPREFIXES=%s" % custom_ctypes_path
         exts_list_new = []
         for item in ec_dict['exts_list']:
@@ -891,9 +889,7 @@ def pre_module_hook_librosa_augment_modluafooter(self, *args, **kwargs):
     """
     if self.name == 'librosa' and self.version == '0.10.1':
         eessi_software_path = get_eessi_envvar('EESSI_SOFTWARE_PATH')
-        custom_ctypes_path = eessi_software_path.replace('versions', 'host_injections', 1)
-        custom_ctypes_path = custom_ctypes_path.replace('software', 'extra', 1)
-        custom_ctypes_path = os.path.join(custom_ctypes_path, 'custom_ctypes')
+        custom_ctypes_path = os.path.join(eessi_software_path, "software", "custom_ctypes", "1.2")
         key = 'modluafooter'
         values = ['prepend_path("EBPYTHONPREFIXES","%s")' % (custom_ctypes_path)]
         print_msg("Adding '%s' to modluafooter", values[0])
