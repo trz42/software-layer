@@ -66,14 +66,14 @@ fi
 check_eessi_initialised
 
 # As an installation location just use $EESSI_SOFTWARE_PATH
-NESSI_CVMFS_INSTALL=${EESSI_SOFTWARE_PATH}
+export NESSI_CVMFS_INSTALL=${EESSI_SOFTWARE_PATH}
 
 # we need a directory we can use for temporary storage
 if [[ -z "${TEMP_DIR}" ]]; then
     tmpdir=$(mktemp -d)
 else
     mkdir -p ${TEMP_DIR}
-    tmpdir=$(mktemp -d --tmpdir=${TEMP_DIR} custom_ctypes.XXX)
+    tmpdir=$(mktemp -d --tmpdir=${TEMP_DIR} extra.XXX)
     if [[ ! -d "$tmpdir" ]] ; then
         fatal_error "Could not create directory ${tmpdir}"
     fi
