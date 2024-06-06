@@ -25,3 +25,4 @@ easyconfigs:
   - GDB-13.2-GCCcore-13.2.0.eb
   - IPython-8.17.2-GCCcore-13.2.0.eb
   - Qt5-5.15.13-GCCcore-13.2.0.eb
+  - NLTK-3.8.1-foss-2023b.eb
