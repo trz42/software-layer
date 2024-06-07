@@ -671,6 +671,12 @@ def pre_single_extension_testthat(ext, *args, **kwargs):
         ext.cfg['preinstallopts'] = "sed -i 's/SIGSTKSZ/32768/g' inst/include/testthat/vendor/catch.h && "
 
 
+def pre_sanitycheck_hook(self, *args, **kwargs):
+    """Main pre-sanity-check hook: trigger custom functions based on software name."""
+    if self.name in PRE_SANITYCHECK_HOOKS:
+        PRE_SANITYCHECK_HOOKS[self.name](self, *args, **kwargs)
+
+
 def post_sanitycheck_hook(self, *args, **kwargs):
     """Main post-sanity-check hook: trigger custom functions based on software name."""
     if self.name in POST_SANITYCHECK_HOOKS:
@@ -716,6 +722,22 @@ def replace_non_distributable_files_with_symlinks(log, install_dir, package, all
                                              full_path, host_inj_path)
                     remove_file(full_path)
                     symlink(host_inj_path, full_path)
+
+
+def pre_sanitycheck_sentence_piece_ld_preload_aarch64(self, *args, **kwargs):
+    """
+    Use LD_PRELOAD before sanity check to work around
+    error 'cannot allocate memory in static TLS block'
+    """
+    cpu_target = get_eessi_envvar('EESSI_SOFTWARE_SUBDIR')
+
+    if self.name == 'SentencePiece' and self.version in ['0.2.0'] and cpu_target == CPU_TARGET_AARCH64_GENERIC:
+        ebrootgperftools = os.environ('EBROOTGPERFTOOLS')
+        lib_tcmalloc_minimal = os.path.join(ebrootgperftools, 'lib64', 'libtcmalloc_minimal.so')
+        env.setvar('LD_PRELOAD', lib_tcmalloc_minimal)
+        print_msg("Set LD_PRELOAD env var to '%s'", os.environ('LD_PRELOAD'))
+    else:
+        raise EasyBuildError("SentencePiece-specific hook triggered for non-SentencePiece easyconfig?!")
 
 
 def post_sanitycheck_cuda(self, *args, **kwargs):
@@ -957,6 +979,10 @@ PRE_SINGLE_EXTENSION_HOOKS = {
 
 POST_SINGLE_EXTENSION_HOOKS = {
     'numpy': post_single_extension_numpy,
+}
+
+PRE_SANITYCHECK_HOOKS = {
+    'SentencePiece': pre_sanitycheck_sentence_piece_ld_preload_aarch64,
 }
 
 POST_SANITYCHECK_HOOKS = {
