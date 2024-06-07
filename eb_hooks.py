@@ -319,7 +319,17 @@ def parse_hook_sentencepiece_disable_tcmalloc_aarch64(ec, eprefix):
     cpu_target = get_eessi_envvar('EESSI_SOFTWARE_SUBDIR')
     if ec.name == 'SentencePiece' and ec.version in ['0.2.0'] and cpu_target == CPU_TARGET_AARCH64_GENERIC:
         # find right setting to change/update
-        print_msg("parse_hook for SentencePiece: '%s'",ec['components'])
+        print_msg("parse_hook for SentencePiece: OLD '%s'", ec['components'])
+        new_components = []
+        for item in ec['components']:
+            if item[2]['easyblock'] == 'CMakeMake':
+                new_item = item[2]
+                new_item['configopts'] = '-DSPM_ENABLE_TCMALLOC=OFF'
+                new_components.append((item[0], item[1], new_item))
+            else:
+                new_components.append(item)
+        ec['components'] = new_components
+        print_msg("parse_hook for SentencePiece: NEW '%s'", ec['components'])
     else:
         raise EasyBuildError("SentencePiece-specific hook triggered for non-SentencePiece easyconfig?!")
 
