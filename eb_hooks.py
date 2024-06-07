@@ -732,7 +732,7 @@ def pre_sanitycheck_sentence_piece_ld_preload_aarch64(self, *args, **kwargs):
     cpu_target = get_eessi_envvar('EESSI_SOFTWARE_SUBDIR')
 
     if self.name == 'SentencePiece' and self.version in ['0.2.0'] and cpu_target == CPU_TARGET_AARCH64_GENERIC:
-        ebrootgperftools = os.environ('EBROOTGPERFTOOLS')
+        ebrootgperftools = os.getenv('EBROOTGPERFTOOLS')
         lib_tcmalloc_minimal = os.path.join(ebrootgperftools, 'lib64', 'libtcmalloc_minimal.so')
         env.setvar('LD_PRELOAD', lib_tcmalloc_minimal)
         print_msg("Set LD_PRELOAD env var to '%s'", os.environ('LD_PRELOAD'))
