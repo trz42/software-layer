@@ -312,6 +312,16 @@ def parse_hook_qt5_check_qtwebengine_disable(ec, eprefix):
         raise EasyBuildError("Qt5-specific hook triggered for non-Qt5 easyconfig?!")
 
 
+def parse_hook_sentencepiece_disable_tcmalloc_aarch64(ec, eprefix):
+    """
+    Disable using TCMalloc
+    """
+    if ec.name == 'SentencePiece' and ec.version in ['0.2.0'] and cpu_target == CPU_TARGET_AARCH64_GENERIC:
+        # find right setting to change/update
+        print_msg("parse_hook for SentencePiece: '%s'",ec['components'])
+    else:
+        raise EasyBuildError("SentencePiece-specific hook triggered for non-SentencePiece easyconfig?!")
+
 def parse_hook_ucx_eprefix(ec, eprefix):
     """Make UCX aware of compatibility layer via additional configuration options."""
     if ec.name == 'UCX':
@@ -729,6 +739,7 @@ def pre_sanitycheck_sentence_piece_ld_preload_aarch64(self, *args, **kwargs):
     Use LD_PRELOAD before sanity check to work around
     error 'cannot allocate memory in static TLS block'
     """
+    return
     cpu_target = get_eessi_envvar('EESSI_SOFTWARE_SUBDIR')
 
     if self.name == 'SentencePiece' and self.version in ['0.2.0'] and cpu_target == CPU_TARGET_AARCH64_GENERIC:
@@ -940,6 +951,7 @@ PARSE_HOOKS = {
     'Pillow-SIMD' : parse_hook_Pillow_SIMD_harcoded_paths,
     'pybind11': parse_hook_pybind11_replace_catch2,
     'Qt5': parse_hook_qt5_check_qtwebengine_disable,
+    'SentencePiece': parse_hook_sentencepiece_disable_tcmalloc_aarch64,
     'UCX': parse_hook_ucx_eprefix,
 }
 
