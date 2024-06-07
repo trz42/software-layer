@@ -735,7 +735,7 @@ def pre_sanitycheck_sentence_piece_ld_preload_aarch64(self, *args, **kwargs):
         ebrootgperftools = os.getenv('EBROOTGPERFTOOLS')
         lib_tcmalloc_minimal = os.path.join(ebrootgperftools, 'lib64', 'libtcmalloc_minimal.so')
         env.setvar('LD_PRELOAD', lib_tcmalloc_minimal)
-        print_msg("Set LD_PRELOAD env var to '%s'", os.environ('LD_PRELOAD'))
+        print_msg("Set LD_PRELOAD env var to '%s'", os.getenv('LD_PRELOAD'))
     else:
         raise EasyBuildError("SentencePiece-specific hook triggered for non-SentencePiece easyconfig?!")
 
