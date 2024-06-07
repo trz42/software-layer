@@ -316,6 +316,7 @@ def parse_hook_sentencepiece_disable_tcmalloc_aarch64(ec, eprefix):
     """
     Disable using TCMalloc
     """
+    cpu_target = get_eessi_envvar('EESSI_SOFTWARE_SUBDIR')
     if ec.name == 'SentencePiece' and ec.version in ['0.2.0'] and cpu_target == CPU_TARGET_AARCH64_GENERIC:
         # find right setting to change/update
         print_msg("parse_hook for SentencePiece: '%s'",ec['components'])
