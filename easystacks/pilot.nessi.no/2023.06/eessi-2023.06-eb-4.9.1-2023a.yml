@@ -65,6 +65,10 @@ easyconfigs:
       # see https://github.com/easybuilders/easybuild-easyconfigs/pull/19987
       options:
         from-pr: 19987
+  - libmad-0.15.1b-GCCcore-12.3.0.eb:
+      # see https://github.com/easybuilders/easybuild-easyconfigs/pull/19987
+      options:
+        from-pr: 19987
   - SoX-14.4.2-GCCcore-12.3.0.eb:
       # see https://github.com/easybuilders/easybuild-easyconfigs/pull/19987
       options:
