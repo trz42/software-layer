@@ -75,3 +75,7 @@ easyconfigs:
         from-pr: 19987
   - tensorboard-2.15.1-gfbf-2023a.eb
   - tqdm-4.66.1-GCCcore-12.3.0.eb
+  - PyTorch-bundle-2.1.2-foss-2023a.eb:
+      # see https://github.com/easybuilders/easybuild-easyconfigs/pull/20382
+      options:
+        from-pr: 20382
