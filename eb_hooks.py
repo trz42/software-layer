@@ -312,9 +312,10 @@ def parse_hook_qt5_check_qtwebengine_disable(ec, eprefix):
         raise EasyBuildError("Qt5-specific hook triggered for non-Qt5 easyconfig?!")
 
 
+
 def parse_hook_sentencepiece_disable_tcmalloc_aarch64(ec, eprefix):
     """
-    Disable using TCMalloc
+    Disable using TC_Malloc on 'aarch64/generic'
     """
     cpu_target = get_eessi_envvar('EESSI_SOFTWARE_SUBDIR')
     if ec.name == 'SentencePiece' and ec.version in ['0.2.0']:
@@ -899,6 +900,7 @@ def inject_gpu_property(ec):
             ec[key] = new_value
 
     return ec
+
 
 
 def pre_module_hook(self, *args, **kwargs):

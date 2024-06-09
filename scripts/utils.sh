@@ -78,7 +78,7 @@ function create_directory_structure() {
   return $return_code
 }
 
-# Function to check if a command exists
+# function to check if a command exists
 function command_exists() {
     command -v "$1" >/dev/null 2>&1
 }
