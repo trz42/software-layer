@@ -55,6 +55,9 @@ easyconfigs:
   - PyTorch-2.1.2-foss-2023a-CUDA-12.1.1.eb:
       options:
         cuda-compute-capabilities: 6.0,6.1,7.0,7.5,8.0,8.6,8.9,9.0
+  - BLAST+-2.14.1-gompi-2023a.eb:
+      options:     
+        from-pr: 20751
   # PyTorch-bundle-CUDA's dependencies without CUDA
   - librosa-0.10.1-foss-2023a.eb
   - NLTK-3.8.1-foss-2023a.eb
@@ -76,3 +79,6 @@ easyconfigs:
   - tensorboard-2.15.1-gfbf-2023a.eb
   - tqdm-4.66.1-GCCcore-12.3.0.eb
   - bx-python-0.10.0-foss-2023a.eb
+  - BLAST+-2.14.1-gompi-2023a.eb:
+      options:     
+        from-pr: 20784
