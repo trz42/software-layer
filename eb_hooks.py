@@ -329,7 +329,7 @@ def parse_hook_pytorch_bundle_torchvision_setenv(ec, eprefix):
                                              " but expected NONE")
                     else:
                         # add preinstallopts
-                        ext_dict['preinstallopts'] = torchvision_include + '; ' + torchvision_library
+                        ext_dict['preinstallopts'] = torchvision_include + ' && ' + torchvision_library + ' && '
                         exts_list_new.append((item[0], item[1], ext_dict))
             ec['exts_list'] = exts_list_new
             print_msg("New exts_list: '%s'", ec['exts_list'])
