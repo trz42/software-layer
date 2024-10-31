@@ -285,9 +285,10 @@ ec=$?
 if [ ${ec} -eq 0 ]; then
     module load ${eessi_extend_module}
 else
-    echo "Did not find ${eessi_extend_module} module; setting EASYBUILD_INSTALLPATH and EASYBUILD_EXPERIMENTAL manually"
+    echo "Did not find ${eessi_extend_module} module; installing it with latest EasyBuild"
+    # EESSI-extend is the thing that sets EASYBUILD_INSTALLPATH so we have a chicken/egg situation to resolve
     export EASYBUILD_INSTALLPATH=${EESSI_PREFIX}/software/${EESSI_OS_TYPE}/${EESSI_SOFTWARE_SUBDIR_OVERRIDE}
-    export EASYBUILD_EXPERIMENTAL=1
+    source load_eessi_extend_module.sh ${EESSI_VERSION}
 fi
 
 if [ ! -z "${shared_fs_path}" ]; then
