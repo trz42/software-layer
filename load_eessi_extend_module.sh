@@ -1,8 +1,7 @@
-# Script to load the environment module for a specific version of EasyBuild.
-# If that module is not available yet, the current latest EasyBuild version of EasyBuild will be installed,
-# and used to install the specific EasyBuild version being specified.
+# Script to load the environment module for EESSI-extend.
+# If that module is not available yet, a specific version will be installed using the latest EasyBuild.
 #
-# This script must be sourced, since it makes changes in the current environment, like loading an EasyBuild module.
+# This script must be sourced, since it makes changes in the current environment, like loading an EESSI-extend module.
 #
 # This script is part of the EESSI software layer, see
 # https://github.com/EESSI/software-layer.git
