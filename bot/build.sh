@@ -21,6 +21,10 @@
 # stop as soon as something fails
 set -e
 
+ls -lisa
+cat *.diff
+exit 0
+
 # source utils.sh and cfg_files.sh
 source scripts/utils.sh
 source scripts/cfg_files.sh
