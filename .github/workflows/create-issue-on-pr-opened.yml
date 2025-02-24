@@ -13,32 +13,32 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const title = `New PR Opened: #${context.payload.pull_request.number} - ${context.payload.pull_request.title}`;
+            const title = 'New PR Opened: #' + context.payload.pull_request.number + ' - ' + context.payload.pull_request.title;
             const body = `
-                          A new pull request has been opened!
+A new pull request #${context.payload.pull_request.number} has been opened!
 
-                          **Title:** ${context.payload.pull_request.title}
-                          **Author:** ${context.payload.pull_request.user.login}
+**Title:** ${context.payload.pull_request.title}
+**Author:** ${context.payload.pull_request.user.login}
 
-                          **Link:** ${context.payload.pull_request.html_url}
+**Link:** ${context.payload.pull_request.html_url}
 
-                          Authorized maintainers may send commands to the build
-                          bots by creating new comments here. A line with a
-                          command has the format <code>bot: COMMANDS [ARGS]</code>
+Authorized maintainers may send commands to the build
+bots by creating new comments here. A line with a
+command has the format <code>bot: COMMANDS [ARGS]</code>
 
-                          The following COMMANDS are supported:
+The following COMMANDS are supported:
 
-                          - <code>help</code> _prints short usage information_
-                          - <code>show_config</code> _lets bots reply with key config information_
-                          - <code>status</code> _shows status information of builds_
-                          - <code>build [architecture|instance|repository|accelerator|exportvariable]</code> _instructs bots to build software according to the linked PR_
+- <code>help</code> _prints short usage information_
+- <code>show_config</code> _lets bots reply with key config information_
+- <code>status</code> _shows status information of builds_
+- <code>build [architecture|instance|repository|accelerator|exportvariable]</code> _instructs bots to build software according to the linked PR_
                          `;
-            
+
             const issue = await github.rest.issues.create({
               owner: context.repo.owner,
               repo: context.repo.repo,
               title: title,
               body: body,
             });
-            
+
             console.log(`Created issue: ${issue.data.html_url}`);
