@@ -23,13 +23,14 @@ jobs:
               **Link to PR:** ${context.payload.pull_request.html_url}
 
               <details><summary>Click for details & help</summary>
-              Authorized maintainers may send commands to the build bots by creating new comments here. A line with a command has the format <code>bot: COMMANDS [ARGS]</code>
+
+              Authorized maintainers may send commands to the build bots by creating new comments in this issue. A comment can contain multiple commands each starting at the beginning of a line and having the format <code>bot: COMMANDS [ARGS]</code>
 
               The following COMMANDS are supported:
               - <code>help</code> _prints short usage information_
               - <code>show_config</code> _shows config information_
               - <code>status</code> _shows status information of builds_
-              - <code>build [architecture|instance|repository|accelerator|exportvariable]</code> _instructs bots to build software according to the linked PR_
+              - <code>build [architecture|instance|repository|accelerator|exportvariable]</code> _instructs to build software according to the linked PR_
               </details>
             `;
 
