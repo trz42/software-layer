@@ -2,7 +2,7 @@ name: Create Issue on PR Opened
 
 on:
   pull_request:
-    types: [opened]
+    types: [opened, synchronize]
 
 jobs:
   create-issue:
@@ -13,32 +13,36 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const title = `New PR Opened: #${context.payload.pull_request.number} - ${context.payload.pull_request.title}`;
+            const title = `New PR opened: #${context.payload.pull_request.number} - ${context.payload.pull_request.title}`;
             const body = `
-                          A new pull request has been opened!
+              A new pull request has been opened!
 
-                          **Title:** ${context.payload.pull_request.title}
-                          **Author:** ${context.payload.pull_request.user.login}
+              **Title:** ${context.payload.pull_request.title}
+              **Author:** ${context.payload.pull_request.user.login}
 
-                          **Link:** ${context.payload.pull_request.html_url}
+              **Link to PR:** ${context.payload.pull_request.html_url}
 
-                          Authorized maintainers may send commands to the build
-                          bots by creating new comments here. A line with a
-                          command has the format <code>bot: COMMANDS [ARGS]</code>
+              <details><summary>Click for details & help</summary>
 
-                          The following COMMANDS are supported:
+              Authorized maintainers may send commands by adding new comments to this issue. A comment can contain multiple commands each starting at the beginning of a line and having the format <code>bot: COMMANDS [ARGS]</code>
 
-                          - <code>help</code> _prints short usage information_
-                          - <code>show_config</code> _lets bots reply with key config information_
-                          - <code>status</code> _shows status information of builds_
-                          - <code>build [architecture|instance|repository|accelerator|exportvariable]</code> _instructs bots to build software according to the linked PR_
-                         `;
-            
-            const issue = await github.issues.create({
+              The table below lists the commands that are currently supported:
+              | command | description |
+              | ------- | ----------- |
+              | help | prints short usage information |
+              | show_config | shows config information |
+              | status | shows status information of builds |
+              | build ARGS | instructs to build software as defined by the linked PR and with the one or more of the arguments:<br/>architecture, instance, repository, accelerator, exportvariable |
+
+              For more information see [building software for EESSI](https://www.eessi.io/docs/bot/#build-test-deploy-bot)
+              </details>
+            `;
+
+            const issue = await github.rest.issues.create({
               owner: context.repo.owner,
               repo: context.repo.repo,
               title: title,
               body: body,
             });
-            
+
             console.log(`Created issue: ${issue.data.html_url}`);
