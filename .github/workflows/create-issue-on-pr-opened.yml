@@ -32,7 +32,9 @@ jobs:
               | help | prints short usage information |
               | show_config | shows config information |
               | status | shows status information of builds |
-              | build [architecture\|instance\|repository\|accelerator\|exportvariable] | instructs to build software according to the linked PR |
+              | build ARGS | instructs to build software as defined by the linked PR and with the one or more of the arguments:<br/>architecture, instance, repository, accelerator, exportvariable |
+
+              For more information see [building software for EESSI](https://www.eessi.io/docs/bot/#build-test-deploy-bot)
               </details>
             `;
 
