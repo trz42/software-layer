@@ -2,7 +2,7 @@ name: Create Issue on PR Opened
 
 on:
   pull_request:
-    types: [opened]
+    types: [opened, synchronize]
 
 jobs:
   create-issue:
@@ -34,7 +34,7 @@ jobs:
                           - <code>build [architecture|instance|repository|accelerator|exportvariable]</code> _instructs bots to build software according to the linked PR_
                          `;
             
-            const issue = await github.issues.create({
+            const issue = await github.rest.issues.create({
               owner: context.repo.owner,
               repo: context.repo.repo,
               title: title,
