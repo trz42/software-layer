@@ -28,10 +28,10 @@ jobs:
 
                           The following COMMANDS are supported:
 
-                          - `help` _prints short usage information_
-                          - `show_config` _lets bots reply with key config information_
-                          - `status` _shows status information of builds_
-                          - `build [architecture|instance|repository|accelerator|exportvariable]` _instructs bots to build software according to the linked PR_
+                          - <code>help</code> _prints short usage information_
+                          - <code>show_config</code> _lets bots reply with key config information_
+                          - <code>status</code> _shows status information of builds_
+                          - <code>build [architecture|instance|repository|accelerator|exportvariable]</code> _instructs bots to build software according to the linked PR_
                          `;
             
             const issue = await github.issues.create({
