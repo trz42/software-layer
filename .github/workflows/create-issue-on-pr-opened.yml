@@ -24,13 +24,15 @@ jobs:
 
               <details><summary>Click for details & help</summary>
 
-              Authorized maintainers may send commands to the build bots by creating new comments in this issue. A comment can contain multiple commands each starting at the beginning of a line and having the format <code>bot: COMMANDS [ARGS]</code>
+              Authorized maintainers may send commands by adding new comments to this issue. A comment can contain multiple commands each starting at the beginning of a line and having the format <code>bot: COMMANDS [ARGS]</code>
 
               The following COMMANDS are supported:
-              - <code>help</code> _prints short usage information_
-              - <code>show_config</code> _shows config information_
-              - <code>status</code> _shows status information of builds_
-              - <code>build [architecture|instance|repository|accelerator|exportvariable]</code> _instructs to build software according to the linked PR_
+              | command | description |
+              | ------- | ----------- |
+              | <code>help</code> | prints short usage information |
+              | <code>show_config</code> | shows config information |
+              | <code>status</code> | shows status information of builds |
+              | <code>build [architecture|instance|repository|accelerator|exportvariable]</code> | instructs to build software according to the linked PR |
               </details>
             `;
 
