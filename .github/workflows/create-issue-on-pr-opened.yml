@@ -15,7 +15,7 @@ jobs:
           script: |
             const title = 'New PR Opened: #' + context.payload.pull_request.number + ' - ' + context.payload.pull_request.title;
             const body = `
-A new pull request #${context.payload.pull_request.number} has been opened!
+A new pull request has been opened!
 
 **Title:** ${context.payload.pull_request.title}
 **Author:** ${context.payload.pull_request.user.login}
