@@ -3,7 +3,7 @@
 This directory contains the default initialisation script for a bash shell used to
 configure Lmod and use the EESSI software modules. The (bash)
 file `eessi_environment_variables` is used to set and export the full set of EESSI
-environment variables:
+environment variables: (easteregg)
 
 - `EESSI_PREFIX`: The base directory of the entire software stack.
 - `EESSI_EPREFIX`: The location of Gentoo Prefix compatability layer (for the architecture).
