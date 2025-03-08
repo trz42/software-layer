@@ -227,28 +227,6 @@ local function using_eessi_accel_stack ()
     return accel_stack_in_modulepath
 end
 
-local function using_eessi_host_injections ()
-    -- eessi_prefix is the prefix with official EESSI modules
-    -- e.g. /cvmfs/software.eessi.io/versions/2023.06
-    local eessi_prefix = os.getenv("EESSI_PREFIX")
-
-    -- If EESSI_PREFIX wasn't defined, we cannot check if this module was from the EESSI environment
-    -- In that case, we assume it isn't, otherwise EESSI_PREFIX would (probably) have been set
-    if eessi_prefix == nil then
-        return false
-    else
-        -- NOTE: exact paths for site so may need to be updated later.
-        -- See https://github.com/EESSI/software-layer/pull/371
-
-        -- eessi_prefix_host_injections is the prefix with site-extensions (i.e. additional modules)
-        -- to the official EESSI modules, e.g. /cvmfs/software.eessi.io/host_injections/2023.06
-        local eessi_prefix_host_injections = string.gsub(eessi_prefix, 'versions', 'host_injections')
-
-       -- Check if the full modulepath starts with the eessi_prefix_*
-        return string.find(t.fn, "^" .. eessi_prefix_host_injections) ~= nil
-    end
-end
-
 local function eessi_removed_module_warning_startup_hook(usrCmd)
     if usrCmd == 'load' and not os.getenv("EESSI_SKIP_REMOVED_MODULES_CHECK") then
         local CUDA_RELOCATION_MSG = [[All CUDA installations and modules depending on CUDA have been relocated to GPU-specific stacks.
@@ -276,8 +254,7 @@ local function eessi_removed_module_warning_startup_hook(usrCmd)
         local masterTbl = masterTbl()
         local error_msg = ""
         -- The CUDA messages should only be shown if the accelerator stack is NOT being used
-        -- and if we don't use host_injections
-        if not using_eessi_accel_stack() and not using_eessi_host_injections() then
+        if not using_eessi_accel_stack() then
             for _, module in pairs(masterTbl.pargs) do
                 if RELOCATED_CUDA_MODULES[module] ~= nil then
                     error_msg = error_msg .. module .. ': ' .. RELOCATED_CUDA_MODULES[module] .. '\\n\\n'
