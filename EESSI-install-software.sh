@@ -261,10 +261,20 @@ echo "Going to install full CUDA SDK and cu* libraries under host_injections if 
 temp_install_storage=${TMPDIR}/temp_install_storage
 mkdir -p ${temp_install_storage}
 if [ -z "${skip_cuda_install}" ] || [ ! "${skip_cuda_install}" ]; then
+    if [[ ! -z ${EESSI_SKIP_REMOVED_MODULES_CHECK} ]]; then
+        saved_EESSI_SKIP_REMOVED_MODULES_CHECK=${EESSI_SKIP_REMOVED_MODULES_CHECK}
+    fi
+    export EESSI_SKIP_REMOVED_MODULES_CHECK=yes
     ${EESSI_PREFIX}/scripts/gpu_support/nvidia/install_cuda_and_libraries.sh \
         -t ${temp_install_storage} \
         --accept-cuda-eula \
         --accept-cudnn-eula
+    if [[ ! -z ${saved_EESSI_SKIP_REMOVED_MODULES_CHECK} ]]; then
+        export EESSI_SKIP_REMOVED_MODULES_CHECK=${saved_EESSI_SKIP_REMOVED_MODULES_CHECK}
+        unset saved_EESSI_SKIP_REMOVED_MODULES_CHECK
+    else
+        unset EESSI_SKIP_REMOVED_MODULES_CHECK
+    fi
 else
     echo "Skipping installation of CUDA SDK and cu* libraries in host_injections, since the --skip-cuda-install flag was passed"
 fi
