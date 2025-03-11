@@ -61,9 +61,11 @@ if [ ! -f "$FILE_TO_SIGN" ]; then
     exit $FILE_PROBLEM
 fi
 
+# Use a very conservatuve umask throughout this script since we are dealing with sensitive things
+umask 077 || { echo "Error: Failed to set 0177 umask."; exit $FILE_PROBLEM; }
+
 # Create a restricted temporary directory and ensure cleanup on exit
 TEMP_DIR=$(mktemp -d) || { echo "Error: Failed to create temporary directory."; exit $FILE_PROBLEM; }
-chmod 700 "$TEMP_DIR"
 trap 'rm -rf "$TEMP_DIR"' EXIT
 
 # Converts the SSH private key to OpenSSH format and generates a public key
@@ -72,8 +74,6 @@ convert_private_key() {
     local output_key="$2"
 
     echo "Converting SSH key to OpenSSH format..."
-    # limit file permissions to max 0600 for the converted key
-    umask 0177
     cp "$input_key" "$output_key" || { echo "Error: Failed to copy $input_key to $output_key"; exit $FILE_PROBLEM; }
 
     # This saves the key in the default OpenSSH format (which is required for signing)
