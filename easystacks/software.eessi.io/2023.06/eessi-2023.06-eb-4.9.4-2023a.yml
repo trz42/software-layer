@@ -50,3 +50,4 @@ easyconfigs:
         # see https://github.com/easybuilders/easybuild-easyconfigs/pull/22235
         from-commit: 01dd97ea62fe4d7d0df040ede3af03eb2f1b8641
   - OpenCV-4.8.1-foss-2023a-contrib.eb
+  - cutadapt-4.9-GCCcore-12.3.0.eb
