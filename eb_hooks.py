@@ -1,5 +1,8 @@
 # Hooks to customize how EasyBuild installs software in EESSI
 # see https://docs.easybuild.io/en/latest/Hooks.html
+#
+# DO NOTHING CHANGE
+#
 import glob
 import os
 import re
