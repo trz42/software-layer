@@ -3,7 +3,8 @@
 # give up as soon as any error occurs
 set -e
 
-git clone https://github.com/EESSI/software-layer-scripts
+# git clone https://github.com/EESSI/software-layer-scripts
+git clone --single-branch --branch debug_bind_mount_issue https://github.com/trz42/software-layer-scripts
 
 # symlink everything, except for:
 # - common files like LICENSE and README.md
