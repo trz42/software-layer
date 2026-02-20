@@ -35,8 +35,8 @@ jobs:
            PR_NUMBER: ${{ github.event.number }}
 
         run: |
-          export EESSI_SOFTWARE_SUBDIR_OVERRIDE=${{matrix.EESSI_SOFTWARE_SUBDIR_OVERRIDE}}
-          source /cvmfs/software.eessi.io/versions/${EESSI_VERSION}/init/bash
+          export EESSI_SOFTWARE_SUBDIR_OVERRIDE=${{ matrix.EESSI_SOFTWARE_SUBDIR_OVERRIDE }}
+          EESSI_SOFTWARE_SUBDIR_OVERRIDE=${{ matrix.EESSI_SOFTWARE_SUBDIR_OVERRIDE }} && source /cvmfs/software.eessi.io/versions/${EESSI_VERSION}/init/bash
 
           # set $EESSI_CPU_FAMILY to the CPU architecture that corresponds to $EESSI_SOFTWARE_SUBDIR_OVERRIDE (part before the first slash),
           # to prevent issues with checks in the Easybuild configuration that use this variable
