@@ -1,3 +1,6 @@
 easyconfigs:
   - OSU-Micro-Benchmarks-7.2-gompi-2023a-CUDA-12.1.1.eb
-
+  - OTF2-3.0.3-GCCcore-12.3.0.eb
+  - AOCC-4.0.0-GCCcore-12.3.0.eb
+  - XlsxWriter-3.1.3-GCCcore-12.3.0.eb
+  - spdlog-1.11.0-GCCcore-12.3.0.eb
