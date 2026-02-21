@@ -43,9 +43,9 @@ def is_valid_repo_url(url):
 def fetch_license_from_ecosystems(url, depth=0):
     """Fetches license information from ecosyste.ms API with a depth limit."""
     if depth > MAX_DEPTH:
-            if DEBUG_MODE:
-                print(f"Max depth reached for {url}, stopping recursion.")
-            return "not found", "not found"
+        if DEBUG_MODE:
+            print(f"Max depth reached for {url}, stopping recursion.")
+        return "not found", "not found"
 
     clean_url = clean_repo_url(url)
     formatted_url = quote(clean_url, safe="")
@@ -55,23 +55,23 @@ def fetch_license_from_ecosystems(url, depth=0):
     try:
         repo_response = requests.get(f"{URL_REPO}{formatted_url}")
         reg_response = requests.get(f"{URL_REG}{formatted_url}")
-    except requests.RequestException as e:
+    except requests.RequestException as err:
         if DEBUG_MODE:
-            print(f"Request failed: {e}")
+            print(f"Request failed: {err}")
         return "not found", "not found"
 
     if repo_response.status_code == 200:
         data = repo_response.json()
         license_info = data.get("license", "not found")
         repo_url = data.get("repository_url", "not found")
-        
+
         if license_info in ("not found", "other", "Other"):
             scraped_license = scrape_license(clean_url)
             if DEBUG_MODE:
                 print("SCRAPED LICENSE "+str(scraped_license))
             if scraped_license != "not found":
                 return scraped_license[0], scraped_license[1]
-        
+
         return license_info, repo_url
 
     if reg_response.status_code == 200:
@@ -87,39 +87,16 @@ def fetch_license_from_ecosystems(url, depth=0):
                     print("SCRAPED LICENSE "+str(scraped_license))
                 if scraped_license != "not found":
                     return scraped_license[0], scraped_license[1]
-                    
+
             return license_info, repo_url
-        else: 
+        else:
             scraped_license = scrape_license(clean_url)
             if DEBUG_MODE:
                 print("SCRAPED LICENSE "+str(scraped_license))
             if scraped_license != "not found":
                 return scraped_license, scraped_license[1]
-            
-    return scrape_repo_from_package(clean_url, depth + 1)
 
-#def scrape_license(repo_url):
-#    try:
-#        response = requests.get(repo_url)
-#        response.raise_for_status()
-#    except requests.RequestException:
-#        return "not found"
-    
-#    soup = BeautifulSoup(response.text, "html.parser")
-#    for link in soup.find_all("a", href=True):
-#        if re.search(r"license|copying|copyright|legal", link.text, re.IGNORECASE):
-#            license_url = requests.compat.urljoin(repo_url, link["href"])
-#            license_text = requests.get(license_url).text.lower()
-#            print(str(license_text))
-#            for spdx_id, content in SPDX_LICENSES.items():
-#                print("spdx_id: "+spdx_id)
-#                print("name: "+content.get("name"))
-#                if spdx_id or content.get("name") in license_text:
-#                    return spdx_id, license_url
-#                if "GNU General Public License" in license_text: 
-#                    return "GPL-3.0", license_url
-#            return "not found", license_url
-#    return "not found"
+    return scrape_repo_from_package(clean_url, depth + 1)
 
 def scrape_license(repo_url):
     try:
@@ -188,10 +165,10 @@ def scrape_repo_from_package(url, depth=0):
 
     return "not found", "not found"
 
-def fetch_license_from_homepage_or_source(module_data):
+def fetch_license_from_homepage_or_source(module):
     """Attempts to fetch the license using the module's homepage or source URL."""
     for key in ["Homepage", "Source URL"]:
-        url = module_data.get(key, "N/A")
+        url = module.get(key, "N/A")
         if url and url != "N/A":
             license_info, repo_url = fetch_license_from_ecosystems(url)
             if license_info != "not found":
@@ -200,15 +177,17 @@ def fetch_license_from_homepage_or_source(module_data):
 
 def process_modules_for_licenses(modules_file):
     """Processes module JSON file to retrieve license information."""
-    with open(modules_file, "r") as f:
-        modules = json.load(f)
-    
+    with open(modules_file, "r") as file:
+        modules = json.load(file)
+
     results = {}
     for module in modules:
         module_name = module["Module"]
+        print(f"processing module: {module_name!r}")
         license_info, url = fetch_license_from_homepage_or_source(module)
         is_redistributable = False
-        
+
+        print(f"type(license_info): {type(license_info)}")
         if isinstance(license_info, tuple):
             license_info = license_info[0]  # Extract the actual license ID
             if isinstance(license_info, tuple): # don't know why sometimes there are tuples of tuples
@@ -220,16 +199,19 @@ def process_modules_for_licenses(modules_file):
         if isinstance(license_info, list):
             license_info = ", ".join(license_info) if license_info else "not found"  # Convert list to string
 
+        print(f"license info: {license_info!r}")
+
         license_info_normalized = license_info.lower() if isinstance(license_info, str) else license_info
+
+        print(f"normalized license info: {license_info_normalized!r}")
 
         if license_info_normalized in SPDX_LICENSES:
             spdx_details = SPDX_LICENSES[license_info_normalized]
             is_redistributable = spdx_details["isOsiApproved"] or spdx_details["isFsfLibre"]
 
         # Split the software name and version to display them properly in the YAML file
-        software_name, version = module_name.split("/", 1)
-        if "-" in version:
-            version,toolchain = version.split("-",1)
+        software_name, version_suffix = module_name.split("/", 1)
+        version = version_suffix.split("-")[0]
         results[software_name] = {
             version: {
                 "License": license_info,
@@ -237,47 +219,65 @@ def process_modules_for_licenses(modules_file):
                 "Retrieved from": url
             }
         }
+
     return results
 
-def save_license_results(results, output_file="licenses_aux.yaml",licenses_original = os.sys.argv[2]):
+def save_license_results(results, output_file="licenses_aux.yaml", licenses_original="licenses.yml"):
     """Saves license information to a JSON file."""
-    with open("temporal_print.yaml", "w") as f:
-        yaml.dump(results, f, default_flow_style=False, sort_keys=True)  #Fast dump of what we have to print in the workflow
+    with open("temporal_print.yaml", "w") as file:
+        # Fast dump of what we have to print in the workflow
+        yaml.dump(results, file, default_flow_style=False, sort_keys=True)
 
     full_data = {}
-    with open(licenses_original, 'r') as f:
-        full_data = yaml.safe_load(f)
-    
-    for software_name, versions_data in results.items():    #Look for new modules which are not in the new licenses dictionary
-        if software_name not in full_data:                  #Add new modules in a data dictionary
+    with open(licenses_original, 'r') as file:
+        full_data = yaml.safe_load(file)
+
+    # Look for new modules which are not in the new licenses dictionary
+    for software_name, versions_data in results.items():
+        # Add new modules in a data dictionary
+        if software_name not in full_data:
             full_data[software_name] = {}
 
-        for version, details in versions_data.items():      
-            if version not in full_data[software_name]: 
-                full_data[software_name][version] = details         #Add/replace the details of modules found in the new licenses data dictionary
+        for version, details in versions_data.items():
+            if version not in full_data[software_name]:
+                # Add/replace the details of modules found in the new licenses data dictionary
+                full_data[software_name][version] = details
 
-    with open(output_file, "w") as f:
-        yaml.dump(full_data, f, default_flow_style=False, sort_keys=True)  #Export data dictionary as licenses_aux.yaml file
-    print(f"License information saved to {output_file}")    
+    with open(output_file, "w") as file:
+        # Export data dictionary as licenses_aux.yaml file
+        yaml.dump(full_data, file, default_flow_style=False, sort_keys=True)
+    print(f"License information saved to {output_file}")
 
 def parse_arguments():
-        parser = argparse.ArgumentParser(description='Script to parse licenses')
-        parser.add_argument('input_file', help='Path to the input file')
-        parser.add_argument('licenses_original', help='Path to the original licenses file (licenses.yml)')
-        parser.add_argument('--debug', help='Prints scripts debugging', action='store_true', required=False)
-        return parser.parse_args()
+    parser = argparse.ArgumentParser(description='Script to parse licenses')
+    parser.add_argument(
+        '--missing-modules',
+        default="missing_modules.json",
+        help='Path to file containing missing modules'
+    )
+    parser.add_argument(
+        '--known-licenses',
+        default="licenses.yml",
+        help='Path to the known licenses file'
+    )
+    parser.add_argument(
+        '--debug',
+        help='Prints scripts debugging',
+        action='store_true'
+    )
+    return parser.parse_args()
 
 def main():
-    modules_file = "modules_results.json"
-    if not os.path.exists(modules_file):
-        print(f"Error: {modules_file} not found.")
-        return
-    license_results = process_modules_for_licenses(modules_file)
-    save_license_results(license_results)
-
-if __name__ == "__main__":
     # Parse command-line arguments and enable global debug mode if requested
     args = parse_arguments()
     if args.debug:
         DEBUG_MODE = True
+
+    if not os.path.exists(args.missing_modules):
+        print(f"Error: {args.modules_file} not found.")
+        return
+    license_results = process_modules_for_licenses(args.missing_modules)
+    save_license_results(license_results, licenses_original=args.known_licenses)
+
+if __name__ == "__main__":
     main()
