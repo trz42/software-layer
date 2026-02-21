@@ -44,13 +44,13 @@ jobs:
 
           run: |
               export EESSI_SOFTWARE_SUBDIR_OVERRIDE=${{ matrix.EESSI_SOFTWARE_SUBDIR_OVERRIDE }}
-              source /cvmfs/software.eessi.io/versions/${EESSI_VERSION}/init/bash
+              source /cvmfs/software.eessi.io/versions/${{ matrix.EESSI_VERSION }}/init/bash
 
               # set $EESSI_CPU_FAMILY to the CPU architecture that corresponds to
               #   $EESSI_SOFTWARE_SUBDIR_OVERRIDE (part before the first slash),
               #   to prevent issues with checks in the Easybuild configuration that use this variable
               export EESSI_CPU_FAMILY=${EESSI_SOFTWARE_SUBDIR_OVERRIDE%%/*}
-              export EESSI_PREFIX=/cvmfs/software.eessi.io/versions/${EESSI_VERSION}
+              export EESSI_PREFIX=/cvmfs/software.eessi.io/versions/${{ matrix.EESSI_VERSION }}
               export EESSI_OS_TYPE=linux
               env | grep ^EESSI | sort
               # module load EasyBuild
@@ -78,7 +78,7 @@ jobs:
                   echo "check missing installations for ${easystack_file} with EasyBuild ${eb_version}..."
                   module purge
                   module load EasyBuild/${eb_version}
-                  module load EESSI-extend/${EESSI_VERSION}-easybuild
+                  module load EESSI-extend/${{ matrix.EESSI_VERSION }}-easybuild
                   which eb
                   ${EB:-eb} --version
                   ${EB:-eb} --missing --easystack ${easystack_file} 2>&1 | tee ${eb_missing_out}
