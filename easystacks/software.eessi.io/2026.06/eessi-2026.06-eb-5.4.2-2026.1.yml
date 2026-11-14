@@ -29,4 +29,4 @@ easyconfigs:
   - ngsLCA-1.0.5-GCCcore-15.2.0.eb:
       options:
         # see https://github.com/easybuilders/easybuild-easyconfigs/pull/27420
-        from-commit: af02a2ae01a1ba14b02f66b4213a18fb80792b22
+        from-commit: 4503a3769813ee1b5afc1e1088c3ab4d51a9cbbe
