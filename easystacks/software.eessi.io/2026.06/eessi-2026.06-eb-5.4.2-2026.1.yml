@@ -26,3 +26,7 @@ easyconfigs:
   - PETSc-3.25.0-foss-2026.1.eb
   - Boost.Python-NumPy-1.90.0-gfbf-2026.1.eb
   - zlib-ng-2.3.2-GCCcore-15.2.0.eb
+  - ngsLCA-1.0.5-GCC-15.2.0.eb:
+      options:
+        # see https://github.com/easybuilders/easybuild-easyconfigs/pull/27420
+        from-commit: 4503a3769813ee1b5afc1e1088c3ab4d51a9cbbe
